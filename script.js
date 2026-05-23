@@ -31,7 +31,13 @@ function adicionar() {
     document.getElementById("corridas").value
   )
 
-  let dia = document.getElementById("dia").value
+  let dia = document
+    .getElementById("dia")
+    .value
+
+  let data = document
+    .getElementById("data")
+    .value
 
   if(nome === "" || valor <= 0) {
 
@@ -53,6 +59,8 @@ function adicionar() {
     motoristaExistente.historico.push({
 
       dia: dia,
+
+      data: data,
 
       valor: valor,
 
@@ -77,6 +85,8 @@ function adicionar() {
         {
 
           dia: dia,
+
+          data: data,
 
           valor: valor,
 
@@ -140,15 +150,21 @@ function mostrarRanking() {
 
         <div class="historico-item">
 
-          📅 ${item.dia}
+          📅 ${item.dia} - ${item.data}
 
-          • R$ ${item.valor}
+          <br>
 
-          • 🚗 ${item.corridas}
+          💰 R$ ${item.valor}
+
+          <br>
+
+          🚗 ${item.corridas} corridas
+
+          <br><br>
 
           <button onclick="removerDia(${index}, ${historicoIndex})">
 
-            ❌
+            ❌ Remover
 
           </button>
 
@@ -316,8 +332,6 @@ function salvarDados() {
     "ranking",
     JSON.stringify(ranking)
   )
-
-  console.log("Dados salvos!")
 }
 
 function limparCampos() {
@@ -327,4 +341,6 @@ function limparCampos() {
   document.getElementById("valor").value = ""
 
   document.getElementById("corridas").value = ""
+
+  document.getElementById("data").value = ""
 }
