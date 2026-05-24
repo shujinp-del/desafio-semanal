@@ -550,5 +550,12 @@ function limparCampos() {
 
 if("serviceWorker" in navigator) {
 
-  navigator.serviceWorker.register("sw.js")
+  navigator.serviceWorker.getRegistrations().then(function(registrations) {
+
+    registrations.forEach(function(registration) {
+
+      registration.unregister()
+
+    })
+  })
 }
