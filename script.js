@@ -97,7 +97,7 @@ function organizarHistoricoPorData() {
   ranking.forEach(motorista => {
 
     motorista.historico.sort((a, b) => {
-      return new Date(a.data) - new Date(b.data)
+      return new Date(b.data) - new Date(a.data)
     })
   })
 }
