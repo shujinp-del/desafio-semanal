@@ -1,8 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
   <title>Desafio Semanal</title>
 
@@ -10,27 +14,48 @@
 
   <!-- PWA -->
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#ff7a18">
+
+  <meta name="theme-color"
+        content="#ff7a18">
+
 </head>
 
 <body>
 
   <div class="app">
 
-    <section id="home" class="tela ativa">
+    <!-- HOME -->
+
+    <section id="home"
+             class="tela ativa">
+
       <h1>🔥 Desafio Semanal</h1>
-      <p class="subtitulo">Registre sua corrida e suba no ranking!</p>
+
+      <p class="subtitulo">
+
+        Registre suas corridas e suba no ranking
+
+      </p>
 
       <div id="liderSemana"></div>
 
       <div class="card">
+
         <h2>Adicionar corrida</h2>
 
-        <input id="nome" placeholder="Nome do motorista">
-        <input id="valor" type="number" placeholder="Valor R$">
-        <input id="corridas" type="number" placeholder="Número de corridas">
+        <input id="nome"
+               placeholder="Nome do motorista">
+
+        <input id="valor"
+               type="number"
+               placeholder="Valor R$">
+
+        <input id="corridas"
+               type="number"
+               placeholder="Número de corridas">
 
         <select id="dia">
+
           <option>Segunda</option>
           <option>Terça</option>
           <option>Quarta</option>
@@ -38,50 +63,119 @@
           <option>Sexta</option>
           <option>Sábado</option>
           <option>Domingo</option>
+
         </select>
 
-        <input type="date" id="data">
+        <input type="date"
+               id="data">
 
-        <button onclick="adicionar()">Adicionar</button>
-        <button class="secundario" onclick="resetSemana()">Resetar Semana</button>
+        <button onclick="adicionar()">
+
+          Adicionar
+
+        </button>
+
+        <button class="secundario"
+                onclick="resetSemana()">
+
+          Resetar Semana
+
+        </button>
+
       </div>
+
     </section>
 
-    <section id="rankingTela" class="tela">
+    <!-- RANKING -->
+
+    <section id="rankingTela"
+             class="tela">
+
       <h1>🏆 Ranking</h1>
+
       <ul id="ranking"></ul>
+
     </section>
 
-    <section id="graficoTela" class="tela">
+    <!-- GRAFICO -->
+
+    <section id="graficoTela"
+             class="tela">
+
       <h1>📊 Gráfico</h1>
 
       <div class="card">
+
         <canvas id="grafico"></canvas>
+
       </div>
 
       <div class="metricas">
+
         <div>
-          <small>Total da Semana</small>
-          <strong id="totalSemana">R$ 0</strong>
+
+          <small>Total Semana</small>
+
+          <strong id="totalSemana">
+
+            R$ 0
+
+          </strong>
+
         </div>
 
         <div>
-          <small>Total de Corridas</small>
-          <strong id="totalCorridas">0</strong>
+
+          <small>Total Corridas</small>
+
+          <strong id="totalCorridas">
+
+            0
+
+          </strong>
+
         </div>
+
       </div>
+
     </section>
 
+    <!-- MENU -->
+
     <nav class="menu">
-      <button onclick="abrirTela('home')">🏠<span>Home</span></button>
-      <button onclick="abrirTela('rankingTela')">🏆<span>Ranking</span></button>
-      <button onclick="abrirTela('graficoTela')">📊<span>Gráfico</span></button>
+
+      <button onclick="abrirTela('home')">
+
+        🏠
+
+        <span>Home</span>
+
+      </button>
+
+      <button onclick="abrirTela('rankingTela')">
+
+        🏆
+
+        <span>Ranking</span>
+
+      </button>
+
+      <button onclick="abrirTela('graficoTela')">
+
+        📊
+
+        <span>Gráfico</span>
+
+      </button>
+
     </nav>
 
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <script src="script.js"></script>
 
 </body>
+
 </html>

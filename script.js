@@ -20,6 +20,7 @@ function abrirTela(id) {
 function adicionar() {
 
   let nome = document.getElementById("nome").value.trim()
+
   let nomeKey = nome.toLowerCase()
 
   let valor = Number(
@@ -36,7 +37,7 @@ function adicionar() {
 
   if(nome === "" || valor <= 0) {
 
-    alert("Preencha nome e valor corretamente")
+    alert("Preencha corretamente")
 
     return
   }
@@ -343,4 +344,5 @@ function limparCampos() {
 if("serviceWorker" in navigator) {
 
   navigator.serviceWorker.register("sw.js")
+
 }
