@@ -3,48 +3,32 @@
 
 <head>
   <meta charset="UTF-8">
-
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Desafio Semanal</title>
-
   <link rel="stylesheet" href="style.css">
-
   <link rel="manifest" href="manifest.json">
-
-  <meta name="theme-color"
-        content="#ff7a18">
+  <meta name="theme-color" content="#ff7a18">
 </head>
 
 <body>
 
   <div class="app">
 
-    <section id="home"
-             class="tela ativa">
+    <section id="home" class="tela ativa">
 
-      <div class="topo-app">
-        <div>
-          <h1>🔥 Desafio</h1>
-          <p class="subtitulo">Painel semanal dos motoristas</p>
-        </div>
-
-        <div class="avatar">
-          🚗
-        </div>
-      </div>
+      <h1>🔥 Desafio</h1>
+      <p class="subtitulo">Painel de ganhos dos motoristas</p>
 
       <div class="dashboard-cards">
 
         <div class="mini-card">
-          <small>Total</small>
+          <small>Total Semana</small>
           <strong id="homeTotal">R$ 0</strong>
         </div>
 
         <div class="mini-card">
-          <small>Corridas</small>
-          <strong id="homeCorridas">0</strong>
+          <small>Total Mês</small>
+          <strong id="homeMensal">R$ 0</strong>
         </div>
 
       </div>
@@ -55,64 +39,35 @@
 
         <h2>Nova corrida</h2>
 
-        <input id="nome"
-               placeholder="Nome do motorista">
+        <input id="nome" placeholder="Nome do motorista">
 
-        <input id="valor"
-               type="number"
-               placeholder="Valor R$">
+        <input id="valor" type="number" placeholder="Valor R$">
 
-        <input id="corridas"
-               type="number"
-               placeholder="Número de corridas">
+        <input id="corridas" type="number" placeholder="Número de corridas">
 
-        <select id="dia">
-          <option>Segunda</option>
-          <option>Terça</option>
-          <option>Quarta</option>
-          <option>Quinta</option>
-          <option>Sexta</option>
-          <option>Sábado</option>
-          <option>Domingo</option>
-        </select>
+        <input type="date" id="data">
 
-        <input type="date"
-               id="data">
+        <button onclick="adicionar()">Adicionar corrida</button>
 
-        <button onclick="adicionar()">
-          Adicionar corrida
-        </button>
-
-        <button class="secundario"
-                onclick="resetSemana()">
-          Resetar semana
-        </button>
+        <button class="secundario" onclick="resetSemana()">Resetar tudo</button>
 
       </div>
 
     </section>
 
-    <section id="rankingTela"
-             class="tela">
+    <section id="rankingTela" class="tela">
 
       <h1>🏆 Ranking</h1>
-
-      <p class="subtitulo">
-        Classificação semanal
-      </p>
+      <p class="subtitulo">Classificação geral</p>
 
       <ul id="ranking"></ul>
 
     </section>
 
-    <section id="graficoTela"
-             class="tela">
+    <section id="graficoTela" class="tela">
 
       <h1>📊 Gráfico</h1>
-
-      <p class="subtitulo">
-        Participação de cada motorista
-      </p>
+      <p class="subtitulo">Participação de cada motorista</p>
 
       <div class="card">
         <canvas id="grafico"></canvas>
@@ -123,6 +78,11 @@
         <div>
           <small>Total Semana</small>
           <strong id="totalSemana">R$ 0</strong>
+        </div>
+
+        <div>
+          <small>Total Mês</small>
+          <strong id="totalMensal">R$ 0</strong>
         </div>
 
         <div>
@@ -156,7 +116,6 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
   <script src="script.js"></script>
 
 </body>

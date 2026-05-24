@@ -20,27 +20,18 @@ function abrirTela(id) {
 function adicionar() {
 
   let nome = document.getElementById("nome").value.trim()
-
   let nomeKey = nome.toLowerCase()
 
-  let valor = Number(
-    document.getElementById("valor").value
-  )
-
-  let corridas = Number(
-    document.getElementById("corridas").value
-  )
-
-  let dia = document.getElementById("dia").value
-
+  let valor = Number(document.getElementById("valor").value)
+  let corridas = Number(document.getElementById("corridas").value)
   let data = document.getElementById("data").value
 
-  if(nome === "" || valor <= 0) {
-
-    alert("Preencha corretamente")
-
+  if(nome === "" || valor <= 0 || data === "") {
+    alert("Preencha nome, valor e data")
     return
   }
+
+  let dia = descobrirDiaSemana(data)
 
   let motorista = ranking.find(
     m => m.nome.toLowerCase() === nomeKey
@@ -49,62 +40,65 @@ function adicionar() {
   if(motorista) {
 
     motorista.valor += valor
-
     motorista.corridas += corridas
 
     motorista.historico.push({
-
       dia,
       data,
       valor,
       corridas
-
     })
 
-  }
-
-  else {
+  } else {
 
     ranking.push({
-
       nome,
       valor,
       corridas,
-
       historico: [
-
         {
           dia,
           data,
           valor,
           corridas
         }
-
       ]
-
     })
   }
 
   ranking.sort((a, b) => b.valor - a.valor)
 
   salvar()
-
   atualizarTudo()
-
   limparCampos()
+}
+
+function descobrirDiaSemana(data) {
+
+  let dias = [
+    "Domingo",
+    "Segunda",
+    "Terça",
+    "Quarta",
+    "Quinta",
+    "Sexta",
+    "Sábado"
+  ]
+
+  let dataObj = new Date(data + "T00:00:00")
+
+  return dias[dataObj.getDay()]
 }
 
 function resetSemana() {
 
-  if(!confirm("Deseja resetar a semana?")) {
-
+  if(!confirm("Deseja apagar todos os dados?")) {
     return
   }
 
   ranking = []
 
   salvar()
-
   atualizarTudo()
 }
 
@@ -119,11 +113,8 @@ function salvar() {
 function atualizarTudo() {
 
   mostrarRanking()
-
   atualizarLider()
-
   atualizarMetricas()
-
   atualizarGrafico()
 }
 
@@ -147,60 +138,38 @@ function mostrarRanking() {
     m.historico.forEach(h => {
 
       historicoHTML += `
-
         <div>
-
-          📅 ${h.dia} - ${h.data || "sem data"}
-
+          📅 ${h.dia || descobrirDiaSemana(h.data)} - ${formatarData(h.data)}
           <br>
-
           💰 R$ ${h.valor}
-
           • 🚗 ${h.corridas}
-
         </div>
-
         <br>
-
       `
     })
 
     lista.innerHTML += `
-
       <li>
-
         <div class="posicao">
-
           ${medalha} ${m.nome}
-
         </div>
 
         <br>
 
         <div class="valor">
-
           💰 R$ ${m.valor}
-
         </div>
 
         <div>
-
           🚗 ${m.corridas} corridas
-
         </div>
 
         <div class="historico">
-
           <strong>Histórico</strong>
-
           <br><br>
-
           ${historicoHTML}
-
         </div>
-
       </li>
-
     `
   })
 }
@@ -219,27 +188,19 @@ function atualizarLider() {
   let top = ranking[0]
 
   lider.innerHTML = `
-
     <div class="lider-card">
-
-      🏆 LÍDER DA SEMANA
-
+      🏆 LÍDER
       <h2>${top.nome}</h2>
-
       <strong>R$ ${top.valor}</strong>
-
       <br><br>
-
       🚗 ${top.corridas} corridas
-
     </div>
-
   `
 }
 
-function atualizarMetricas() {function atualizarMetricas() {
+function atualizarMetricas() {
 
-  let total = ranking.reduce(
+  let totalSemana = ranking.reduce(
     (soma, m) => soma + m.valor,
     0
   )
@@ -249,34 +210,50 @@ function atualizarMetricas() {function atualizarMetricas() {
     0
   )
 
+  let totalMensal = calcularTotalMensal()
+
   document.getElementById("totalSemana").innerText =
-    `R$ ${total}`
+    `R$ ${totalSemana}`
+
+  document.getElementById("totalMensal").innerText =
+    `R$ ${totalMensal}`
 
   document.getElementById("totalCorridas").innerText =
     corridas
 
   document.getElementById("homeTotal").innerText =
-    `R$ ${total}`
+    `R$ ${totalSemana}`
 
-  document.getElementById("homeCorridas").innerText =
-    corridas
+  document.getElementById("homeMensal").innerText =
+    `R$ ${totalMensal}`
 }
 
-  let total = ranking.reduce(
-    (soma, m) => soma + m.valor,
-    0
-  )
+function calcularTotalMensal() {
 
-  let corridas = ranking.reduce(
-    (soma, m) => soma + m.corridas,
-    0
-  )
+  let hoje = new Date()
+  let mesAtual = hoje.getMonth()
+  let anoAtual = hoje.getFullYear()
 
-  document.getElementById("totalSemana").innerText =
-    `R$ ${total}`
+  let total = 0
 
-  document.getElementById("totalCorridas").innerText =
-    corridas
+  ranking.forEach(motorista => {
+
+    motorista.historico.forEach(item => {
+
+      if(!item.data) return
+
+      let dataItem = new Date(item.data + "T00:00:00")
+
+      if(
+        dataItem.getMonth() === mesAtual &&
+        dataItem.getFullYear() === anoAtual
+      ) {
+        total += item.valor
+      }
+    })
+  })
+
+  return total
 }
 
 function atualizarGrafico() {
@@ -286,23 +263,17 @@ function atualizarGrafico() {
   if(!canvas) return
 
   let nomes = ranking.map(m => m.nome)
-
   let valores = ranking.map(m => m.valor)
 
   let total = valores.reduce((a, b) => a + b, 0)
 
   let porcentagens = valores.map(v =>
-
-    total === 0
-      ? 0
-      : ((v / total) * 100).toFixed(1)
-
+    total === 0 ? 0 : ((v / total) * 100).toFixed(1)
   )
 
   let ctx = canvas.getContext("2d")
 
   if(grafico) {
-
     grafico.destroy()
   }
 
@@ -313,9 +284,7 @@ function atualizarGrafico() {
     data: {
 
       labels: nomes.map(
-
         (n, i) => `${n} (${porcentagens[i]}%)`
-
       ),
 
       datasets: [{
@@ -323,18 +292,15 @@ function atualizarGrafico() {
         data: valores,
 
         backgroundColor: [
-
           "#ff7a18",
           "#ffb347",
           "#ffd166",
           "#22c55e",
           "#3b82f6",
           "#8b5cf6"
-
         ],
 
         borderWidth: 2
-
       }]
     },
 
@@ -343,7 +309,6 @@ function atualizarGrafico() {
       plugins: {
 
         legend: {
-
           position: "bottom"
         }
       }
@@ -351,21 +316,23 @@ function atualizarGrafico() {
   })
 }
 
+function formatarData(data) {
+
+  if(!data) return "sem data"
+
+  let partes = data.split("-")
+
+  return `${partes[2]}/${partes[1]}/${partes[0]}`
+}
+
 function limparCampos() {
 
   document.getElementById("nome").value = ""
-
   document.getElementById("valor").value = ""
-
   document.getElementById("corridas").value = ""
-
   document.getElementById("data").value = ""
 }
 
-/* PWA */
-
 if("serviceWorker" in navigator) {
-
   navigator.serviceWorker.register("sw.js")
-
 }
