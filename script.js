@@ -1,216 +1,95 @@
-let ranking = []
-
-let dadosSalvos = localStorage.getItem("ranking")
-
-if(dadosSalvos) {
-
-  ranking = JSON.parse(dadosSalvos)
-}
+let ranking = JSON.parse(localStorage.getItem("ranking")) || []
 
 let grafico
 
 mostrarRanking()
-
 atualizarLider()
-
 atualizarGrafico()
 
 function adicionar() {
 
-  let nome = document
-    .getElementById("nome")
-    .value
-    .trim()
-    .toLowerCase()
+  let nome = document.getElementById("nome").value.trim().toLowerCase()
+  let valor = Number(document.getElementById("valor").value)
+  let corridas = Number(document.getElementById("corridas").value)
+  let dia = document.getElementById("dia").value
+  let data = document.getElementById("data").value
 
-  let valor = Number(
-    document.getElementById("valor").value
-  )
+  if(nome === "" || valor <= 0) return alert("Preencha tudo")
 
-  let corridas = Number(
-    document.getElementById("corridas").value
-  )
+  let motorista = ranking.find(m => m.nome === nome)
 
-  let dia = document
-    .getElementById("dia")
-    .value
+  if(motorista) {
 
-  let data = document
-    .getElementById("data")
-    .value
+    motorista.valor += valor
+    motorista.corridas += corridas
 
-  if(nome === "" || valor <= 0) {
+    motorista.historico.push({ dia, data, valor, corridas })
 
-    alert("Preencha os campos")
-
-    return
-  }
-
-  let motoristaExistente = ranking.find(
-    motorista => motorista.nome === nome
-  )
-
-  if(motoristaExistente) {
-
-    motoristaExistente.valor += valor
-
-    motoristaExistente.corridas += corridas
-
-    motoristaExistente.historico.push({
-
-      dia: dia,
-
-      data: data,
-
-      valor: valor,
-
-      corridas: corridas
-
-    })
-
-  }
-
-  else {
+  } else {
 
     ranking.push({
-
-      nome: nome,
-
-      valor: valor,
-
-      corridas: corridas,
-
-      historico: [
-
-        {
-
-          dia: dia,
-
-          data: data,
-
-          valor: valor,
-
-          corridas: corridas
-
-        }
-
-      ]
-
+      nome,
+      valor,
+      corridas,
+      historico: [{ dia, data, valor, corridas }]
     })
-
   }
 
-  ranking.sort((a, b) => b.valor - a.valor)
+  salvar()
+  atualizarTudo()
+}
 
-  salvarDados()
+function resetSemana() {
 
+  if(!confirm("Resetar semana?")) return
+
+  ranking = []
+
+  salvar()
+  atualizarTudo()
+}
+
+function salvar() {
+  localStorage.setItem("ranking", JSON.stringify(ranking))
+}
+
+function atualizarTudo() {
   mostrarRanking()
-
   atualizarLider()
-
   atualizarGrafico()
-
-  limparCampos()
 }
 
 function mostrarRanking() {
 
   let lista = document.getElementById("ranking")
-
   lista.innerHTML = ""
 
-  ranking.forEach((motorista, index) => {
+  ranking.forEach((m, i) => {
 
-    let medalha = ""
-    let classe = ""
+    let medalha = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : ""
 
-    if(index === 0) {
+    let hist = ""
 
-      medalha = "🥇"
-      classe = "primeiro"
-    }
+    m.historico.forEach(h => {
 
-    else if(index === 1) {
-
-      medalha = "🥈"
-      classe = "segundo"
-    }
-
-    else if(index === 2) {
-
-      medalha = "🥉"
-      classe = "terceiro"
-    }
-
-    let historicoHTML = ""
-
-    motorista.historico.forEach((item, historicoIndex) => {
-
-      historicoHTML += `
-
-        <div class="historico-item">
-
-          📅 ${item.dia} - ${item.data}
-
-          <br>
-
-          💰 R$ ${item.valor}
-
-          <br>
-
-          🚗 ${item.corridas} corridas
-
-          <br><br>
-
-          <button onclick="removerDia(${index}, ${historicoIndex})">
-
-            ❌ Remover
-
-          </button>
-
+      hist += `
+        <div>
+          📅 ${h.dia} - ${h.data}
+          💰 R$ ${h.valor} 🚗 ${h.corridas}
         </div>
-
       `
     })
 
     lista.innerHTML += `
-
-      <li class="${classe}">
-
-        <strong>
-
-          ${medalha}
-
-          ${motorista.nome}
-
-        </strong>
-
+      <li>
+        ${medalha} ${m.nome}
         <br><br>
-
-        💰 Total semanal:
-        R$ ${motorista.valor}
-
+        💰 Total: R$ ${m.valor}
+        <br>
+        🚗 Corridas: ${m.corridas}
         <br><br>
-
-        🚗 Corridas:
-        ${motorista.corridas}
-
-        <div class="historico">
-
-          <strong>
-
-            Histórico
-
-          </strong>
-
-          <br><br>
-
-          ${historicoHTML}
-
-        </div>
-
+        ${hist}
       </li>
-
     `
   })
 }
@@ -220,51 +99,35 @@ function atualizarLider() {
   let lider = document.getElementById("liderSemana")
 
   if(ranking.length === 0) {
-
     lider.innerHTML = ""
-
     return
   }
 
-  let primeiroLugar = ranking[0]
+  let top = ranking[0]
 
   lider.innerHTML = `
-
     <div class="lider-card">
-
-      🏆 Líder da Semana
-
+      🏆 Líder
       <br><br>
-
-      <strong>
-
-        ${primeiroLugar.nome}
-
-      </strong>
-
+      ${top.nome.toUpperCase()}
       <br><br>
-
-      💰 R$ ${primeiroLugar.valor}
-
+      💰 R$ ${top.valor}
     </div>
-
   `
 }
 
 function atualizarGrafico() {
 
   let nomes = ranking.map(m => m.nome)
-
   let valores = ranking.map(m => m.valor)
 
-  let ctx = document
-    .getElementById("grafico")
-    .getContext("2d")
+  let total = valores.reduce((a,b)=>a+b,0)
 
-  if(grafico) {
+  let porcent = valores.map(v => ((v/total)*100).toFixed(1))
 
-    grafico.destroy()
-  }
+  let ctx = document.getElementById("grafico").getContext("2d")
+
+  if(grafico) grafico.destroy()
 
   grafico = new Chart(ctx, {
 
@@ -272,75 +135,12 @@ function atualizarGrafico() {
 
     data: {
 
-      labels: nomes,
+      labels: nomes.map((n,i)=> `${n} (${porcent[i]}%)`),
 
       datasets: [{
-
         data: valores,
-
-        backgroundColor: [
-
-          "#f97316",
-          "#fb923c",
-          "#facc15",
-          "#ea580c",
-          "#ffb703",
-          "#ff7b00",
-          "#ffd166"
-
-        ],
-
-        borderWidth: 2
-
+        backgroundColor: ["#f97316","#fb923c","#facc15","#ea580c","#ffb703"]
       }]
     }
   })
-}
-
-function removerDia(motoristaIndex, historicoIndex) {
-
-  let motorista = ranking[motoristaIndex]
-
-  let itemRemovido =
-    motorista.historico[historicoIndex]
-
-  motorista.valor -= itemRemovido.valor
-
-  motorista.corridas -= itemRemovido.corridas
-
-  motorista.historico.splice(historicoIndex, 1)
-
-  if(motorista.historico.length === 0) {
-
-    ranking.splice(motoristaIndex, 1)
-  }
-
-  ranking.sort((a, b) => b.valor - a.valor)
-
-  salvarDados()
-
-  mostrarRanking()
-
-  atualizarLider()
-
-  atualizarGrafico()
-}
-
-function salvarDados() {
-
-  localStorage.setItem(
-    "ranking",
-    JSON.stringify(ranking)
-  )
-}
-
-function limparCampos() {
-
-  document.getElementById("nome").value = ""
-
-  document.getElementById("valor").value = ""
-
-  document.getElementById("corridas").value = ""
-
-  document.getElementById("data").value = ""
 }

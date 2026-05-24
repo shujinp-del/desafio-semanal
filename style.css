@@ -218,3 +218,20 @@ canvas {
 
   box-shadow: 0 4px 15px rgba(249,115,22,0.1);
 }
+button {
+  margin-top: 10px;
+  padding: 10px;
+  border: none;
+  background: #f97316;
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.lider-card {
+  background: linear-gradient(90deg,#f97316,#fb923c);
+  padding: 20px;
+  border-radius: 20px;
+  color: white;
+  margin: 15px 0;
+}
