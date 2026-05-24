@@ -247,4 +247,10 @@ canvas {
   border-left: 4px solid #ff7a18;
   padding: 10px;
   border-radius: 12px;
+}.grupo-mes {
+  margin: 14px 0 10px;
+  color: #ffb347;
+  font-weight: bold;
+  font-size: 13px;
+  letter-spacing: 1px;
 }
