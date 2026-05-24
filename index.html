@@ -2,7 +2,6 @@
 <html lang="pt-BR">
 
 <head>
-
   <meta charset="UTF-8">
 
   <meta name="viewport"
@@ -12,36 +11,49 @@
 
   <link rel="stylesheet" href="style.css">
 
-  <!-- PWA -->
   <link rel="manifest" href="manifest.json">
 
   <meta name="theme-color"
         content="#ff7a18">
-
 </head>
 
 <body>
 
   <div class="app">
 
-    <!-- HOME -->
-
     <section id="home"
              class="tela ativa">
 
-      <h1>🔥 Desafio Semanal</h1>
+      <div class="topo-app">
+        <div>
+          <h1>🔥 Desafio</h1>
+          <p class="subtitulo">Painel semanal dos motoristas</p>
+        </div>
 
-      <p class="subtitulo">
+        <div class="avatar">
+          🚗
+        </div>
+      </div>
 
-        Registre suas corridas e suba no ranking
+      <div class="dashboard-cards">
 
-      </p>
+        <div class="mini-card">
+          <small>Total</small>
+          <strong id="homeTotal">R$ 0</strong>
+        </div>
+
+        <div class="mini-card">
+          <small>Corridas</small>
+          <strong id="homeCorridas">0</strong>
+        </div>
+
+      </div>
 
       <div id="liderSemana"></div>
 
       <div class="card">
 
-        <h2>Adicionar corrida</h2>
+        <h2>Nova corrida</h2>
 
         <input id="nome"
                placeholder="Nome do motorista">
@@ -55,7 +67,6 @@
                placeholder="Número de corridas">
 
         <select id="dia">
-
           <option>Segunda</option>
           <option>Terça</option>
           <option>Quarta</option>
@@ -63,109 +74,81 @@
           <option>Sexta</option>
           <option>Sábado</option>
           <option>Domingo</option>
-
         </select>
 
         <input type="date"
                id="data">
 
         <button onclick="adicionar()">
-
-          Adicionar
-
+          Adicionar corrida
         </button>
 
         <button class="secundario"
                 onclick="resetSemana()">
-
-          Resetar Semana
-
+          Resetar semana
         </button>
 
       </div>
 
     </section>
-
-    <!-- RANKING -->
 
     <section id="rankingTela"
              class="tela">
 
       <h1>🏆 Ranking</h1>
 
+      <p class="subtitulo">
+        Classificação semanal
+      </p>
+
       <ul id="ranking"></ul>
 
     </section>
-
-    <!-- GRAFICO -->
 
     <section id="graficoTela"
              class="tela">
 
       <h1>📊 Gráfico</h1>
 
+      <p class="subtitulo">
+        Participação de cada motorista
+      </p>
+
       <div class="card">
-
         <canvas id="grafico"></canvas>
-
       </div>
 
       <div class="metricas">
 
         <div>
-
           <small>Total Semana</small>
-
-          <strong id="totalSemana">
-
-            R$ 0
-
-          </strong>
-
+          <strong id="totalSemana">R$ 0</strong>
         </div>
 
         <div>
-
           <small>Total Corridas</small>
-
-          <strong id="totalCorridas">
-
-            0
-
-          </strong>
-
+          <strong id="totalCorridas">0</strong>
         </div>
 
       </div>
 
     </section>
 
-    <!-- MENU -->
-
     <nav class="menu">
 
       <button onclick="abrirTela('home')">
-
         🏠
-
         <span>Home</span>
-
       </button>
 
       <button onclick="abrirTela('rankingTela')">
-
         🏆
-
         <span>Ranking</span>
-
       </button>
 
       <button onclick="abrirTela('graficoTela')">
-
         📊
-
         <span>Gráfico</span>
-
       </button>
 
     </nav>

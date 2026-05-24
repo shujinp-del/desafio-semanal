@@ -237,7 +237,30 @@ function atualizarLider() {
   `
 }
 
-function atualizarMetricas() {
+function atualizarMetricas() {function atualizarMetricas() {
+
+  let total = ranking.reduce(
+    (soma, m) => soma + m.valor,
+    0
+  )
+
+  let corridas = ranking.reduce(
+    (soma, m) => soma + m.corridas,
+    0
+  )
+
+  document.getElementById("totalSemana").innerText =
+    `R$ ${total}`
+
+  document.getElementById("totalCorridas").innerText =
+    corridas
+
+  document.getElementById("homeTotal").innerText =
+    `R$ ${total}`
+
+  document.getElementById("homeCorridas").innerText =
+    corridas
+}
 
   let total = ranking.reduce(
     (soma, m) => soma + m.valor,

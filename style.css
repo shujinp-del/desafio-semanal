@@ -191,4 +191,46 @@ canvas {
   display: block;
   font-size: 11px;
   margin-top: 3px;
+}.topo-app {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.avatar {
+  width: 54px;
+  height: 54px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #ff7a18, #ffb347);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  box-shadow: 0 12px 30px rgba(255,122,24,0.35);
+}
+
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin: 18px 0;
+}
+
+.mini-card {
+  background: #181818;
+  padding: 18px;
+  border-radius: 24px;
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.28);
+}
+
+.mini-card small {
+  color: #a3a3a3;
+}
+
+.mini-card strong {
+  display: block;
+  margin-top: 8px;
+  font-size: 24px;
+  color: #ffb347;
 }
