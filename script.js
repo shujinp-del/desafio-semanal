@@ -1,13 +1,11 @@
 let ranking = JSON.parse(localStorage.getItem("ranking")) || []
+let metasMotoristas = JSON.parse(localStorage.getItem("metasMotoristas")) || {}
 
 let grafico
-let metaMensal =
-  Number(localStorage.getItem("metaMensal")) || 0
 
 atualizarTudo()
 
 function abrirTela(id) {
-
   document.querySelectorAll(".tela").forEach(tela => {
     tela.classList.remove("ativa")
   })
@@ -20,25 +18,14 @@ function abrirTela(id) {
 }
 
 function adicionar() {
-
   let nome = document.getElementById("nome").value.trim()
-
   let nomeKey = nome.toLowerCase()
-
-  let valor = Number(
-    document.getElementById("valor").value
-  )
-
-  let corridas = Number(
-    document.getElementById("corridas").value
-  )
-
+  let valor = Number(document.getElementById("valor").value)
+  let corridas = Number(document.getElementById("corridas").value)
   let data = document.getElementById("data").value
 
   if(nome === "" || valor <= 0 || data === "") {
-
     alert("Preencha nome, valor e data")
-
     return
   }
 
@@ -49,36 +36,15 @@ function adicionar() {
   )
 
   if(motorista) {
-
     motorista.valor += valor
-
     motorista.corridas += corridas
-
-    motorista.historico.push({
-      dia,
-      data,
-      valor,
-      corridas
-    })
-
+    motorista.historico.push({ dia, data, valor, corridas })
   } else {
-
     ranking.push({
-
       nome,
       valor,
       corridas,
-
-      historico: [
-
-        {
-          dia,
-          data,
-          valor,
-          corridas
-        }
-
-      ]
+      historico: [{ dia, data, valor, corridas }]
     })
   }
 
@@ -87,103 +53,58 @@ function adicionar() {
   ranking.sort((a, b) => b.valor - a.valor)
 
   salvar()
-
   atualizarTudo()
-
   limparCampos()
 }
 
-function salvarMeta() {
+function salvarMetaMotorista(index) {
+  let motorista = ranking[index]
+  let input = document.getElementById(`metaMotorista-${index}`)
 
-  metaMensal = Number(
-    document.getElementById("metaMensal").value
-  )
+  if(!motorista || !input) return
+
+  let chave = motorista.nome.toLowerCase()
+  let valorMeta = Number(input.value)
+
+  metasMotoristas[chave] = valorMeta
 
   localStorage.setItem(
-    "metaMensal",
-    metaMensal
+    "metasMotoristas",
+    JSON.stringify(metasMotoristas)
   )
 
-  atualizarMeta()
+  mostrarRanking()
 }
 
-function atualizarMeta() {
-
-  let totalMensal = calcularTotalMensal()
-
-  let progresso = 0
-
-  if(metaMensal > 0) {
-
-    progresso = (totalMensal / metaMensal) * 100
-
-    if(progresso > 100) {
-      progresso = 100
-    }
-  }
-
-  document.getElementById("progressoMeta").style.width =
-    `${progresso}%`
-
-  if(metaMensal > 0) {
-
-    let falta = metaMensal - totalMensal
-
-    if(falta <= 0) {
-
-      document.getElementById("textoMeta").innerHTML =
-        `🔥 Meta batida! Total: R$ ${totalMensal}`
-
-    } else {
-
-      document.getElementById("textoMeta").innerHTML =
-        `🎯 Faltam R$ ${falta} para bater a meta`
-    }
-
-  } else {
-
-    document.getElementById("textoMeta").innerHTML =
-      "Meta ainda não definida"
-  }
+function salvarMeta() {
+  alert("Agora a meta é individual por motorista. Use a meta dentro do card de cada motorista.")
 }
 
-function calcularTotalMensal() {
-
+function calcularTotalMensalMotorista(motorista) {
   let hoje = new Date()
-
   let mesAtual = hoje.getMonth()
-
   let anoAtual = hoje.getFullYear()
 
   let total = 0
 
-  ranking.forEach(motorista => {
+  motorista.historico.forEach(item => {
+    if(!item.data) return
 
-    motorista.historico.forEach(item => {
+    let dataItem = new Date(item.data + "T00:00:00")
 
-      let dataItem =
-        new Date(item.data + "T00:00:00")
-
-      if(
-
-        dataItem.getMonth() === mesAtual &&
-
-        dataItem.getFullYear() === anoAtual
-
-      ) {
-
-        total += item.valor
-      }
-    })
+    if(
+      dataItem.getMonth() === mesAtual &&
+      dataItem.getFullYear() === anoAtual
+    ) {
+      total += Number(item.valor)
+    }
   })
 
   return total
 }
 
 function descobrirDiaSemana(data) {
-
   let dias = [
-
     "Domingo",
     "Segunda",
     "Terça",
@@ -191,40 +112,29 @@ function descobrirDiaSemana(data) {
     "Quinta",
     "Sexta",
     "Sábado"
-
   ]
 
   let dataObj = new Date(data + "T00:00:00")
-
   return dias[dataObj.getDay()]
 }
 
 function organizarHistoricoPorData() {
-
   ranking.forEach(motorista => {
-
     motorista.historico.sort((a, b) => {
-
       return new Date(b.data) - new Date(a.data)
-
     })
   })
 }
 
 function descobrirMelhorDia(motorista) {
-
-  if(!motorista.historico ||
-     motorista.historico.length === 0) {
-
+  if(!motorista.historico || motorista.historico.length === 0) {
     return null
   }
 
   let melhor = motorista.historico[0]
 
   motorista.historico.forEach(item => {
-
-    if(item.valor > melhor.valor) {
-
+    if(Number(item.valor) > Number(melhor.valor)) {
       melhor = item
     }
   })
@@ -233,24 +143,17 @@ function descobrirMelhorDia(motorista) {
 }
 
 function agruparHistoricoPorMes(historico) {
-
   let grupos = {}
 
   historico.forEach(item => {
+    let dataObj = new Date(item.data + "T00:00:00")
 
-    let dataObj =
-      new Date(item.data + "T00:00:00")
-
-    let nomeMes =
-      dataObj.toLocaleDateString("pt-BR", {
-
-        month: "long",
-        year: "numeric"
-
-      })
+    let nomeMes = dataObj.toLocaleDateString("pt-BR", {
+      month: "long",
+      year: "numeric"
+    })
 
     if(!grupos[nomeMes]) {
-
       grupos[nomeMes] = []
     }
 
@@ -261,270 +164,241 @@ function agruparHistoricoPorMes(historico) {
 }
 
 function resetSemana() {
-
-  if(!confirm("Deseja apagar todos os dados?")) {
-
-    return
-  }
+  if(!confirm("Deseja apagar todos os dados?")) return
 
   ranking = []
-
   salvar()
-
   atualizarTudo()
 }
 
 function salvar() {
-
-  localStorage.setItem(
-    "ranking",
-    JSON.stringify(ranking)
-  )
+  localStorage.setItem("ranking", JSON.stringify(ranking))
 }
 
 function atualizarTudo() {
-
   organizarHistoricoPorData()
-
   mostrarRanking()
-
   atualizarLider()
-
   atualizarMetricas()
-
-  atualizarMeta()
-
   atualizarGrafico()
 }
 
 function mostrarRanking() {
-
   let lista = document.getElementById("ranking")
 
   let campoPesquisa = document.getElementById("pesquisaMotorista")
 
-let pesquisa = campoPesquisa
-  ? campoPesquisa.value.toLowerCase()
-  : ""
+  let pesquisa = campoPesquisa
+    ? campoPesquisa.value.toLowerCase()
+    : ""
 
   lista.innerHTML = ""
 
   ranking
-    .filter(m =>
-      m.nome.toLowerCase().includes(pesquisa)
-    )
-
+    .filter(m => m.nome.toLowerCase().includes(pesquisa))
     .forEach((m, i) => {
+      let indexReal = ranking.indexOf(m)
 
       let medalha = ""
 
-      if(i === 0) medalha = "🥇"
-      else if(i === 1) medalha = "🥈"
-      else if(i === 2) medalha = "🥉"
-      else medalha = `${i + 1}º`
+      if(indexReal === 0) medalha = "🥇"
+      else if(indexReal === 1) medalha = "🥈"
+      else if(indexReal === 2) medalha = "🥉"
+      else medalha = `${indexReal + 1}º`
 
       let melhorDia = descobrirMelhorDia(m)
 
       let melhorDiaHTML = ""
 
       if(melhorDia) {
-
         melhorDiaHTML = `
-
           <div class="melhor-dia">
-
             🔥 Melhor dia:
-
-            ${melhorDia.dia}
-            - ${formatarData(melhorDia.data)}
-
+            ${melhorDia.dia} - ${formatarData(melhorDia.data)}
             <br>
-
             💰 R$ ${melhorDia.valor}
-
           </div>
-
         `
       }
 
-      let grupos =
-        agruparHistoricoPorMes(m.historico)
+      let chaveMeta = m.nome.toLowerCase()
+      let meta = metasMotoristas[chaveMeta] || 0
+      let totalMesMotorista = calcularTotalMensalMotorista(m)
 
+      let progresso = 0
+
+      if(meta > 0) {
+        progresso = (totalMesMotorista / meta) * 100
+
+        if(progresso > 100) {
+          progresso = 100
+        }
+      }
+
+      let textoMeta = "Meta ainda não definida"
+
+      if(meta > 0) {
+        let falta = meta - totalMesMotorista
+
+        if(falta <= 0) {
+          textoMeta = `🔥 Meta batida! Total mensal: R$ ${totalMesMotorista}`
+        } else {
+          textoMeta = `🎯 Faltam R$ ${falta} para a meta`
+        }
+      }
+
+      let metaHTML = `
+        <div class="meta-motorista">
+          <strong>🏅 Meta mensal do motorista</strong>
+
+          <input
+            id="metaMotorista-${indexReal}"
+            type="number"
+            placeholder="Meta R$"
+            value="${meta > 0 ? meta : ""}"
+          >
+
+          <button onclick="salvarMetaMotorista(${indexReal})">
+            Salvar meta
+          </button>
+
+          <div class="barra-meta">
+            <div style="width:${progresso}%"></div>
+          </div>
+
+          <p>${textoMeta}</p>
+        </div>
+      `
+
+      let grupos = agruparHistoricoPorMes(m.historico)
       let historicoHTML = ""
 
       Object.keys(grupos).forEach(mes => {
-
         historicoHTML += `
-
           <div class="grupo-mes">
-
             ${mes.toUpperCase()}
-
           </div>
-
         `
 
         grupos[mes].forEach(h => {
+          let destaque = ""
+
+          if(
+            melhorDia &&
+            h.data === melhorDia.data &&
+            Number(h.valor) === Number(melhorDia.valor)
+          ) {
+            destaque = "dia-destaque"
+          }
 
           historicoHTML += `
-
-            <div class="dia-destaque">
-
-              📅 ${h.dia}
-              - ${formatarData(h.data)}
-
+            <div class="${destaque}">
+              📅 ${h.dia} - ${formatarData(h.data)}
               <br>
-
               💰 R$ ${h.valor}
               • 🚗 ${h.corridas}
-
             </div>
-
             <br>
-
           `
         })
       })
 
       lista.innerHTML += `
-
         <li>
-
           <div class="posicao">
-
             ${medalha} ${m.nome}
-
           </div>
 
           <br>
 
           <div class="valor">
-
             💰 R$ ${m.valor}
-
           </div>
 
           <div>
-
             🚗 ${m.corridas} corridas
-
           </div>
+
+          ${metaHTML}
 
           ${melhorDiaHTML}
 
           <div class="historico">
-
             <strong>Histórico</strong>
-
             <br><br>
-
             ${historicoHTML}
-
           </div>
-
         </li>
-
       `
     })
 }
 
 function atualizarLider() {
-
-  let lider =
-    document.getElementById("liderSemana")
+  let lider = document.getElementById("liderSemana")
 
   if(ranking.length === 0) {
-
     lider.innerHTML = ""
-
     return
   }
 
   let top = ranking[0]
 
   lider.innerHTML = `
-
     <div class="lider-card">
-
       🏆 LÍDER
-
       <h2>${top.nome}</h2>
-
       <strong>R$ ${top.valor}</strong>
-
       <br><br>
-
       🚗 ${top.corridas} corridas
-
     </div>
-
   `
 }
 
 function atualizarMetricas() {
-
   let totalSemana = ranking.reduce(
-
-    (soma, m) => soma + m.valor,
-
+    (soma, m) => soma + Number(m.valor),
     0
-
   )
 
   let corridas = ranking.reduce(
-
-    (soma, m) => soma + m.corridas,
-
+    (soma, m) => soma + Number(m.corridas),
     0
-
   )
 
-  document.getElementById("totalSemana")
-    .innerText = `R$ ${totalSemana}`
-
-  document.getElementById("totalCorridas")
-    .innerText = corridas
+  document.getElementById("totalSemana").innerText = `R$ ${totalSemana}`
+  document.getElementById("totalCorridas").innerText = corridas
 }
 
 function atualizarGrafico() {
-
-  let canvas =
-    document.getElementById("grafico")
+  let canvas = document.getElementById("grafico")
 
   if(!canvas) return
 
   let nomes = ranking.map(m => m.nome)
-
-  let valores = ranking.map(m => m.valor)
+  let valores = ranking.map(m => Number(m.valor))
 
   let ctx = canvas.getContext("2d")
 
   if(grafico) {
-
     grafico.destroy()
   }
 
   grafico = new Chart(ctx, {
-
     type: "doughnut",
 
     data: {
-
       labels: nomes,
 
       datasets: [{
-
         data: valores,
 
         backgroundColor: [
-
           "#ff7a18",
           "#ffb347",
           "#ffd166",
           "#22c55e",
           "#3b82f6",
           "#8b5cf6"
-
         ]
       }]
     }
@@ -532,6 +406,7 @@ function atualizarGrafico() {
 }
 
 function formatarData(data) {
+  if(!data) return "sem data"
 
   let partes = data.split("-")
 
@@ -539,24 +414,16 @@ function formatarData(data) {
 }
 
 function limparCampos() {
-
   document.getElementById("nome").value = ""
-
   document.getElementById("valor").value = ""
-
   document.getElementById("corridas").value = ""
-
   document.getElementById("data").value = ""
 }
 
 if("serviceWorker" in navigator) {
-
   navigator.serviceWorker.getRegistrations().then(function(registrations) {
-
     registrations.forEach(function(registration) {
-
       registration.unregister()
-
     })
   })
 }
