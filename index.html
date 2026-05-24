@@ -1,42 +1,76 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Desafio Semanal</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-  <div class="container">
+  <div class="app">
 
-    <h1>🔥 Desafio Semanal</h1>
+    <section id="home" class="tela ativa">
+      <h1>🔥 Desafio Semanal</h1>
+      <p class="subtitulo">Registre sua corrida e suba no ranking!</p>
 
-    <input id="nome" placeholder="Nome">
-    <input id="valor" type="number" placeholder="Valor">
-    <input id="corridas" type="number" placeholder="Corridas">
+      <div id="liderSemana"></div>
 
-    <select id="dia">
-      <option>Segunda</option>
-      <option>Terça</option>
-      <option>Quarta</option>
-      <option>Quinta</option>
-      <option>Sexta</option>
-      <option>Sábado</option>
-      <option>Domingo</option>
-    </select>
+      <div class="card">
+        <h2>Adicionar corrida</h2>
 
-    <input type="date" id="data">
+        <input id="nome" placeholder="Nome do motorista">
+        <input id="valor" type="number" placeholder="Valor R$">
+        <input id="corridas" type="number" placeholder="Número de corridas">
 
-    <button onclick="adicionar()">Adicionar</button>
-    <button onclick="resetSemana()">🔄 Reset Semana</button>
+        <select id="dia">
+          <option>Segunda</option>
+          <option>Terça</option>
+          <option>Quarta</option>
+          <option>Quinta</option>
+          <option>Sexta</option>
+          <option>Sábado</option>
+          <option>Domingo</option>
+        </select>
 
-    <div id="liderSemana"></div>
+        <input type="date" id="data">
 
-    <canvas id="grafico"></canvas>
+        <button onclick="adicionar()">Adicionar</button>
+        <button class="secundario" onclick="resetSemana()">Resetar Semana</button>
+      </div>
+    </section>
 
-    <ul id="ranking"></ul>
+    <section id="rankingTela" class="tela">
+      <h1>🏆 Ranking</h1>
+      <ul id="ranking"></ul>
+    </section>
+
+    <section id="graficoTela" class="tela">
+      <h1>📊 Gráfico</h1>
+
+      <div class="card">
+        <canvas id="grafico"></canvas>
+      </div>
+
+      <div class="metricas">
+        <div>
+          <small>Total da Semana</small>
+          <strong id="totalSemana">R$ 0</strong>
+        </div>
+
+        <div>
+          <small>Total de Corridas</small>
+          <strong id="totalCorridas">0</strong>
+        </div>
+      </div>
+    </section>
+
+    <nav class="menu">
+      <button onclick="abrirTela('home')">🏠<span>Home</span></button>
+      <button onclick="abrirTela('rankingTela')">🏆<span>Ranking</span></button>
+      <button onclick="abrirTela('graficoTela')">📊<span>Gráfico</span></button>
+    </nav>
 
   </div>
 
@@ -44,5 +78,4 @@
   <script src="script.js"></script>
 
 </body>
-
 </html>
