@@ -301,10 +301,11 @@ function mostrarRanking() {
 
   let lista = document.getElementById("ranking")
 
-  let pesquisa = document
-    .getElementById("pesquisaMotorista")
-    .value
-    .toLowerCase()
+  let campoPesquisa = document.getElementById("pesquisaMotorista")
+
+let pesquisa = campoPesquisa
+  ? campoPesquisa.value.toLowerCase()
+  : ""
 
   lista.innerHTML = ""
 
