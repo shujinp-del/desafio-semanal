@@ -233,4 +233,18 @@ canvas {
   margin-top: 8px;
   font-size: 24px;
   color: #ffb347;
+}.melhor-dia {
+  margin-top: 14px;
+  background: linear-gradient(135deg, #ff7a18, #ffb347);
+  color: white;
+  padding: 12px;
+  border-radius: 16px;
+  font-weight: bold;
+}
+
+.dia-destaque {
+  background: rgba(255, 122, 24, 0.18);
+  border-left: 4px solid #ff7a18;
+  padding: 10px;
+  border-radius: 12px;
 }

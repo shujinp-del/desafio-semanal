@@ -66,6 +66,8 @@ function adicionar() {
     })
   }
 
+  organizarHistoricoPorData()
+
   ranking.sort((a, b) => b.valor - a.valor)
 
   salvar()
@@ -90,6 +92,34 @@ function descobrirDiaSemana(data) {
   return dias[dataObj.getDay()]
 }
 
+function organizarHistoricoPorData() {
+
+  ranking.forEach(motorista => {
+
+    motorista.historico.sort((a, b) => {
+      return new Date(a.data) - new Date(b.data)
+    })
+  })
+}
+
+function descobrirMelhorDia(motorista) {
+
+  if(!motorista.historico || motorista.historico.length === 0) {
+    return null
+  }
+
+  let melhor = motorista.historico[0]
+
+  motorista.historico.forEach(item => {
+
+    if(item.valor > melhor.valor) {
+      melhor = item
+    }
+  })
+
+  return melhor
+}
+
 function resetSemana() {
 
   if(!confirm("Deseja apagar todos os dados?")) {
@@ -112,6 +142,8 @@ function salvar() {
 
 function atualizarTudo() {
 
+  organizarHistoricoPorData()
+
   mostrarRanking()
   atualizarLider()
   atualizarMetricas()
@@ -133,12 +165,34 @@ function mostrarRanking() {
     else if(i === 2) medalha = "🥉"
     else medalha = `${i + 1}º`
 
+    let melhorDia = descobrirMelhorDia(m)
+
+    let melhorDiaHTML = ""
+
+    if(melhorDia) {
+      melhorDiaHTML = `
+        <div class="melhor-dia">
+          🔥 Melhor dia:
+          ${melhorDia.dia} - ${formatarData(melhorDia.data)}
+          <br>
+          💰 R$ ${melhorDia.valor}
+          • 🚗 ${melhorDia.corridas}
+        </div>
+      `
+    }
+
     let historicoHTML = ""
 
     m.historico.forEach(h => {
 
+      let destaque = ""
+
+      if(melhorDia && h.data === melhorDia.data && h.valor === melhorDia.valor) {
+        destaque = "dia-destaque"
+      }
+
       historicoHTML += `
-        <div>
+        <div class="${destaque}">
           📅 ${h.dia || descobrirDiaSemana(h.data)} - ${formatarData(h.data)}
           <br>
           💰 R$ ${h.valor}
@@ -164,6 +218,8 @@ function mostrarRanking() {
           🚗 ${m.corridas} corridas
         </div>
 
+        ${melhorDiaHTML}
+
         <div class="historico">
           <strong>Histórico</strong>
           <br><br>
@@ -186,6 +242,19 @@ function atualizarLider() {
   }
 
   let top = ranking[0]
+  let melhorDia = descobrirMelhorDia(top)
+
+  let melhorTexto = ""
+
+  if(melhorDia) {
+    melhorTexto = `
+      <br><br>
+      🔥 Melhor dia:
+      ${melhorDia.dia}
+      <br>
+      R$ ${melhorDia.valor}
+    `
+  }
 
   lider.innerHTML = `
     <div class="lider-card">
@@ -194,6 +263,7 @@ function atualizarLider() {
       <strong>R$ ${top.valor}</strong>
       <br><br>
       🚗 ${top.corridas} corridas
+      ${melhorTexto}
     </div>
   `
 }
