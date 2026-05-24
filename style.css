@@ -1,18 +1,21 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: #111827;
-  color: #111;
+  background: #050505;
+  color: white;
 }
 
 .app {
   max-width: 430px;
   margin: auto;
   min-height: 100vh;
-  background: #f8fafc;
-  padding: 18px;
-  padding-bottom: 90px;
-  box-sizing: border-box;
+  background: linear-gradient(180deg, #121212, #050505);
+  padding: 20px;
+  padding-bottom: 95px;
 }
 
 .tela {
@@ -24,21 +27,26 @@ body {
 }
 
 h1 {
-  color: #111827;
-  margin-bottom: 8px;
+  font-size: 30px;
+  margin-bottom: 6px;
 }
 
 .subtitulo {
-  color: #6b7280;
+  color: #a3a3a3;
   margin-bottom: 22px;
 }
 
 .card {
-  background: white;
-  padding: 18px;
-  border-radius: 22px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+  background: #181818;
+  padding: 20px;
+  border-radius: 26px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.35);
   margin-bottom: 20px;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.card h2 {
+  margin-top: 0;
 }
 
 input,
@@ -46,10 +54,15 @@ select {
   width: 100%;
   padding: 15px;
   margin: 8px 0;
-  border: 1px solid #e5e7eb;
-  border-radius: 14px;
+  border-radius: 16px;
+  border: 1px solid #2c2c2c;
+  background: #0f0f0f;
+  color: white;
   font-size: 15px;
-  box-sizing: border-box;
+}
+
+input::placeholder {
+  color: #777;
 }
 
 button {
@@ -57,31 +70,29 @@ button {
   padding: 15px;
   margin-top: 10px;
   border: none;
-  border-radius: 15px;
+  border-radius: 18px;
   background: linear-gradient(135deg, #ff7a18, #ffb347);
   color: white;
   font-weight: bold;
   font-size: 15px;
-  cursor: pointer;
 }
 
 button.secundario {
-  background: white;
-  color: #374151;
-  border: 1px solid #e5e7eb;
+  background: #262626;
+  color: #f5f5f5;
 }
 
 .lider-card {
   background: linear-gradient(135deg, #ff7a18, #ffb347);
   color: white;
-  padding: 22px;
-  border-radius: 24px;
-  margin: 20px 0;
-  box-shadow: 0 10px 25px rgba(255,122,24,0.35);
+  padding: 24px;
+  border-radius: 30px;
+  margin: 22px 0;
+  box-shadow: 0 18px 40px rgba(255,122,24,0.35);
 }
 
 .lider-card h2 {
-  font-size: 30px;
+  font-size: 34px;
   margin: 10px 0;
 }
 
@@ -91,77 +102,93 @@ ul {
 
 li {
   list-style: none;
-  background: white;
-  padding: 18px;
-  margin-bottom: 14px;
-  border-radius: 20px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  background: #181818;
+  padding: 20px;
+  margin-bottom: 16px;
+  border-radius: 26px;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.06);
 }
 
 .posicao {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: bold;
 }
 
 .valor {
-  color: #16a34a;
+  color: #ffb347;
   font-weight: bold;
+  font-size: 20px;
 }
 
 .historico {
-  margin-top: 12px;
-  padding-top: 10px;
-  border-top: 1px solid #e5e7eb;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #2c2c2c;
+  color: #cfcfcf;
   font-size: 14px;
-  color: #4b5563;
 }
 
 .metricas {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 14px;
 }
 
 .metricas div {
-  background: white;
-  padding: 16px;
-  border-radius: 18px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  background: #181818;
+  padding: 18px;
+  border-radius: 24px;
+  border: 1px solid rgba(255,255,255,0.06);
 }
 
 .metricas small {
-  color: #6b7280;
+  color: #a3a3a3;
 }
 
 .metricas strong {
   display: block;
   margin-top: 8px;
-  font-size: 20px;
+  font-size: 24px;
+  color: #ffb347;
+}
+
+canvas {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 12px;
 }
 
 .menu {
   position: fixed;
-  bottom: 0;
+  bottom: 14px;
   left: 50%;
   transform: translateX(-50%);
-  max-width: 430px;
-  width: 100%;
-  background: #111827;
+  max-width: 390px;
+  width: calc(100% - 30px);
+  background: rgba(24,24,24,0.95);
   display: flex;
   justify-content: space-around;
-  padding: 10px 0;
+  padding: 10px;
+  border-radius: 28px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.45);
+  border: 1px solid rgba(255,255,255,0.08);
 }
 
 .menu button {
   background: transparent;
-  padding: 8px;
   margin: 0;
-  color: white;
+  padding: 8px;
+  color: #aaa;
   font-size: 20px;
+}
+
+.menu button:hover {
+  color: #ffb347;
 }
 
 .menu span {
   display: block;
-  font-size: 12px;
-  margin-top: 4px;
+  font-size: 11px;
+  margin-top: 3px;
 }
