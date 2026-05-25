@@ -21,7 +21,11 @@ const db = getFirestore(app);
 
 console.log("🔥 Firebase conectado!");
 
-let ranking = JSON.parse(localStorage.getItem("ranking")) || [];
+
+
+let ranking = JSON.parse(
+  localStorage.getItem("ranking")
+) || [];
 
 let grafico;
 let graficoLinha;
@@ -29,7 +33,11 @@ let graficoLinha;
 
 
 function salvar() {
-  localStorage.setItem("ranking", JSON.stringify(ranking));
+
+  localStorage.setItem(
+    "ranking",
+    JSON.stringify(ranking)
+  );
 }
 
 
@@ -40,27 +48,46 @@ function abrirTela(id) {
     tela.classList.remove("ativa");
   });
 
-  document.getElementById(id).classList.add("ativa");
+  const tela = document.getElementById(id);
+
+  if (tela) {
+    tela.classList.add("ativa");
+  }
+
+  if (id === "graficoTela") {
+
+    atualizarGrafico();
+
+    atualizarGraficoLinha();
+  }
 }
 
 
 
 async function adicionar() {
 
-  const nome = document.getElementById("nome").value;
+  const nome = document.getElementById("nome").value.trim();
 
-  const valor = Number(document.getElementById("valor").value);
+  const valor = Number(
+    document.getElementById("valor").value
+  );
 
-  const corridas = Number(document.getElementById("corridas").value);
+  const corridas = Number(
+    document.getElementById("corridas").value
+  );
 
   const data = document.getElementById("data").value;
 
-  if (!nome || !valor || !corridas || !data) {
-    alert("Preencha todos os campos");
+  if (!nome || valor <= 0 || !data) {
+
+    alert("Preencha os campos");
+
     return;
   }
 
-  const dia = new Date(data).toLocaleDateString("pt-BR");
+  const dia = new Date(data).toLocaleDateString(
+    "pt-BR"
+  );
 
   ranking.push({
     nome,
@@ -74,30 +101,30 @@ async function adicionar() {
 
   try {
 
-    await addDoc(collection(db, "corridas"), {
-      nome: nome,
-      valor: valor,
-      corridas: corridas,
-      data: data,
-      dia: dia,
-      criadoEm: new Date().toISOString()
-    });
+    await addDoc(
+      collection(db, "corridas"),
+      {
+        nome: nome,
+        valor: valor,
+        corridas: corridas,
+        data: data,
+        dia: dia,
+        criadoEm: new Date().toISOString()
+      }
+    );
 
-    console.log("🔥 Corrida salva no Firebase!");
+    console.log("🔥 Corrida salva Firebase");
 
   } catch (erro) {
 
     console.error("Erro Firebase:", erro);
 
-    alert("Erro ao salvar no Firebase");
+    alert("Erro ao salvar Firebase");
   }
 
   atualizarTudo();
 
-  document.getElementById("nome").value = "";
-  document.getElementById("valor").value = "";
-  document.getElementById("corridas").value = "";
-  document.getElementById("data").value = "";
+  limparCampos();
 }
 
 
@@ -109,37 +136,64 @@ function atualizarTudo() {
   let totalCorridas = 0;
 
   ranking.forEach(item => {
-    totalSemana += item.valor;
-    totalMensal += item.valor;
-    totalCorridas += item.corridas;
+
+    totalSemana += Number(item.valor);
+
+    totalMensal += Number(item.valor);
+
+    totalCorridas += Number(item.corridas);
   });
 
-  document.getElementById("homeTotal").innerText =
-    "R$ " + totalSemana;
+  const homeTotal =
+    document.getElementById("homeTotal");
 
-  let totalMensalEl = document.getElementById("totalMensal")
+  const homeMensal =
+    document.getElementById("homeMensal");
 
-if (totalMensalEl) {
-  totalMensalEl.innerText = "R$ " + totalMensal
-}
+  const totalSemanaEl =
+    document.getElementById("totalSemana");
 
-  document.getElementById("totalSemana").innerText =
-    "R$ " + totalSemana;
+  const totalMensalEl =
+    document.getElementById("totalMensal");
 
-  document.getElementById("totalMensal").innerText =
-    "R$ " + totalMensal;
+  const totalCorridasEl =
+    document.getElementById("totalCorridas");
 
-  document.getElementById("totalCorridas").innerText =
-    totalCorridas;
+  if (homeTotal) {
+    homeTotal.innerText = "R$ " + totalSemana;
+  }
+
+  if (homeMensal) {
+    homeMensal.innerText = "R$ " + totalMensal;
+  }
+
+  if (totalSemanaEl) {
+    totalSemanaEl.innerText = "R$ " + totalSemana;
+  }
+
+  if (totalMensalEl) {
+    totalMensalEl.innerText = "R$ " + totalMensal;
+  }
+
+  if (totalCorridasEl) {
+    totalCorridasEl.innerText = totalCorridas;
+  }
 
   atualizarRanking();
+
+  atualizarLider();
+
+  atualizarGrafico();
+
+  atualizarGraficoLinha();
 }
 
 
 
 function atualizarRanking() {
 
-  const lista = document.getElementById("ranking");
+  const lista =
+    document.getElementById("ranking");
 
   if (!lista) return;
 
@@ -147,13 +201,31 @@ function atualizarRanking() {
 
   ranking
     .sort((a, b) => b.valor - a.valor)
-    .forEach(item => {
+    .forEach((item, index) => {
+
+      let medalha = `${index + 1}º`;
+
+      if (index === 0) medalha = "🥇";
+      if (index === 1) medalha = "🥈";
+      if (index === 2) medalha = "🥉";
 
       lista.innerHTML += `
         <li>
-          🏆 ${item.nome}
-          — R$ ${item.valor}
-          — ${item.corridas} corridas
+
+          <div class="posicao">
+            ${medalha} ${item.nome}
+          </div>
+
+          <br>
+
+          <div class="valor">
+            💰 R$ ${item.valor}
+          </div>
+
+          <div>
+            🚗 ${item.corridas} corridas
+          </div>
+
         </li>
       `;
     });
@@ -161,9 +233,162 @@ function atualizarRanking() {
 
 
 
+function atualizarLider() {
+
+  const lider =
+    document.getElementById("liderSemana");
+
+  if (!lider) return;
+
+  if (ranking.length === 0) {
+
+    lider.innerHTML = "";
+
+    return;
+  }
+
+  const top =
+    ranking.sort((a, b) => b.valor - a.valor)[0];
+
+  lider.innerHTML = `
+    <div class="lider-card">
+
+      🏆 LÍDER
+
+      <h2>${top.nome}</h2>
+
+      <strong>
+        R$ ${top.valor}
+      </strong>
+
+      <br><br>
+
+      🚗 ${top.corridas} corridas
+
+    </div>
+  `;
+}
+
+
+
+function atualizarGrafico() {
+
+  const canvas =
+    document.getElementById("grafico");
+
+  if (!canvas) return;
+
+  const ctx = canvas.getContext("2d");
+
+  if (grafico) {
+    grafico.destroy();
+  }
+
+  grafico = new Chart(ctx, {
+
+    type: "doughnut",
+
+    data: {
+
+      labels: ranking.map(r => r.nome),
+
+      datasets: [{
+
+        data: ranking.map(r => r.valor),
+
+        backgroundColor: [
+          "#ff7a18",
+          "#ffb347",
+          "#ffd166",
+          "#22c55e",
+          "#3b82f6",
+          "#8b5cf6"
+        ]
+      }]
+    }
+  });
+}
+
+
+
+function atualizarGraficoLinha() {
+
+  const canvas =
+    document.getElementById("graficoLinha");
+
+  if (!canvas) return;
+
+  const totais = {};
+
+  ranking.forEach(item => {
+
+    if (!totais[item.data]) {
+      totais[item.data] = 0;
+    }
+
+    totais[item.data] += Number(item.valor);
+  });
+
+  const datas =
+    Object.keys(totais).sort();
+
+  const valores =
+    datas.map(d => totais[d]);
+
+  if (graficoLinha) {
+    graficoLinha.destroy();
+  }
+
+  graficoLinha = new Chart(
+    canvas.getContext("2d"),
+    {
+
+      type: "line",
+
+      data: {
+
+        labels: datas,
+
+        datasets: [{
+
+          label: "Evolução",
+
+          data: valores,
+
+          borderColor: "#ff7a18",
+
+          backgroundColor:
+            "rgba(255,122,24,0.2)",
+
+          fill: true,
+
+          tension: 0.3
+        }]
+      }
+    }
+  );
+}
+
+
+
+function limparCampos() {
+
+  document.getElementById("nome").value = "";
+
+  document.getElementById("valor").value = "";
+
+  document.getElementById("corridas").value = "";
+
+  document.getElementById("data").value = "";
+}
+
+
+
 function resetSemana() {
 
-  if (!confirm("Deseja resetar tudo?")) return;
+  if (!confirm("Deseja apagar tudo?")) {
+    return;
+  }
 
   ranking = [];
 
@@ -176,12 +401,24 @@ function resetSemana() {
 
 window.testarFirebase = async function () {
 
-  await addDoc(collection(db, "corridas"), {
-    teste: "firebase funcionando",
-    criadoEm: new Date().toISOString()
-  });
+  try {
 
-  alert("🔥 Firebase funcionando!");
+    await addDoc(
+      collection(db, "corridas"),
+      {
+        teste: "firebase funcionando",
+        criadoEm: new Date().toISOString()
+      }
+    );
+
+    alert("🔥 Firebase funcionando!");
+
+  } catch (erro) {
+
+    console.error(erro);
+
+    alert("❌ Erro Firebase");
+  }
 };
 
 
