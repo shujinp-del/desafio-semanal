@@ -117,8 +117,11 @@ function atualizarTudo() {
   document.getElementById("homeTotal").innerText =
     "R$ " + totalSemana;
 
-  document.getElementById("homeMensal").innerText =
-    "R$ " + totalMensal;
+  let totalMensalEl = document.getElementById("totalMensal")
+
+if (totalMensalEl) {
+  totalMensalEl.innerText = "R$ " + totalMensal
+}
 
   document.getElementById("totalSemana").innerText =
     "R$ " + totalSemana;
