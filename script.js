@@ -2,6 +2,7 @@ let ranking = JSON.parse(localStorage.getItem("ranking")) || []
 let metasMotoristas = JSON.parse(localStorage.getItem("metasMotoristas")) || {}
 
 let grafico
+let graficoLinha
 
 atualizarTudo()
 
@@ -14,6 +15,7 @@ function abrirTela(id) {
 
   if(id === "graficoTela") {
     atualizarGrafico()
+    atualizarGraficoLinha()
   }
 }
 
@@ -49,7 +51,6 @@ function adicionar() {
   }
 
   organizarHistoricoPorData()
-
   ranking.sort((a, b) => b.valor - a.valor)
 
   salvar()
@@ -64,9 +65,8 @@ function salvarMetaMotorista(index) {
   if(!motorista || !input) return
 
   let chave = motorista.nome.toLowerCase()
-  let valorMeta = Number(input.value)
 
-  metasMotoristas[chave] = valorMeta
+  metasMotoristas[chave] = Number(input.value)
 
   localStorage.setItem(
     "metasMotoristas",
@@ -74,33 +74,6 @@ function salvarMetaMotorista(index) {
   )
 
   mostrarRanking()
-}
-
-function salvarMeta() {
-  alert("Agora a meta é individual por motorista. Use a meta dentro do card de cada motorista.")
-}
-
-function calcularTotalMensalMotorista(motorista) {
-  let hoje = new Date()
-  let mesAtual = hoje.getMonth()
-  let anoAtual = hoje.getFullYear()
-
-  let total = 0
-
-  motorista.historico.forEach(item => {
-    if(!item.data) return
-
-    let dataItem = new Date(item.data + "T00:00:00")
-
-    if(
-      dataItem.getMonth() === mesAtual &&
-      dataItem.getFullYear() === anoAtual
-    ) {
-      total += Number(item.valor)
-    }
-  })
-
-  return total
 }
 
 function descobrirDiaSemana(data) {
@@ -142,6 +115,28 @@ function descobrirMelhorDia(motorista) {
   return melhor
 }
 
+function calcularTotalMensalMotorista(motorista) {
+  let hoje = new Date()
+  let mesAtual = hoje.getMonth()
+  let anoAtual = hoje.getFullYear()
+  let total = 0
+
+  motorista.historico.forEach(item => {
+    if(!item.data) return
+
+    let dataItem = new Date(item.data + "T00:00:00")
+
+    if(
+      dataItem.getMonth() === mesAtual &&
+      dataItem.getFullYear() === anoAtual
+    ) {
+      total += Number(item.valor)
+    }
+  })
+
+  return total
+}
+
 function agruparHistoricoPorMes(historico) {
   let grupos = {}
 
@@ -181,6 +176,7 @@ function atualizarTudo() {
   atualizarLider()
   atualizarMetricas()
   atualizarGrafico()
+  atualizarGraficoLinha()
 }
 
 function mostrarRanking() {
@@ -196,7 +192,8 @@ function mostrarRanking() {
 
   ranking
     .filter(m => m.nome.toLowerCase().includes(pesquisa))
-    .forEach((m, i) => {
+    .forEach((m) => {
+
       let indexReal = ranking.indexOf(m)
 
       let medalha = ""
@@ -365,8 +362,11 @@ function atualizarMetricas() {
     0
   )
 
-  document.getElementById("totalSemana").innerText = `R$ ${totalSemana}`
-  document.getElementById("totalCorridas").innerText = corridas
+  let totalSemanaEl = document.getElementById("totalSemana")
+  let totalCorridasEl = document.getElementById("totalCorridas")
+
+  if(totalSemanaEl) totalSemanaEl.innerText = `R$ ${totalSemana}`
+  if(totalCorridasEl) totalCorridasEl.innerText = corridas
 }
 
 function atualizarGrafico() {
@@ -401,6 +401,64 @@ function atualizarGrafico() {
           "#8b5cf6"
         ]
       }]
+    }
+  })
+}
+
+function atualizarGraficoLinha() {
+  let canvas = document.getElementById("graficoLinha")
+
+  if(!canvas) return
+
+  let totaisData = {}
+
+  ranking.forEach(motorista => {
+    motorista.historico.forEach(item => {
+      if(!item.data) return
+
+      if(!totaisData[item.data]) {
+        totaisData[item.data] = 0
+      }
+
+      totaisData[item.data] += Number(item.valor)
+    })
+  })
+
+  let datas = Object.keys(totaisData).sort()
+
+  let valores = datas.map(data => totaisData[data])
+
+  let labels = datas.map(data => formatarData(data))
+
+  let ctx = canvas.getContext("2d")
+
+  if(graficoLinha) {
+    graficoLinha.destroy()
+  }
+
+  graficoLinha = new Chart(ctx, {
+    type: "line",
+
+    data: {
+      labels: labels,
+
+      datasets: [{
+        label: "Evolução por data",
+        data: valores,
+        borderColor: "#ff7a18",
+        backgroundColor: "rgba(255,122,24,0.2)",
+        tension: 0.35,
+        fill: true
+      }]
+    },
+
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          display: true
+        }
+      }
     }
   })
 }
