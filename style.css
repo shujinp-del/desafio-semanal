@@ -5,7 +5,7 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: #050505;
+  background: radial-gradient(circle at top, #2a1200, #070707 45%);
   color: white;
 }
 
@@ -13,9 +13,9 @@ body {
   max-width: 430px;
   margin: auto;
   min-height: 100vh;
-  background: linear-gradient(180deg, #121212, #050505);
-  padding: 20px;
+  padding: 22px;
   padding-bottom: 95px;
+  background: linear-gradient(180deg, rgba(20,20,20,0.96), #050505);
 }
 
 .tela {
@@ -24,25 +24,51 @@ body {
 
 .tela.ativa {
   display: block;
+  animation: aparecer 0.35s ease;
+}
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 h1 {
-  font-size: 30px;
+  font-size: 32px;
   margin-bottom: 6px;
 }
 
 .subtitulo {
-  color: #a3a3a3;
+  color: #b8b8b8;
   margin-bottom: 22px;
 }
 
-.card {
-  background: #181818;
+.card,
+li {
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 28px;
   padding: 20px;
-  border-radius: 26px;
-  box-shadow: 0 15px 35px rgba(0,0,0,0.35);
-  margin-bottom: 20px;
-  border: 1px solid rgba(255,255,255,0.06);
+  margin-bottom: 18px;
+  box-shadow: 0 18px 45px rgba(0,0,0,0.35);
+  animation: subir 0.35s ease;
+}
+
+@keyframes subir {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .card h2 {
@@ -54,15 +80,22 @@ select {
   width: 100%;
   padding: 15px;
   margin: 8px 0;
-  border-radius: 16px;
-  border: 1px solid #2c2c2c;
-  background: #0f0f0f;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(0,0,0,0.35);
   color: white;
   font-size: 15px;
+  outline: none;
 }
 
 input::placeholder {
-  color: #777;
+  color: #888;
+}
+
+input:focus,
+select:focus {
+  border-color: #ffb347;
+  box-shadow: 0 0 0 3px rgba(255,179,71,0.15);
 }
 
 button {
@@ -75,20 +108,64 @@ button {
   color: white;
   font-weight: bold;
   font-size: 15px;
+  cursor: pointer;
+  transition: 0.25s;
+  box-shadow: 0 10px 25px rgba(255,122,24,0.28);
+}
+
+button:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.08);
+}
+
+button:active {
+  transform: scale(0.97);
 }
 
 button.secundario {
-  background: #262626;
+  background: rgba(255,255,255,0.08);
+  box-shadow: none;
   color: #f5f5f5;
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+.dashboard-cards,
+.metricas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.mini-card,
+.metricas div {
+  background: linear-gradient(180deg, rgba(255,255,255,0.09), rgba(255,255,255,0.04));
+  padding: 18px;
+  border-radius: 24px;
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 14px 30px rgba(0,0,0,0.25);
+}
+
+.mini-card small,
+.metricas small {
+  color: #b8b8b8;
+}
+
+.mini-card strong,
+.metricas strong {
+  display: block;
+  margin-top: 8px;
+  font-size: 24px;
+  color: #ffb347;
 }
 
 .lider-card {
   background: linear-gradient(135deg, #ff7a18, #ffb347);
   color: white;
   padding: 24px;
-  border-radius: 30px;
+  border-radius: 32px;
   margin: 22px 0;
-  box-shadow: 0 18px 40px rgba(255,122,24,0.35);
+  box-shadow: 0 22px 50px rgba(255,122,24,0.4);
 }
 
 .lider-card h2 {
@@ -102,12 +179,6 @@ ul {
 
 li {
   list-style: none;
-  background: #181818;
-  padding: 20px;
-  margin-bottom: 16px;
-  border-radius: 26px;
-  box-shadow: 0 12px 28px rgba(0,0,0,0.3);
-  border: 1px solid rgba(255,255,255,0.06);
 }
 
 .posicao {
@@ -118,43 +189,72 @@ li {
 .valor {
   color: #ffb347;
   font-weight: bold;
-  font-size: 20px;
+  font-size: 21px;
 }
 
 .historico {
   margin-top: 14px;
   padding-top: 12px;
-  border-top: 1px solid #2c2c2c;
-  color: #cfcfcf;
+  border-top: 1px solid rgba(255,255,255,0.12);
+  color: #d1d1d1;
   font-size: 14px;
 }
 
-.metricas {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-}
-
-.metricas div {
-  background: #181818;
-  padding: 18px;
-  border-radius: 24px;
-  border: 1px solid rgba(255,255,255,0.06);
-}
-
-.metricas small {
-  color: #a3a3a3;
-}
-
-.metricas strong {
-  display: block;
-  margin-top: 8px;
-  font-size: 24px;
+.grupo-mes {
+  margin: 14px 0 10px;
   color: #ffb347;
+  font-weight: bold;
+  font-size: 13px;
+  letter-spacing: 1px;
+}
+
+.melhor-dia {
+  margin-top: 14px;
+  background: linear-gradient(135deg, #ff7a18, #ffb347);
+  color: white;
+  padding: 13px;
+  border-radius: 18px;
+  font-weight: bold;
+  box-shadow: 0 10px 22px rgba(255,122,24,0.25);
+}
+
+.dia-destaque {
+  background: rgba(255, 122, 24, 0.16);
+  border-left: 4px solid #ff7a18;
+  padding: 10px;
+  border-radius: 14px;
+}
+
+.meta-motorista {
+  margin-top: 14px;
+  padding: 15px;
+  border-radius: 18px;
+  background: rgba(255,122,24,0.12);
+  border: 1px solid rgba(255,122,24,0.3);
+}
+
+.meta-motorista p {
+  color: #ffb347;
+  font-weight: bold;
+}
+
+.barra-meta {
+  width: 100%;
+  height: 14px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 12px;
+}
+
+.barra-meta div {
+  height: 100%;
+  background: linear-gradient(135deg, #ff7a18, #ffb347);
+  border-radius: 999px;
 }
 
 canvas {
-  background: #ffffff;
+  background: white;
   border-radius: 24px;
   padding: 12px;
 }
@@ -166,17 +266,18 @@ canvas {
   transform: translateX(-50%);
   max-width: 390px;
   width: calc(100% - 30px);
-  background: rgba(24,24,24,0.95);
+  background: rgba(20,20,20,0.95);
   display: flex;
   justify-content: space-around;
   padding: 10px;
-  border-radius: 28px;
-  box-shadow: 0 15px 40px rgba(0,0,0,0.45);
-  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 30px;
+  box-shadow: 0 18px 45px rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.1);
 }
 
 .menu button {
   background: transparent;
+  box-shadow: none;
   margin: 0;
   padding: 8px;
   color: #aaa;
@@ -191,116 +292,46 @@ canvas {
   display: block;
   font-size: 11px;
   margin-top: 3px;
-}.topo-app {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 }
 
-.avatar {
-  width: 54px;
-  height: 54px;
-  border-radius: 18px;
-  background: linear-gradient(135deg, #ff7a18, #ffb347);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 26px;
-  box-shadow: 0 12px 30px rgba(255,122,24,0.35);
-}
+@media (min-width: 900px) {
+  .app {
+    max-width: 1050px;
+    padding: 32px;
+    padding-bottom: 110px;
+  }
 
-.dashboard-cards {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-  margin: 18px 0;
-}
+  #home.ativa {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+    align-items: start;
+  }
 
-.mini-card {
-  background: #181818;
-  padding: 18px;
-  border-radius: 24px;
-  border: 1px solid rgba(255,255,255,0.06);
-  box-shadow: 0 12px 28px rgba(0,0,0,0.28);
-}
+  #home h1,
+  #home .subtitulo,
+  #home .dashboard-cards {
+    grid-column: 1 / -1;
+  }
 
-.mini-card small {
-  color: #a3a3a3;
-}
+  #ranking {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
 
-.mini-card strong {
-  display: block;
-  margin-top: 8px;
-  font-size: 24px;
-  color: #ffb347;
-}.melhor-dia {
-  margin-top: 14px;
-  background: linear-gradient(135deg, #ff7a18, #ffb347);
-  color: white;
-  padding: 12px;
-  border-radius: 16px;
-  font-weight: bold;
-}
+  #graficoTela.ativa {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+  }
 
-.dia-destaque {
-  background: rgba(255, 122, 24, 0.18);
-  border-left: 4px solid #ff7a18;
-  padding: 10px;
-  border-radius: 12px;
-}.grupo-mes {
-  margin: 14px 0 10px;
-  color: #ffb347;
-  font-weight: bold;
-  font-size: 13px;
-  letter-spacing: 1px;
-}.barra-meta {
-  width: 100%;
-  height: 16px;
-  background: #2c2c2c;
-  border-radius: 999px;
-  overflow: hidden;
-  margin-top: 15px;
-}
+  #graficoTela h1,
+  #graficoTela .subtitulo {
+    grid-column: 1 / -1;
+  }
 
-#progressoMeta {
-  height: 100%;
-  width: 0%;
-  background: linear-gradient(135deg, #ff7a18, #ffb347);
-  border-radius: 999px;
-  transition: 0.4s;
-}
-
-#textoMeta {
-  color: #ffb347;
-  font-weight: bold;
-}.meta-motorista {
-  margin-top: 14px;
-  padding: 14px;
-  border-radius: 16px;
-  background: rgba(255,122,24,0.12);
-  border: 1px solid rgba(255,122,24,0.25);
-}
-
-.meta-motorista input {
-  margin-top: 10px;
-}
-
-.meta-motorista p {
-  color: #ffb347;
-  font-weight: bold;
-}
-
-.barra-meta {
-  width: 100%;
-  height: 14px;
-  background: #2c2c2c;
-  border-radius: 999px;
-  overflow: hidden;
-  margin-top: 12px;
-}
-
-.barra-meta div {
-  height: 100%;
-  background: linear-gradient(135deg, #ff7a18, #ffb347);
-  border-radius: 999px;
+  .menu {
+    max-width: 600px;
+  }
 }
