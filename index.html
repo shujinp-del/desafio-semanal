@@ -153,6 +153,9 @@
     const db = getFirestore(app);
 
     window.testarFirebase = async function () {
+      window.db = db
+window.collection = collection
+window.addDoc = addDoc
 
       try {
 

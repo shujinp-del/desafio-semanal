@@ -19,7 +19,7 @@ function abrirTela(id) {
   }
 }
 
-function adicionar() {
+async function adicionar() {
 
   let nome = document.getElementById("nome").value.trim()
 
@@ -77,9 +77,29 @@ function adicionar() {
 
   ranking.sort((a, b) => b.valor - a.valor)
 
-  salvar()
+ salvar()
 
-  atualizarTudo()
+try {
+
+  await addDoc(collection(db, "corridas"), {
+
+    nome,
+    valor,
+    corridas,
+    data,
+    criadoEm: new Date().toISOString()
+
+  })
+
+  console.log("🔥 Corrida salva no Firebase")
+
+} catch (erro) {
+
+  console.error("Erro Firebase", erro)
+
+}
+
+atualizarTudo()
 
   limparCampos()
 }
