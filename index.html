@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Desafio Semanal</title>
+
   <link rel="stylesheet" href="style.css">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#ff7a18">
@@ -34,33 +35,14 @@
       </div>
 
       <div id="liderSemana"></div>
-      <div class="card meta-card">
-
-  <h2>🏅 Meta mensal</h2>
-
-  <input
-    id="metaMensal"
-    type="number"
-    placeholder="Digite sua meta mensal R$"
-  >
-
-  <button onclick="salvarMeta()">
-    Salvar meta
-  </button>
-
-  <div class="barra-meta">
-    <div id="progressoMeta"></div>
-  </div>
-
-  <p id="textoMeta">
-    Meta ainda não definida
-  </p>
-
-</div>
 
       <div class="card">
 
         <h2>Nova corrida</h2>
+
+        <button onclick="testarFirebase()">
+          🔥 Testar Firebase
+        </button>
 
         <input id="nome" placeholder="Nome do motorista">
 
@@ -70,9 +52,13 @@
 
         <input type="date" id="data">
 
-        <button onclick="adicionar()">Adicionar corrida</button>
+        <button onclick="adicionar()">
+          Adicionar corrida
+        </button>
 
-        <button class="secundario" onclick="resetSemana()">Resetar tudo</button>
+        <button class="secundario" onclick="resetSemana()">
+          Resetar tudo
+        </button>
 
       </div>
 
@@ -95,24 +81,20 @@
       <div class="card">
         <canvas id="grafico"></canvas>
       </div>
+
       <div class="card">
 
-  <h2>📈 Evolução por data</h2>
+        <h2>📈 Evolução por data</h2>
 
-  <canvas id="graficoLinha"></canvas>
+        <canvas id="graficoLinha"></canvas>
 
-</div>
+      </div>
 
       <div class="metricas">
 
         <div>
           <small>Total Semana</small>
           <strong id="totalSemana">R$ 0</strong>
-        </div>
-
-        <div>
-          <small>Total Mês</small>
-          <strong id="totalMensal">R$ 0</strong>
         </div>
 
         <div>
@@ -145,11 +127,17 @@
 
   </div>
 
-   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <script type="module">
 
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+    import {
+      getFirestore,
+      collection,
+      addDoc
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBrfxwL7BCUQSInVnP7Mx4jnmhNFazABfE",
@@ -161,6 +149,27 @@
     };
 
     const app = initializeApp(firebaseConfig);
+
+    const db = getFirestore(app);
+
+    window.testarFirebase = async function () {
+
+      try {
+
+        await addDoc(collection(db, "corridas"), {
+          teste: "corrida enviada pelo app",
+          criadoEm: new Date().toISOString()
+        });
+
+        alert("🔥 Firebase funcionando!");
+
+      } catch (erro) {
+
+        console.error(erro);
+
+        alert("❌ Erro Firebase");
+      }
+    };
 
     console.log("🔥 Firebase conectado!");
 
