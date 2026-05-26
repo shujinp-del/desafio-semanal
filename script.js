@@ -503,10 +503,17 @@ function salvarLocal() {
 }
 
 window.entrar = entrar;
+
 window.cadastrar = cadastrar;
+
 window.sair = sair;
+
 window.adicionar = adicionar;
+
 window.abrirTela = abrirTela;
+
 window.resetSemana = resetSemana;
+
 window.excluirCorrida = excluirCorrida;
+
 window.editarCorrida = editarCorrida;
