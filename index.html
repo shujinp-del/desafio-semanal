@@ -2,40 +2,54 @@
 <html lang="pt-BR">
 
 <head>
-
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Desafio Semanal</title>
 
-  <link
-    rel="stylesheet"
-    href="style.css"
-  >
-
-  <link
-    rel="manifest"
-    href="manifest.json"
-  >
-
-  <meta
-    name="theme-color"
-    content="#ff7a18"
-  >
-
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#ff7a18">
 </head>
 
 <body>
 
   <div class="app">
 
+    <section id="loginTela" class="tela ativa">
 
+      <h1>🔥 Desafio Semanal</h1>
 
-    <section id="home" class="tela ativa">
+      <p class="subtitulo">
+        Entre para lançar suas corridas
+      </p>
+
+      <div class="card">
+
+        <h2>Login do motorista</h2>
+
+        <input id="emailLogin" type="email" placeholder="Email">
+
+        <input id="senhaLogin" type="password" placeholder="Senha">
+
+        <button onclick="entrar()">
+          Entrar
+        </button>
+
+        <button class="secundario" onclick="cadastrar()">
+          Criar conta
+        </button>
+
+      </div>
+
+    </section>
+
+    <section id="home" class="tela">
+
+      <button class="secundario" onclick="sair()">
+        Sair
+      </button>
+
+      <p id="usuarioLogado" class="subtitulo"></p>
 
       <h1>🔥 Desafio</h1>
 
@@ -46,23 +60,13 @@
       <div class="dashboard-cards">
 
         <div class="mini-card">
-
           <small>Total Semana</small>
-
-          <strong id="homeTotal">
-            R$ 0
-          </strong>
-
+          <strong id="homeTotal">R$ 0</strong>
         </div>
 
         <div class="mini-card">
-
           <small>Total Mês</small>
-
-          <strong id="homeMensal">
-            R$ 0
-          </strong>
-
+          <strong id="homeMensal">R$ 0</strong>
         </div>
 
       </div>
@@ -73,48 +77,25 @@
 
         <h2>Nova corrida</h2>
 
-        <button onclick="testarFirebase()">
-          🔥 Testar Firebase
-        </button>
+        <input id="nome" placeholder="Nome do motorista">
 
-        <input
-          id="nome"
-          placeholder="Nome do motorista"
-        >
+        <input id="valor" type="number" placeholder="Valor R$">
 
-        <input
-          id="valor"
-          type="number"
-          placeholder="Valor R$"
-        >
+        <input id="corridas" type="number" placeholder="Número de corridas">
 
-        <input
-          id="corridas"
-          type="number"
-          placeholder="Número de corridas"
-        >
-
-        <input
-          type="date"
-          id="data"
-        >
+        <input type="date" id="data">
 
         <button onclick="adicionar()">
           Adicionar corrida
         </button>
 
-        <button
-          class="secundario"
-          onclick="resetSemana()"
-        >
+        <button class="secundario" onclick="resetSemana()">
           Resetar tudo
         </button>
 
       </div>
 
     </section>
-
-
 
     <section id="rankingTela" class="tela">
 
@@ -128,8 +109,6 @@
 
     </section>
 
-
-
     <section id="historicoTela" class="tela">
 
       <h1>📅 Histórico Mensal</h1>
@@ -139,20 +118,13 @@
       </p>
 
       <div class="card">
-
         <h2>Total do mês</h2>
-
-        <strong id="totalHistoricoMensal">
-          R$ 0
-        </strong>
-
+        <strong id="totalHistoricoMensal">R$ 0</strong>
       </div>
 
       <ul id="listaHistorico"></ul>
 
     </section>
-
-
 
     <section id="graficoTela" class="tela">
 
@@ -167,42 +139,27 @@
       </div>
 
       <div class="card">
-
         <h2>📈 Evolução por data</h2>
-
         <canvas id="graficoLinha"></canvas>
-
       </div>
 
       <div class="metricas">
 
         <div>
-
           <small>Total Semana</small>
-
-          <strong id="totalSemana">
-            R$ 0
-          </strong>
-
+          <strong id="totalSemana">R$ 0</strong>
         </div>
 
         <div>
-
           <small>Total Corridas</small>
-
-          <strong id="totalCorridas">
-            0
-          </strong>
-
+          <strong id="totalCorridas">0</strong>
         </div>
 
       </div>
 
     </section>
 
-
-
-    <nav class="menu">
+    <nav class="menu" id="menuApp">
 
       <button onclick="abrirTela('home')">
         🏠
@@ -228,94 +185,9 @@
 
   </div>
 
-
-
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-
-
-  <script type="module">
-
-    import { initializeApp }
-    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-
-    import {
-      getFirestore,
-      collection,
-      addDoc
-    }
-    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-    const firebaseConfig = {
-
-      apiKey:
-        "AIzaSyBrfxwL7BCUQSInVnP7Mx4jnmhNFazABfE",
-
-      authDomain:
-        "desafio-semanal.firebaseapp.com",
-
-      projectId:
-        "desafio-semanal",
-
-      storageBucket:
-        "desafio-semanal.firebasestorage.app",
-
-      messagingSenderId:
-        "948247090731",
-
-      appId:
-        "1:948247090731:web:fb36df17768ce636f07c6e"
-    };
-
-    const app =
-      initializeApp(firebaseConfig);
-
-    const db =
-      getFirestore(app);
-
-    window.testarFirebase =
-      async function () {
-
-        try {
-
-          await addDoc(
-            collection(db, "corridas"),
-            {
-
-              teste:
-                "corrida enviada pelo app",
-
-              criadoEm:
-                new Date().toISOString()
-            }
-          );
-
-          alert(
-            "🔥 Firebase funcionando!"
-          );
-
-        } catch (erro) {
-
-          console.error(erro);
-
-          alert(
-            "❌ Erro Firebase"
-          );
-        }
-      };
-
-    console.log(
-      "🔥 Firebase conectado!"
-    );
-
-  </script>
-
-
-
-  <script
-    type="module"
-    src="script.js"
-  ></script>
+  <script type="module" src="script.js"></script>
 
 </body>
 
