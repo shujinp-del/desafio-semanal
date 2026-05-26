@@ -30,8 +30,9 @@ function iniciarSincronia() {
     snapshot.forEach(doc => {
       let item = doc.data();
 
-      if(item.nome && item.valor && item.data) {
-        corridas.push(item);
+     if(item.nome && item.valor && item.data && estaNaSemanaAtual(item.data)) {
+  corridas.push(item);
+}
       }
     });
 
@@ -127,6 +128,40 @@ function descobrirDiaSemana(data) {
 
   let dataObj = new Date(data + "T00:00:00");
   return dias[dataObj.getDay()];
+}
+function estaNaSemanaAtual(data) {
+
+  let hoje = new Date();
+
+  let inicioSemana = new Date(hoje);
+
+  let diaSemana = hoje.getDay();
+
+  let diferenca = diaSemana === 0
+    ? -6
+    : 1 - diaSemana;
+
+  inicioSemana.setDate(
+    hoje.getDate() + diferenca
+  );
+
+  inicioSemana.setHours(0, 0, 0, 0);
+
+  let fimSemana = new Date(inicioSemana);
+
+  fimSemana.setDate(
+    inicioSemana.getDate() + 6
+  );
+
+  fimSemana.setHours(23, 59, 59, 999);
+
+  let dataCorrida =
+    new Date(data + "T00:00:00");
+
+  return (
+    dataCorrida >= inicioSemana &&
+    dataCorrida <= fimSemana
+  );
 }
 
 function abrirTela(id) {
