@@ -74,6 +74,27 @@
     </section>
 
     <section id="graficoTela" class="tela">
+      <section id="historicoTela" class="tela">
+
+  <h1>📅 Histórico Mensal</h1>
+
+  <p class="subtitulo">
+    Corridas do mês atual
+  </p>
+
+  <div class="card">
+
+    <h2>Total do mês</h2>
+
+    <strong id="totalHistoricoMensal">
+      R$ 0
+    </strong>
+
+  </div>
+
+  <ul id="listaHistorico"></ul>
+
+</section>
 
       <h1>📊 Gráfico</h1>
       <p class="subtitulo">Participação de cada motorista</p>
@@ -107,6 +128,10 @@
     </section>
 
     <nav class="menu">
+      <button onclick="abrirTela('historicoTela')">
+  📅
+  <span>Histórico</span>
+</button>
 
       <button onclick="abrirTela('home')">
         🏠

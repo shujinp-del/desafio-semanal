@@ -25,6 +25,7 @@ const app = getApps().length
 const db = getFirestore(app);
 
 let ranking = [];
+let corridasFirebase = [];
 
 let grafico;
 let graficoLinha;
@@ -32,6 +33,7 @@ let graficoLinha;
 
 
 function iniciarSincronia() {
+
 
   onSnapshot(
     collection(db, "corridas"),
@@ -52,6 +54,7 @@ function iniciarSincronia() {
           corridas.push(item);
         }
       });
+      corridasFirebase = corridas;
 
       ranking = montarRanking(corridas);
 
@@ -278,12 +281,104 @@ function abrirTela(id) {
     atualizarGrafico();
 
     atualizarGraficoLinha();
+    function atualizarHistoricoMensal() {
+
+  let lista =
+    document.getElementById(
+      "listaHistorico"
+    );
+
+  let totalEl =
+    document.getElementById(
+      "totalHistoricoMensal"
+    );
+
+  if (!lista || !totalEl) return;
+
+  lista.innerHTML = "";
+
+  let total = 0;
+
+  let hoje = new Date();
+
+  let mesAtual =
+    hoje.getMonth();
+
+  let anoAtual =
+    hoje.getFullYear();
+
+  let corridasMes =
+    corridasFirebase.filter(item => {
+
+      let data =
+        new Date(item.data + "T00:00:00");
+
+      return (
+        data.getMonth() === mesAtual &&
+        data.getFullYear() === anoAtual
+      );
+    });
+
+  corridasMes.sort((a, b) => {
+
+    return (
+      new Date(b.data) -
+      new Date(a.data)
+    );
+  });
+
+  corridasMes.forEach(item => {
+
+    total += Number(item.valor);
+
+    lista.innerHTML += `
+      <li>
+
+        <div class="posicao">
+          🚗 ${item.nome}
+        </div>
+
+        <br>
+
+        <div class="valor">
+          💰 R$ ${item.valor}
+        </div>
+
+        <div>
+          📅 ${formatarData(item.data)}
+        </div>
+
+        <div>
+          🛣️ ${item.corridas} corridas
+        </div>
+
+      </li>
+    `;
+  });
+
+  totalEl.innerText =
+    `R$ ${total}`;
+}
   }
 }
 
 
 
 function atualizarTudo() {
+  function atualizarTudo() {
+
+  atualizarRanking();
+
+  atualizarLider();
+
+  atualizarMetricas();
+
+  atualizarGrafico();
+
+  atualizarGraficoLinha();
+
+  atualizarHistoricoMensal();
+}
 
   atualizarRanking();
 
