@@ -2,34 +2,67 @@
 <html lang="pt-BR">
 
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
   <title>Desafio Semanal</title>
 
-  <link rel="stylesheet" href="style.css">
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#ff7a18">
+  <link
+    rel="stylesheet"
+    href="style.css"
+  >
+
+  <link
+    rel="manifest"
+    href="manifest.json"
+  >
+
+  <meta
+    name="theme-color"
+    content="#ff7a18"
+  >
+
 </head>
 
 <body>
 
   <div class="app">
 
+
+
     <section id="home" class="tela ativa">
 
       <h1>🔥 Desafio</h1>
-      <p class="subtitulo">Painel de ganhos dos motoristas</p>
+
+      <p class="subtitulo">
+        Painel de ganhos dos motoristas
+      </p>
 
       <div class="dashboard-cards">
 
         <div class="mini-card">
+
           <small>Total Semana</small>
-          <strong id="homeTotal">R$ 0</strong>
+
+          <strong id="homeTotal">
+            R$ 0
+          </strong>
+
         </div>
 
         <div class="mini-card">
+
           <small>Total Mês</small>
-          <strong id="homeMensal">R$ 0</strong>
+
+          <strong id="homeMensal">
+            R$ 0
+          </strong>
+
         </div>
 
       </div>
@@ -44,19 +77,36 @@
           🔥 Testar Firebase
         </button>
 
-        <input id="nome" placeholder="Nome do motorista">
+        <input
+          id="nome"
+          placeholder="Nome do motorista"
+        >
 
-        <input id="valor" type="number" placeholder="Valor R$">
+        <input
+          id="valor"
+          type="number"
+          placeholder="Valor R$"
+        >
 
-        <input id="corridas" type="number" placeholder="Número de corridas">
+        <input
+          id="corridas"
+          type="number"
+          placeholder="Número de corridas"
+        >
 
-        <input type="date" id="data">
+        <input
+          type="date"
+          id="data"
+        >
 
         <button onclick="adicionar()">
           Adicionar corrida
         </button>
 
-        <button class="secundario" onclick="resetSemana()">
+        <button
+          class="secundario"
+          onclick="resetSemana()"
+        >
           Resetar tudo
         </button>
 
@@ -64,40 +114,53 @@
 
     </section>
 
+
+
     <section id="rankingTela" class="tela">
 
       <h1>🏆 Ranking</h1>
-      <p class="subtitulo">Classificação geral</p>
+
+      <p class="subtitulo">
+        Classificação geral
+      </p>
 
       <ul id="ranking"></ul>
 
     </section>
 
+
+
+    <section id="historicoTela" class="tela">
+
+      <h1>📅 Histórico Mensal</h1>
+
+      <p class="subtitulo">
+        Corridas do mês atual
+      </p>
+
+      <div class="card">
+
+        <h2>Total do mês</h2>
+
+        <strong id="totalHistoricoMensal">
+          R$ 0
+        </strong>
+
+      </div>
+
+      <ul id="listaHistorico"></ul>
+
+    </section>
+
+
+
     <section id="graficoTela" class="tela">
-      <section id="historicoTela" class="tela">
-
-  <h1>📅 Histórico Mensal</h1>
-
-  <p class="subtitulo">
-    Corridas do mês atual
-  </p>
-
-  <div class="card">
-
-    <h2>Total do mês</h2>
-
-    <strong id="totalHistoricoMensal">
-      R$ 0
-    </strong>
-
-  </div>
-
-  <ul id="listaHistorico"></ul>
-
-</section>
 
       <h1>📊 Gráfico</h1>
-      <p class="subtitulo">Participação de cada motorista</p>
+
+      <p class="subtitulo">
+        Participação de cada motorista
+      </p>
 
       <div class="card">
         <canvas id="grafico"></canvas>
@@ -114,24 +177,32 @@
       <div class="metricas">
 
         <div>
+
           <small>Total Semana</small>
-          <strong id="totalSemana">R$ 0</strong>
+
+          <strong id="totalSemana">
+            R$ 0
+          </strong>
+
         </div>
 
         <div>
+
           <small>Total Corridas</small>
-          <strong id="totalCorridas">0</strong>
+
+          <strong id="totalCorridas">
+            0
+          </strong>
+
         </div>
 
       </div>
 
     </section>
 
+
+
     <nav class="menu">
-      <button onclick="abrirTela('historicoTela')">
-  📅
-  <span>Histórico</span>
-</button>
 
       <button onclick="abrirTela('home')">
         🏠
@@ -143,6 +214,11 @@
         <span>Ranking</span>
       </button>
 
+      <button onclick="abrirTela('historicoTela')">
+        📅
+        <span>Histórico</span>
+      </button>
+
       <button onclick="abrirTela('graficoTela')">
         📊
         <span>Gráfico</span>
@@ -152,58 +228,94 @@
 
   </div>
 
+
+
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
 
   <script type="module">
 
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { initializeApp }
+    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
     import {
       getFirestore,
       collection,
       addDoc
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    }
+    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
-      apiKey: "AIzaSyBrfxwL7BCUQSInVnP7Mx4jnmhNFazABfE",
-      authDomain: "desafio-semanal.firebaseapp.com",
-      projectId: "desafio-semanal",
-      storageBucket: "desafio-semanal.firebasestorage.app",
-      messagingSenderId: "948247090731",
-      appId: "1:948247090731:web:fb36df17768ce636f07c6e"
+
+      apiKey:
+        "AIzaSyBrfxwL7BCUQSInVnP7Mx4jnmhNFazABfE",
+
+      authDomain:
+        "desafio-semanal.firebaseapp.com",
+
+      projectId:
+        "desafio-semanal",
+
+      storageBucket:
+        "desafio-semanal.firebasestorage.app",
+
+      messagingSenderId:
+        "948247090731",
+
+      appId:
+        "1:948247090731:web:fb36df17768ce636f07c6e"
     };
 
-    const app = initializeApp(firebaseConfig);
+    const app =
+      initializeApp(firebaseConfig);
 
-    const db = getFirestore(app);
+    const db =
+      getFirestore(app);
 
-    window.testarFirebase = async function () {
-      window.db = db
-window.collection = collection
-window.addDoc = addDoc
+    window.testarFirebase =
+      async function () {
 
-      try {
+        try {
 
-        await addDoc(collection(db, "corridas"), {
-          teste: "corrida enviada pelo app",
-          criadoEm: new Date().toISOString()
-        });
+          await addDoc(
+            collection(db, "corridas"),
+            {
 
-        alert("🔥 Firebase funcionando!");
+              teste:
+                "corrida enviada pelo app",
 
-      } catch (erro) {
+              criadoEm:
+                new Date().toISOString()
+            }
+          );
 
-        console.error(erro);
+          alert(
+            "🔥 Firebase funcionando!"
+          );
 
-        alert("❌ Erro Firebase");
-      }
-    };
+        } catch (erro) {
 
-    console.log("🔥 Firebase conectado!");
+          console.error(erro);
+
+          alert(
+            "❌ Erro Firebase"
+          );
+        }
+      };
+
+    console.log(
+      "🔥 Firebase conectado!"
+    );
 
   </script>
 
-<script type="module" src="script.js"></script>
+
+
+  <script
+    type="module"
+    src="script.js"
+  ></script>
 
 </body>
 
