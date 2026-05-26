@@ -444,12 +444,17 @@ function atualizarGrafico() {
       datasets: [{
         data: ranking.map(m => m.valor),
         backgroundColor: [
-          "#ff7a18",
-          "#ffb347",
-          "#ffd166",
-          "#22c55e",
-          "#3b82f6",
-          "#8b5cf6"
+  "#2563eb", // azul
+  "#dc2626", // vermelho
+  "#16a34a", // verde
+  "#ca8a04", // amarelo forte
+  "#9333ea", // roxo
+  "#ea580c", // laranja
+  "#0891b2", // ciano
+  "#be123c", // rosa forte
+  "#4f46e5", // índigo
+  "#15803d"  // verde escuro
+]
         ]
       }]
     }
