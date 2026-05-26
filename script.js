@@ -422,8 +422,8 @@ window.testarFirebase = async function () {
 };
 
 
-window.adicionar = adicionar;
-window.abrirTela = abrirTela;
-window.resetSemana = resetSemana;
+window.adicionar = adicionar
+window.abrirTela = abrirTela
+window.resetSemana = resetSemana
 
-atualizarTudo();
+atualizarTudo()
