@@ -1,9 +1,10 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { initializeApp, getApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
 import {
   getFirestore,
   collection,
-  addDoc
+  addDoc,
+  onSnapshot
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -15,287 +16,264 @@ const firebaseConfig = {
   appId: "1:948247090731:web:fb36df17768ce636f07c6e"
 };
 
-const app = initializeApp(firebaseConfig);
-
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-console.log("🔥 Firebase conectado!");
-
-
-
-let ranking = JSON.parse(
-  localStorage.getItem("ranking")
-) || [];
-
+let ranking = [];
 let grafico;
 let graficoLinha;
 
+function iniciarSincronia() {
+  onSnapshot(collection(db, "corridas"), snapshot => {
+    let corridas = [];
 
+    snapshot.forEach(doc => {
+      let item = doc.data();
 
-function salvar() {
+      if(item.nome && item.valor && item.data) {
+        corridas.push(item);
+      }
+    });
 
-  localStorage.setItem(
-    "ranking",
-    JSON.stringify(ranking)
-  );
+    ranking = montarRanking(corridas);
+
+    salvarLocal();
+
+    atualizarTudo();
+
+    console.log("🔥 Dados sincronizados com Firebase");
+  });
 }
 
+function montarRanking(corridas) {
+  let mapa = {};
 
+  corridas.forEach(item => {
+    let chave = item.nome.toLowerCase();
+
+    if(!mapa[chave]) {
+      mapa[chave] = {
+        nome: item.nome,
+        valor: 0,
+        corridas: 0,
+        historico: []
+      };
+    }
+
+    mapa[chave].valor += Number(item.valor);
+    mapa[chave].corridas += Number(item.corridas || 0);
+
+    mapa[chave].historico.push({
+      dia: item.dia || descobrirDiaSemana(item.data),
+      data: item.data,
+      valor: Number(item.valor),
+      corridas: Number(item.corridas || 0)
+    });
+  });
+
+  let lista = Object.values(mapa);
+
+  lista.forEach(motorista => {
+    motorista.historico.sort((a, b) => new Date(b.data) - new Date(a.data));
+  });
+
+  lista.sort((a, b) => b.valor - a.valor);
+
+  return lista;
+}
+
+async function adicionar() {
+  let nome = document.getElementById("nome").value.trim();
+  let valor = Number(document.getElementById("valor").value);
+  let corridas = Number(document.getElementById("corridas").value);
+  let data = document.getElementById("data").value;
+
+  if(!nome || valor <= 0 || !data) {
+    alert("Preencha nome, valor e data");
+    return;
+  }
+
+  let dia = descobrirDiaSemana(data);
+
+  try {
+    await addDoc(collection(db, "corridas"), {
+      nome,
+      valor,
+      corridas,
+      data,
+      dia,
+      criadoEm: new Date().toISOString()
+    });
+
+    limparCampos();
+
+    console.log("🔥 Corrida salva no Firebase");
+  } catch (erro) {
+    console.error("Erro ao salvar:", erro);
+    alert("Erro ao salvar no Firebase");
+  }
+}
+
+function descobrirDiaSemana(data) {
+  let dias = [
+    "Domingo",
+    "Segunda",
+    "Terça",
+    "Quarta",
+    "Quinta",
+    "Sexta",
+    "Sábado"
+  ];
+
+  let dataObj = new Date(data + "T00:00:00");
+  return dias[dataObj.getDay()];
+}
 
 function abrirTela(id) {
-
   document.querySelectorAll(".tela").forEach(tela => {
     tela.classList.remove("ativa");
   });
 
-  const tela = document.getElementById(id);
+  let tela = document.getElementById(id);
 
-  if (tela) {
+  if(tela) {
     tela.classList.add("ativa");
   }
 
-  if (id === "graficoTela") {
-
+  if(id === "graficoTela") {
     atualizarGrafico();
-
     atualizarGraficoLinha();
   }
 }
 
-
-
-async function adicionar() {
-
-  const nome = document.getElementById("nome").value.trim();
-
-  const valor = Number(
-    document.getElementById("valor").value
-  );
-
-  const corridas = Number(
-    document.getElementById("corridas").value
-  );
-
-  const data = document.getElementById("data").value;
-
-  if (!nome || valor <= 0 || !data) {
-
-    alert("Preencha os campos");
-
-    return;
-  }
-
-  const dia = new Date(data).toLocaleDateString(
-    "pt-BR"
-  );
-
-  ranking.push({
-    nome,
-    valor,
-    corridas,
-    data,
-    dia
-  });
-
-  salvar();
-
-  try {
-
-    await addDoc(
-      collection(db, "corridas"),
-      {
-        nome: nome,
-        valor: valor,
-        corridas: corridas,
-        data: data,
-        dia: dia,
-        criadoEm: new Date().toISOString()
-      }
-    );
-
-    console.log("🔥 Corrida salva Firebase");
-
-  } catch (erro) {
-
-    console.error("Erro Firebase:", erro);
-
-    alert("Erro ao salvar Firebase");
-  }
-
-  atualizarTudo();
-
-  limparCampos();
-}
-
-
-
 function atualizarTudo() {
-
-  let totalSemana = 0;
-  let totalMensal = 0;
-  let totalCorridas = 0;
-
-  ranking.forEach(item => {
-
-    totalSemana += Number(item.valor);
-
-    totalMensal += Number(item.valor);
-
-    totalCorridas += Number(item.corridas);
-  });
-
-  const homeTotal =
-    document.getElementById("homeTotal");
-
-  const homeMensal =
-    document.getElementById("homeMensal");
-
-  const totalSemanaEl =
-    document.getElementById("totalSemana");
-
-  const totalMensalEl =
-    document.getElementById("totalMensal");
-
-  const totalCorridasEl =
-    document.getElementById("totalCorridas");
-
-  if (homeTotal) {
-    homeTotal.innerText = "R$ " + totalSemana;
-  }
-
-  if (homeMensal) {
-    homeMensal.innerText = "R$ " + totalMensal;
-  }
-
-  if (totalSemanaEl) {
-    totalSemanaEl.innerText = "R$ " + totalSemana;
-  }
-
-  if (totalMensalEl) {
-    totalMensalEl.innerText = "R$ " + totalMensal;
-  }
-
-  if (totalCorridasEl) {
-    totalCorridasEl.innerText = totalCorridas;
-  }
-
   atualizarRanking();
-
   atualizarLider();
-
+  atualizarMetricas();
   atualizarGrafico();
-
   atualizarGraficoLinha();
 }
 
-
-
 function atualizarRanking() {
+  let lista = document.getElementById("ranking");
 
-  const lista =
-    document.getElementById("ranking");
-
-  if (!lista) return;
+  if(!lista) return;
 
   lista.innerHTML = "";
 
-  ranking
-    .sort((a, b) => b.valor - a.valor)
-    .forEach((item, index) => {
+  ranking.forEach((m, index) => {
+    let medalha = `${index + 1}º`;
 
-      let medalha = `${index + 1}º`;
+    if(index === 0) medalha = "🥇";
+    if(index === 1) medalha = "🥈";
+    if(index === 2) medalha = "🥉";
 
-      if (index === 0) medalha = "🥇";
-      if (index === 1) medalha = "🥈";
-      if (index === 2) medalha = "🥉";
+    let melhor = descobrirMelhorDia(m);
 
-      lista.innerHTML += `
-        <li>
+    let melhorHTML = "";
 
-          <div class="posicao">
-            ${medalha} ${item.nome}
-          </div>
-
+    if(melhor) {
+      melhorHTML = `
+        <div class="melhor-dia">
+          🔥 Melhor dia:
+          ${melhor.dia} - ${formatarData(melhor.data)}
           <br>
-
-          <div class="valor">
-            💰 R$ ${item.valor}
-          </div>
-
-          <div>
-            🚗 ${item.corridas} corridas
-          </div>
-
-        </li>
+          💰 R$ ${melhor.valor}
+        </div>
       `;
-    });
+    }
+
+    lista.innerHTML += `
+      <li>
+        <div class="posicao">
+          ${medalha} ${m.nome}
+        </div>
+
+        <br>
+
+        <div class="valor">
+          💰 R$ ${m.valor}
+        </div>
+
+        <div>
+          🚗 ${m.corridas} corridas
+        </div>
+
+        ${melhorHTML}
+      </li>
+    `;
+  });
 }
 
+function descobrirMelhorDia(motorista) {
+  if(!motorista.historico || motorista.historico.length === 0) {
+    return null;
+  }
 
+  let melhor = motorista.historico[0];
+
+  motorista.historico.forEach(item => {
+    if(Number(item.valor) > Number(melhor.valor)) {
+      melhor = item;
+    }
+  });
+
+  return melhor;
+}
 
 function atualizarLider() {
+  let lider = document.getElementById("liderSemana");
 
-  const lider =
-    document.getElementById("liderSemana");
+  if(!lider) return;
 
-  if (!lider) return;
-
-  if (ranking.length === 0) {
-
+  if(ranking.length === 0) {
     lider.innerHTML = "";
-
     return;
   }
 
-  const top =
-    ranking.sort((a, b) => b.valor - a.valor)[0];
+  let top = ranking[0];
 
   lider.innerHTML = `
     <div class="lider-card">
-
       🏆 LÍDER
-
       <h2>${top.nome}</h2>
-
-      <strong>
-        R$ ${top.valor}
-      </strong>
-
+      <strong>R$ ${top.valor}</strong>
       <br><br>
-
       🚗 ${top.corridas} corridas
-
     </div>
   `;
 }
 
+function atualizarMetricas() {
+  let total = ranking.reduce((soma, m) => soma + Number(m.valor), 0);
+  let corridas = ranking.reduce((soma, m) => soma + Number(m.corridas), 0);
 
+  let homeTotal = document.getElementById("homeTotal");
+  let homeMensal = document.getElementById("homeMensal");
+  let totalSemana = document.getElementById("totalSemana");
+  let totalCorridas = document.getElementById("totalCorridas");
+
+  if(homeTotal) homeTotal.innerText = `R$ ${total}`;
+  if(homeMensal) homeMensal.innerText = `R$ ${total}`;
+  if(totalSemana) totalSemana.innerText = `R$ ${total}`;
+  if(totalCorridas) totalCorridas.innerText = corridas;
+}
 
 function atualizarGrafico() {
+  let canvas = document.getElementById("grafico");
 
-  const canvas =
-    document.getElementById("grafico");
+  if(!canvas) return;
 
-  if (!canvas) return;
-
-  const ctx = canvas.getContext("2d");
-
-  if (grafico) {
+  if(grafico) {
     grafico.destroy();
   }
 
-  grafico = new Chart(ctx, {
-
+  grafico = new Chart(canvas.getContext("2d"), {
     type: "doughnut",
-
     data: {
-
-      labels: ranking.map(r => r.nome),
-
+      labels: ranking.map(m => m.nome),
       datasets: [{
-
-        data: ranking.map(r => r.valor),
-
+        data: ranking.map(m => m.valor),
         backgroundColor: [
           "#ff7a18",
           "#ffb347",
@@ -309,121 +287,75 @@ function atualizarGrafico() {
   });
 }
 
-
-
 function atualizarGraficoLinha() {
+  let canvas = document.getElementById("graficoLinha");
 
-  const canvas =
-    document.getElementById("graficoLinha");
+  if(!canvas) return;
 
-  if (!canvas) return;
+  let totais = {};
 
-  const totais = {};
+  ranking.forEach(motorista => {
+    motorista.historico.forEach(item => {
+      if(!totais[item.data]) {
+        totais[item.data] = 0;
+      }
 
-  ranking.forEach(item => {
-
-    if (!totais[item.data]) {
-      totais[item.data] = 0;
-    }
-
-    totais[item.data] += Number(item.valor);
+      totais[item.data] += Number(item.valor);
+    });
   });
 
-  const datas =
-    Object.keys(totais).sort();
+  let datas = Object.keys(totais).sort();
+  let valores = datas.map(data => totais[data]);
+  let labels = datas.map(data => formatarData(data));
 
-  const valores =
-    datas.map(d => totais[d]);
-
-  if (graficoLinha) {
+  if(graficoLinha) {
     graficoLinha.destroy();
   }
 
-  graficoLinha = new Chart(
-    canvas.getContext("2d"),
-    {
-
-      type: "line",
-
-      data: {
-
-        labels: datas,
-
-        datasets: [{
-
-          label: "Evolução",
-
-          data: valores,
-
-          borderColor: "#ff7a18",
-
-          backgroundColor:
-            "rgba(255,122,24,0.2)",
-
-          fill: true,
-
-          tension: 0.3
-        }]
-      }
+  graficoLinha = new Chart(canvas.getContext("2d"), {
+    type: "line",
+    data: {
+      labels,
+      datasets: [{
+        label: "Evolução por data",
+        data: valores,
+        borderColor: "#ff7a18",
+        backgroundColor: "rgba(255,122,24,0.2)",
+        tension: 0.35,
+        fill: true
+      }]
     }
-  );
+  });
 }
 
+function formatarData(data) {
+  if(!data) return "sem data";
 
+  let partes = data.split("-");
+  return `${partes[2]}/${partes[1]}/${partes[0]}`;
+}
 
 function limparCampos() {
-
   document.getElementById("nome").value = "";
-
   document.getElementById("valor").value = "";
-
   document.getElementById("corridas").value = "";
-
   document.getElementById("data").value = "";
 }
 
-
-
 function resetSemana() {
-
-  if (!confirm("Deseja apagar tudo?")) {
-    return;
-  }
+  if(!confirm("Deseja limpar apenas os dados locais?")) return;
 
   ranking = [];
-
-  salvar();
-
+  salvarLocal();
   atualizarTudo();
 }
 
+function salvarLocal() {
+  localStorage.setItem("ranking", JSON.stringify(ranking));
+}
 
+window.adicionar = adicionar;
+window.abrirTela = abrirTela;
+window.resetSemana = resetSemana;
 
-window.testarFirebase = async function () {
-
-  try {
-
-    await addDoc(
-      collection(db, "corridas"),
-      {
-        teste: "firebase funcionando",
-        criadoEm: new Date().toISOString()
-      }
-    );
-
-    alert("🔥 Firebase funcionando!");
-
-  } catch (erro) {
-
-    console.error(erro);
-
-    alert("❌ Erro Firebase");
-  }
-};
-
-
-window.adicionar = adicionar
-window.abrirTela = abrirTela
-window.resetSemana = resetSemana
-
-atualizarTudo()
+iniciarSincronia();
