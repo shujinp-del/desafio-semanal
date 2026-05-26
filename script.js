@@ -7,7 +7,8 @@ import {
   onSnapshot,
   getDocs,
   deleteDoc,
-  doc
+  doc,
+  updateDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -31,6 +32,8 @@ let corridasFirebase = [];
 
 let grafico;
 let graficoLinha;
+
+let editandoId = null;
 
 
 
@@ -199,25 +202,57 @@ async function adicionar() {
 
   try {
 
-    await addDoc(
-      collection(db, "corridas"),
-      {
-        nome,
-        valor,
-        corridas,
-        data,
-        dia,
-        criadoEm:
-          new Date()
-            .toISOString()
-      }
-    );
+    if (editandoId) {
+
+      await updateDoc(
+        doc(
+          db,
+          "corridas",
+          editandoId
+        ),
+        {
+          nome,
+          valor,
+          corridas,
+          data,
+          dia
+        }
+      );
+
+      alert(
+        "✏️ Corrida editada!"
+      );
+
+      editandoId = null;
+
+      document
+        .querySelector(
+          "#home button"
+        ).innerText =
+          "Adicionar corrida";
+
+    } else {
+
+      await addDoc(
+        collection(db, "corridas"),
+        {
+          nome,
+          valor,
+          corridas,
+          data,
+          dia,
+          criadoEm:
+            new Date()
+              .toISOString()
+        }
+      );
+
+      console.log(
+        "🔥 Corrida salva"
+      );
+    }
 
     limparCampos();
-
-    console.log(
-      "🔥 Corrida salva"
-    );
 
   } catch (erro) {
 
@@ -230,6 +265,48 @@ async function adicionar() {
       "Erro ao salvar"
     );
   }
+}
+
+
+
+function editarCorrida(id) {
+
+  let corrida =
+    corridasFirebase.find(
+      item => item.id === id
+    );
+
+  if (!corrida) return;
+
+  document
+    .getElementById("nome")
+    .value =
+      corrida.nome;
+
+  document
+    .getElementById("valor")
+    .value =
+      corrida.valor;
+
+  document
+    .getElementById("corridas")
+    .value =
+      corrida.corridas;
+
+  document
+    .getElementById("data")
+    .value =
+      corrida.data;
+
+  editandoId = id;
+
+  document
+    .querySelector(
+      "#home button"
+    ).innerText =
+      "Salvar edição";
+
+  abrirTela("home");
 }
 
 
@@ -549,6 +626,12 @@ function atualizarHistoricoMensal() {
           </div>
 
           <br>
+
+          <button
+            onclick="editarCorrida('${item.id}')"
+          >
+            ✏️ Editar
+          </button>
 
           <button
             onclick="excluirCorrida('${item.id}')"
@@ -922,6 +1005,9 @@ window.resetSemana =
 
 window.excluirCorrida =
   excluirCorrida;
+
+window.editarCorrida =
+  editarCorrida;
 
 
 
