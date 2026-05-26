@@ -43,6 +43,8 @@
 
     </section>
 
+
+
     <section id="home" class="tela">
 
       <button class="secundario" onclick="sair()">
@@ -97,6 +99,32 @@
 
     </section>
 
+
+
+    <section id="minhasTela" class="tela">
+
+      <h1>👤 Minhas Corridas</h1>
+
+      <p class="subtitulo">
+        Histórico do motorista logado
+      </p>
+
+      <div class="card">
+
+        <h2>Total pessoal</h2>
+
+        <strong id="meuTotal">
+          R$ 0
+        </strong>
+
+      </div>
+
+      <ul id="listaMinhas"></ul>
+
+    </section>
+
+
+
     <section id="rankingTela" class="tela">
 
       <h1>🏆 Ranking</h1>
@@ -109,6 +137,8 @@
 
     </section>
 
+
+
     <section id="historicoTela" class="tela">
 
       <h1>📅 Histórico Mensal</h1>
@@ -118,13 +148,20 @@
       </p>
 
       <div class="card">
+
         <h2>Total do mês</h2>
-        <strong id="totalHistoricoMensal">R$ 0</strong>
+
+        <strong id="totalHistoricoMensal">
+          R$ 0
+        </strong>
+
       </div>
 
       <ul id="listaHistorico"></ul>
 
     </section>
+
+
 
     <section id="graficoTela" class="tela">
 
@@ -139,8 +176,11 @@
       </div>
 
       <div class="card">
+
         <h2>📈 Evolução por data</h2>
+
         <canvas id="graficoLinha"></canvas>
+
       </div>
 
       <div class="metricas">
@@ -159,11 +199,18 @@
 
     </section>
 
+
+
     <nav class="menu" id="menuApp">
 
       <button onclick="abrirTela('home')">
         🏠
         <span>Home</span>
+      </button>
+
+      <button onclick="abrirTela('minhasTela')">
+        👤
+        <span>Minhas</span>
       </button>
 
       <button onclick="abrirTela('rankingTela')">

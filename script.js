@@ -174,7 +174,6 @@ async function adicionar() {
 
       alert("✏️ Corrida editada!");
       editandoId = null;
-
     } else {
       await addDoc(collection(db, "corridas"), {
         nome,
@@ -275,6 +274,10 @@ function abrirTela(id) {
   if (id === "historicoTela") {
     atualizarHistoricoMensal();
   }
+
+  if (id === "minhasTela") {
+    atualizarMinhasCorridas();
+  }
 }
 
 function atualizarTudo() {
@@ -284,6 +287,7 @@ function atualizarTudo() {
   atualizarGrafico();
   atualizarGraficoLinha();
   atualizarHistoricoMensal();
+  atualizarMinhasCorridas();
 }
 
 function atualizarRanking() {
@@ -309,6 +313,38 @@ function atualizarRanking() {
       </li>
     `;
   });
+}
+
+function atualizarMinhasCorridas() {
+  let lista = document.getElementById("listaMinhas");
+  let totalEl = document.getElementById("meuTotal");
+
+  if (!lista || !totalEl || !usuarioAtual) return;
+
+  lista.innerHTML = "";
+
+  let minhas = corridasFirebase.filter(item => item.uid === usuarioAtual.uid);
+
+  let total = minhas.reduce((soma, item) => soma + Number(item.valor), 0);
+
+  minhas.sort((a, b) => new Date(b.data) - new Date(a.data));
+
+  minhas.forEach(item => {
+    lista.innerHTML += `
+      <li>
+        <div class="posicao">🚗 ${item.nome}</div>
+        <br>
+        <div class="valor">💰 R$ ${item.valor}</div>
+        <div>📅 ${formatarData(item.data)}</div>
+        <div>🛣️ ${item.corridas || 0} corridas</div>
+        <br>
+        <button onclick="editarCorrida('${item.id}')">✏️ Editar</button>
+        <button onclick="excluirCorrida('${item.id}')">🗑️ Excluir</button>
+      </li>
+    `;
+  });
+
+  totalEl.innerText = `R$ ${total}`;
 }
 
 function atualizarHistoricoMensal() {
@@ -503,17 +539,10 @@ function salvarLocal() {
 }
 
 window.entrar = entrar;
-
 window.cadastrar = cadastrar;
-
 window.sair = sair;
-
 window.adicionar = adicionar;
-
 window.abrirTela = abrirTela;
-
 window.resetSemana = resetSemana;
-
 window.excluirCorrida = excluirCorrida;
-
 window.editarCorrida = editarCorrida;
