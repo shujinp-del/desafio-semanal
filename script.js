@@ -333,6 +333,7 @@ function atualizarMetas() {
   let progressoEl = document.getElementById("progressoMeta");
   let inputMeta = document.getElementById("metaSemanal");
   let badgeEl = document.getElementById("badgeMeta");
+  let notificacaoEl = document.getElementById("notificacaoMeta");
 
   if (!atualEl || !totalEl || !progressoEl) return;
 
@@ -381,6 +382,20 @@ function atualizarMetas() {
       badgeEl.innerHTML = "🥉 Bronze — 25% da meta";
     } else {
       badgeEl.innerHTML = "🚀 Começando — siga lançando corridas";
+    }
+  }
+
+  if (notificacaoEl) {
+    let faltam = meta - totalAtual;
+
+    if (meta <= 0) {
+      notificacaoEl.innerHTML = "🚀 Defina uma meta para começar";
+    } else if (faltam <= 0) {
+      notificacaoEl.innerHTML = "🏆 Parabéns! Você bateu sua meta semanal!";
+    } else if (faltam <= meta * 0.1) {
+      notificacaoEl.innerHTML = `🔥 Falta pouco! Só R$ ${faltam} para bater sua meta.`;
+    } else {
+      notificacaoEl.innerHTML = `🔔 Faltam R$ ${faltam} para sua meta semanal.`;
     }
   }
 }
