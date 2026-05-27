@@ -585,6 +585,9 @@ async function atualizarAdmin() {
         <button onclick="aprovarUsuario('${id}')">✅ Aprovar</button>
         <button onclick="bloquearUsuario('${id}')">🚫 Bloquear</button>
         <button onclick="tornarAdmin('${id}')">👑 Tornar admin</button>
+        <button onclick="excluirConta('${id}', '${usuario.email}')">
+  🗑️ Excluir conta
+</button>
       </li>
     `;
   });
@@ -1030,6 +1033,34 @@ async function resetSemana() {
     alert("Erro ao apagar");
   }
 }
+async function excluirConta(id, email) {
+  if (!confirm("Tem certeza que deseja excluir esta conta e todas as corridas dela?")) {
+    return;
+  }
+
+  try {
+    let corridasSnap = await getDocs(collection(db, "corridas"));
+
+    for (let documento of corridasSnap.docs) {
+      let corrida = documento.data();
+
+      if (corrida.email === email) {
+        await deleteDoc(documento.ref);
+      }
+    }
+
+    await deleteDoc(doc(db, "usuarios", id));
+
+    alert("Conta excluída com sucesso!");
+
+    atualizarAdmin();
+    atualizarRankingMetas();
+
+  } catch (erro) {
+    console.error(erro);
+    alert("Erro ao excluir conta");
+  }
+}
 
 window.entrar = entrar;
 window.cadastrar = cadastrar;
@@ -1043,3 +1074,4 @@ window.aprovarUsuario = aprovarUsuario;
 window.bloquearUsuario = bloquearUsuario;
 window.tornarAdmin = tornarAdmin;
 window.salvarMeta = salvarMeta;
+window.excluirConta = excluirConta;
