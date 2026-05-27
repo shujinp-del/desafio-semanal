@@ -773,3 +773,4 @@ window.abrirTela = abrirTela;
 window.salvarMeta = salvarMeta;
 window.aprovarUsuario = aprovarUsuario;
 window.bloquearUsuario = bloquearUsuario;
+window.salvarMeta = salvarMeta;
