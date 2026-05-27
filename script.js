@@ -32,28 +32,40 @@ const firebaseConfig = {
 };
 
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+
 const db = getFirestore(app);
+
 const auth = getAuth(app);
 
 let usuarioAtual = null;
 let dadosUsuario = null;
+
 let ranking = [];
 let corridasFirebase = [];
+
 let grafico;
 let graficoLinha;
+
 let editandoId = null;
+
 let pararSincronia = null;
 
 function mostrarStatusLogin(texto) {
+
   let card = document.querySelector("#loginTela .card");
+
   if (!card) return;
 
   let status = document.getElementById("statusLogin");
 
   if (!status) {
+
     status = document.createElement("p");
+
     status.id = "statusLogin";
+
     status.className = "subtitulo";
+
     card.appendChild(status);
   }
 
@@ -61,16 +73,25 @@ function mostrarStatusLogin(texto) {
 }
 
 async function cadastrar() {
+
   let email = document.getElementById("emailLogin").value.trim();
+
   let senha = document.getElementById("senhaLogin").value;
 
   if (!email || !senha) {
+
     alert("Digite email e senha");
+
     return;
   }
 
   try {
-    let credencial = await createUserWithEmailAndPassword(auth, email, senha);
+
+    let credencial = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      senha
+    );
 
     await setDoc(doc(db, "usuarios", credencial.user.uid), {
       email: email,
@@ -82,12 +103,15 @@ async function cadastrar() {
     alert("Conta criada! Aguarde aprovação do administrador.");
 
   } catch (erro) {
+
     alert(erro.message);
   }
 }
 
 function entrar() {
+
   let email = document.getElementById("emailLogin").value.trim();
+
   let senha = document.getElementById("senhaLogin").value;
 
   signInWithEmailAndPassword(auth, email, senha)
@@ -95,30 +119,40 @@ function entrar() {
 }
 
 function sair() {
+
   signOut(auth);
 }
 
 onAuthStateChanged(auth, async usuario => {
+
   usuarioAtual = usuario;
 
   let menu = document.getElementById("menuApp");
+
   let usuarioLogado = document.getElementById("usuarioLogado");
 
   if (pararSincronia) {
+
     pararSincronia();
+
     pararSincronia = null;
   }
 
   if (!usuario) {
+
     if (menu) menu.style.display = "none";
+
     abrirTela("loginTela");
+
     return;
   }
 
   let usuarioRef = doc(db, "usuarios", usuario.uid);
+
   let usuarioSnap = await getDoc(usuarioRef);
 
   if (!usuarioSnap.exists()) {
+
     await setDoc(usuarioRef, {
       email: usuario.email,
       status: "pendente",
@@ -131,67 +165,98 @@ onAuthStateChanged(auth, async usuario => {
       status: "pendente",
       papel: "motorista"
     };
+
   } else {
+
     dadosUsuario = usuarioSnap.data();
   }
 
-  if (dadosUsuario.status !== "ativo" && dadosUsuario.status !== "admin") {
+  if (
+    dadosUsuario.status !== "ativo" &&
+    dadosUsuario.status !== "admin"
+  ) {
+
     if (menu) menu.style.display = "none";
-    mostrarStatusLogin("⏳ Sua conta está aguardando aprovação.");
+
+    mostrarStatusLogin(
+      "⏳ Sua conta está aguardando aprovação."
+    );
+
     abrirTela("loginTela");
+
     return;
   }
 
   if (menu) menu.style.display = "flex";
 
   if (usuarioLogado) {
-    usuarioLogado.innerText = `Logado como: ${usuario.email}`;
+
+    usuarioLogado.innerText =
+      `Logado como: ${usuario.email}`;
   }
 
   mostrarStatusLogin("");
+
   abrirTela("home");
+
   iniciarSincronia();
 });
 
 function iniciarSincronia() {
-  pararSincronia = onSnapshot(collection(db, "corridas"), snapshot => {
-    let todasCorridas = [];
-    let corridasSemana = [];
 
-    snapshot.forEach(docSnap => {
-      let item = docSnap.data();
+  pararSincronia = onSnapshot(
+    collection(db, "corridas"),
+    snapshot => {
 
-      let corrida = {
-        id: docSnap.id,
-        ...item
-      };
+      let todasCorridas = [];
 
-      if (corrida.nome && corrida.valor && corrida.data) {
-        todasCorridas.push(corrida);
+      let corridasSemana = [];
 
-        if (estaNaSemanaAtual(corrida.data)) {
-          corridasSemana.push(corrida);
+      snapshot.forEach(docSnap => {
+
+        let item = docSnap.data();
+
+        let corrida = {
+          id: docSnap.id,
+          ...item
+        };
+
+        if (
+          corrida.nome &&
+          corrida.valor &&
+          corrida.data
+        ) {
+
+          todasCorridas.push(corrida);
+
+          if (estaNaSemanaAtual(corrida.data)) {
+
+            corridasSemana.push(corrida);
+          }
         }
-      }
-    });
+      });
 
-    corridasFirebase = todasCorridas;
-    ranking = montarRanking(corridasSemana);
+      corridasFirebase = todasCorridas;
 
-    salvarLocal();
-    atualizarTudo();
+      ranking = montarRanking(corridasSemana);
 
-    console.log("🔥 Dados sincronizados");
-  });
+      atualizarTudo();
+
+      console.log("🔥 Dados sincronizados");
+    }
+  );
 }
 
 function montarRanking(corridas) {
+
   let mapa = {};
 
   corridas.forEach(item => {
+
     let chave = item.nome.toLowerCase();
 
     if (!mapa[chave]) {
+
       mapa[chave] = {
         nome: item.nome,
         valor: 0,
@@ -201,6 +266,7 @@ function montarRanking(corridas) {
     }
 
     mapa[chave].valor += Number(item.valor);
+
     mapa[chave].corridas += Number(item.corridas || 0);
 
     mapa[chave].historico.push({
@@ -213,50 +279,78 @@ function montarRanking(corridas) {
   });
 
   let lista = Object.values(mapa);
+
   lista.sort((a, b) => b.valor - a.valor);
 
   return lista;
 }
 
 async function adicionar() {
+
   if (!usuarioAtual) {
+
     alert("Faça login primeiro");
+
     return;
   }
 
-  if (!dadosUsuario || (dadosUsuario.status !== "ativo" && dadosUsuario.status !== "admin")) {
+  if (
+    !dadosUsuario ||
+    (
+      dadosUsuario.status !== "ativo" &&
+      dadosUsuario.status !== "admin"
+    )
+  ) {
+
     alert("Sua conta ainda não foi aprovada");
+
     return;
   }
 
-  let nome = document.getElementById("nome").value.trim();
-  let valor = Number(document.getElementById("valor").value);
-  let corridas = Number(document.getElementById("corridas").value);
-  let data = document.getElementById("data").value;
+  let nome =
+    document.getElementById("nome").value.trim();
+
+  let valor =
+    Number(document.getElementById("valor").value);
+
+  let corridas =
+    Number(document.getElementById("corridas").value);
+
+  let data =
+    document.getElementById("data").value;
 
   if (!nome || valor <= 0 || !data) {
+
     alert("Preencha nome, valor e data");
+
     return;
   }
 
   let dia = descobrirDiaSemana(data);
 
   try {
+
     if (editandoId) {
-      await updateDoc(doc(db, "corridas", editandoId), {
-        nome,
-        valor,
-        corridas,
-        data,
-        dia,
-        uid: usuarioAtual.uid,
-        email: usuarioAtual.email
-      });
+
+      await updateDoc(
+        doc(db, "corridas", editandoId),
+        {
+          nome,
+          valor,
+          corridas,
+          data,
+          dia,
+          uid: usuarioAtual.uid,
+          email: usuarioAtual.email
+        }
+      );
 
       alert("✏️ Corrida editada!");
+
       editandoId = null;
 
     } else {
+
       await addDoc(collection(db, "corridas"), {
         nome,
         valor,
@@ -272,36 +366,57 @@ async function adicionar() {
     limparCampos();
 
   } catch (erro) {
-    console.error("Erro:", erro);
+
+    console.error(erro);
+
     alert("Erro ao salvar");
   }
 }
 
 function editarCorrida(id) {
-  let corrida = corridasFirebase.find(item => item.id === id);
+
+  let corrida =
+    corridasFirebase.find(item => item.id === id);
+
   if (!corrida) return;
 
-  document.getElementById("nome").value = corrida.nome;
-  document.getElementById("valor").value = corrida.valor;
-  document.getElementById("corridas").value = corrida.corridas;
-  document.getElementById("data").value = corrida.data;
+  document.getElementById("nome").value =
+    corrida.nome;
+
+  document.getElementById("valor").value =
+    corrida.valor;
+
+  document.getElementById("corridas").value =
+    corrida.corridas;
+
+  document.getElementById("data").value =
+    corrida.data;
 
   editandoId = id;
+
   abrirTela("home");
 }
 
 async function excluirCorrida(id) {
-  if (!confirm("Deseja excluir esta corrida?")) return;
+
+  if (!confirm("Deseja excluir esta corrida?")) {
+    return;
+  }
 
   try {
+
     await deleteDoc(doc(db, "corridas", id));
+
   } catch (erro) {
-    console.error("Erro ao excluir:", erro);
+
+    console.error(erro);
+
     alert("Erro ao excluir");
   }
 }
 
 function descobrirDiaSemana(data) {
+
   let dias = [
     "Domingo",
     "Segunda",
@@ -312,33 +427,52 @@ function descobrirDiaSemana(data) {
     "Sábado"
   ];
 
-  let dataObj = new Date(data + "T00:00:00");
+  let dataObj =
+    new Date(data + "T00:00:00");
+
   return dias[dataObj.getDay()];
 }
 
 function estaNaSemanaAtual(data) {
+
   let hoje = new Date();
+
   let inicioSemana = new Date(hoje);
+
   let diaSemana = hoje.getDay();
 
-  let diferenca = diaSemana === 0 ? -6 : 1 - diaSemana;
+  let diferenca =
+    diaSemana === 0 ? -6 : 1 - diaSemana;
 
-  inicioSemana.setDate(hoje.getDate() + diferenca);
+  inicioSemana.setDate(
+    hoje.getDate() + diferenca
+  );
+
   inicioSemana.setHours(0, 0, 0, 0);
 
   let fimSemana = new Date(inicioSemana);
-  fimSemana.setDate(inicioSemana.getDate() + 6);
+
+  fimSemana.setDate(
+    inicioSemana.getDate() + 6
+  );
+
   fimSemana.setHours(23, 59, 59, 999);
 
-  let dataCorrida = new Date(data + "T00:00:00");
+  let dataCorrida =
+    new Date(data + "T00:00:00");
 
-  return dataCorrida >= inicioSemana && dataCorrida <= fimSemana;
+  return (
+    dataCorrida >= inicioSemana &&
+    dataCorrida <= fimSemana
+  );
 }
 
 function abrirTela(id) {
-  document.querySelectorAll(".tela").forEach(tela => {
-    tela.classList.remove("ativa");
-  });
+
+  document.querySelectorAll(".tela")
+    .forEach(tela => {
+      tela.classList.remove("ativa");
+    });
 
   let tela = document.getElementById(id);
 
@@ -347,79 +481,143 @@ function abrirTela(id) {
   }
 
   if (id === "graficoTela") {
+
     atualizarGrafico();
+
     atualizarGraficoLinha();
   }
 
   if (id === "historicoTela") {
+
     atualizarHistoricoMensal();
   }
 
   if (id === "minhasTela") {
+
     atualizarMinhasCorridas();
   }
 }
 
 function atualizarTudo() {
+
   atualizarRanking();
+
   atualizarLider();
+
   atualizarMetricas();
+
   atualizarGrafico();
+
   atualizarGraficoLinha();
+
   atualizarHistoricoMensal();
+
   atualizarMinhasCorridas();
 }
 
 function atualizarRanking() {
-  let lista = document.getElementById("ranking");
+
+  let lista =
+    document.getElementById("ranking");
 
   if (!lista) return;
 
   lista.innerHTML = "";
 
   ranking.forEach((m, index) => {
+
     let medalha = `${index + 1}º`;
 
     if (index === 0) medalha = "🥇";
+
     if (index === 1) medalha = "🥈";
+
     if (index === 2) medalha = "🥉";
 
     lista.innerHTML += `
       <li>
-        <div class="posicao">${medalha} ${m.nome}</div>
+        <div class="posicao">
+          ${medalha} ${m.nome}
+        </div>
+
         <br>
-        <div class="valor">💰 R$ ${m.valor}</div>
-        <div>🚗 ${m.corridas} corridas</div>
+
+        <div class="valor">
+          💰 R$ ${m.valor}
+        </div>
+
+        <div>
+          🚗 ${m.corridas} corridas
+        </div>
       </li>
     `;
   });
 }
 
 function atualizarMinhasCorridas() {
-  let lista = document.getElementById("listaMinhas");
-  let totalEl = document.getElementById("meuTotal");
 
-  if (!lista || !totalEl || !usuarioAtual) return;
+  let lista =
+    document.getElementById("listaMinhas");
+
+  let totalEl =
+    document.getElementById("meuTotal");
+
+  if (!lista || !totalEl || !usuarioAtual) {
+    return;
+  }
 
   lista.innerHTML = "";
 
-  let minhas = corridasFirebase.filter(item => item.uid === usuarioAtual.uid);
+  let minhas =
+    corridasFirebase.filter(
+      item => item.uid === usuarioAtual.uid
+    );
 
-  let total = minhas.reduce((soma, item) => soma + Number(item.valor), 0);
+  let total =
+    minhas.reduce(
+      (soma, item) =>
+        soma + Number(item.valor),
+      0
+    );
 
-  minhas.sort((a, b) => new Date(b.data) - new Date(a.data));
+  minhas.sort(
+    (a, b) =>
+      new Date(b.data) - new Date(a.data)
+  );
 
   minhas.forEach(item => {
+
     lista.innerHTML += `
       <li>
-        <div class="posicao">🚗 ${item.nome}</div>
+
+        <div class="posicao">
+          🚗 ${item.nome}
+        </div>
+
         <br>
-        <div class="valor">💰 R$ ${item.valor}</div>
-        <div>📅 ${formatarData(item.data)}</div>
-        <div>🛣️ ${item.corridas || 0} corridas</div>
+
+        <div class="valor">
+          💰 R$ ${item.valor}
+        </div>
+
+        <div>
+          📅 ${formatarData(item.data)}
+        </div>
+
+        <div>
+          🛣️ ${item.corridas || 0} corridas
+        </div>
+
         <br>
-        <button onclick="editarCorrida('${item.id}')">✏️ Editar</button>
-        <button onclick="excluirCorrida('${item.id}')">🗑️ Excluir</button>
+
+        <button onclick="editarCorrida('${item.id}')">
+          ✏️ Editar
+        </button>
+
+        <button onclick="excluirCorrida('${item.id}')">
+          🗑️ Excluir
+        </button>
+
       </li>
     `;
   });
@@ -428,41 +626,79 @@ function atualizarMinhasCorridas() {
 }
 
 function atualizarHistoricoMensal() {
-  let lista = document.getElementById("listaHistorico");
-  let totalEl = document.getElementById("totalHistoricoMensal");
+
+  let lista =
+    document.getElementById("listaHistorico");
+
+  let totalEl =
+    document.getElementById("totalHistoricoMensal");
 
   if (!lista || !totalEl) return;
 
   lista.innerHTML = "";
 
   let total = 0;
+
   let hoje = new Date();
+
   let mesAtual = hoje.getMonth();
+
   let anoAtual = hoje.getFullYear();
 
-  let corridasMes = corridasFirebase.filter(item => {
-    if (!item.data) return false;
+  let corridasMes =
+    corridasFirebase.filter(item => {
 
-    let data = new Date(item.data + "T00:00:00");
+      if (!item.data) return false;
 
-    return data.getMonth() === mesAtual && data.getFullYear() === anoAtual;
-  });
+      let data =
+        new Date(item.data + "T00:00:00");
 
-  corridasMes.sort((a, b) => new Date(b.data) - new Date(a.data));
+      return (
+        data.getMonth() === mesAtual &&
+        data.getFullYear() === anoAtual
+      );
+    });
+
+  corridasMes.sort(
+    (a, b) =>
+      new Date(b.data) - new Date(a.data)
+  );
 
   corridasMes.forEach(item => {
+
     total += Number(item.valor);
 
     lista.innerHTML += `
       <li>
-        <div class="posicao">🚗 ${item.nome}</div>
+
+        <div class="posicao">
+          🚗 ${item.nome}
+        </div>
+
         <br>
-        <div class="valor">💰 R$ ${item.valor}</div>
-        <div>📅 ${formatarData(item.data)}</div>
-        <div>🛣️ ${item.corridas || 0} corridas</div>
+
+        <div class="valor">
+          💰 R$ ${item.valor}
+        </div>
+
+        <div>
+          📅 ${formatarData(item.data)}
+        </div>
+
+        <div>
+          🛣️ ${item.corridas || 0} corridas
+        </div>
+
         <br>
-        <button onclick="editarCorrida('${item.id}')">✏️ Editar</button>
-        <button onclick="excluirCorrida('${item.id}')">🗑️ Excluir</button>
+
+        <button onclick="editarCorrida('${item.id}')">
+          ✏️ Editar
+        </button>
+
+        <button onclick="excluirCorrida('${item.id}')">
+          🗑️ Excluir
+        </button>
+
       </li>
     `;
   });
@@ -471,12 +707,16 @@ function atualizarHistoricoMensal() {
 }
 
 function atualizarLider() {
-  let lider = document.getElementById("liderSemana");
+
+  let lider =
+    document.getElementById("liderSemana");
 
   if (!lider) return;
 
   if (ranking.length === 0) {
+
     lider.innerHTML = "";
+
     return;
   }
 
@@ -484,72 +724,129 @@ function atualizarLider() {
 
   lider.innerHTML = `
     <div class="lider-card">
+
       🏆 LÍDER
+
       <h2>${top.nome}</h2>
-      <strong>R$ ${top.valor}</strong>
+
+      <strong>
+        R$ ${top.valor}
+      </strong>
+
       <br><br>
+
       🚗 ${top.corridas} corridas
+
     </div>
   `;
 }
 
 function atualizarMetricas() {
-  let total = ranking.reduce((soma, m) => soma + Number(m.valor), 0);
-  let corridas = ranking.reduce((soma, m) => soma + Number(m.corridas), 0);
 
-  let homeTotal = document.getElementById("homeTotal");
-  let homeMensal = document.getElementById("homeMensal");
-  let totalSemana = document.getElementById("totalSemana");
-  let totalCorridas = document.getElementById("totalCorridas");
+  let total =
+    ranking.reduce(
+      (soma, m) =>
+        soma + Number(m.valor),
+      0
+    );
 
-  if (homeTotal) homeTotal.innerText = `R$ ${total}`;
-  if (homeMensal) homeMensal.innerText = `R$ ${total}`;
-  if (totalSemana) totalSemana.innerText = `R$ ${total}`;
-  if (totalCorridas) totalCorridas.innerText = corridas;
+  let corridas =
+    ranking.reduce(
+      (soma, m) =>
+        soma + Number(m.corridas),
+      0
+    );
+
+  let homeTotal =
+    document.getElementById("homeTotal");
+
+  let homeMensal =
+    document.getElementById("homeMensal");
+
+  let totalSemana =
+    document.getElementById("totalSemana");
+
+  let totalCorridas =
+    document.getElementById("totalCorridas");
+
+  if (homeTotal) {
+    homeTotal.innerText = `R$ ${total}`;
+  }
+
+  if (homeMensal) {
+    homeMensal.innerText = `R$ ${total}`;
+  }
+
+  if (totalSemana) {
+    totalSemana.innerText = `R$ ${total}`;
+  }
+
+  if (totalCorridas) {
+    totalCorridas.innerText = corridas;
+  }
 }
 
 function atualizarGrafico() {
-  let canvas = document.getElementById("grafico");
+
+  let canvas =
+    document.getElementById("grafico");
 
   if (!canvas) return;
 
   if (grafico) {
+
     grafico.destroy();
   }
 
-  grafico = new Chart(canvas.getContext("2d"), {
-    type: "doughnut",
-    data: {
-      labels: ranking.map(m => m.nome),
-      datasets: [{
-        data: ranking.map(m => m.valor),
-        backgroundColor: [
-          "#2563eb",
-          "#dc2626",
-          "#16a34a",
-          "#facc15",
-          "#9333ea",
-          "#f97316",
-          "#06b6d4",
-          "#ec4899",
-          "#111827",
-          "#84cc16"
+  grafico = new Chart(
+    canvas.getContext("2d"),
+    {
+      type: "doughnut",
+
+      data: {
+
+        labels:
+          ranking.map(m => m.nome),
+
+        datasets: [
+          {
+            data:
+              ranking.map(m => m.valor),
+
+            backgroundColor: [
+              "#2563eb",
+              "#dc2626",
+              "#16a34a",
+              "#facc15",
+              "#9333ea",
+              "#f97316",
+              "#06b6d4",
+              "#ec4899",
+              "#111827",
+              "#84cc16"
+            ]
+          }
         ]
-      }]
+      }
     }
-  });
+  );
 }
 
 function atualizarGraficoLinha() {
-  let canvas = document.getElementById("graficoLinha");
+
+  let canvas =
+    document.getElementById("graficoLinha");
 
   if (!canvas) return;
 
   let totais = {};
 
   ranking.forEach(motorista => {
+
     motorista.historico.forEach(item => {
+
       if (!totais[item.data]) {
+
         totais[item.data] = 0;
       }
 
@@ -558,75 +855,115 @@ function atualizarGraficoLinha() {
   });
 
   let datas = Object.keys(totais).sort();
-  let valores = datas.map(data => totais[data]);
+
+  let valores =
+    datas.map(data => totais[data]);
 
   if (graficoLinha) {
+
     graficoLinha.destroy();
   }
 
-  graficoLinha = new Chart(canvas.getContext("2d"), {
-    type: "line",
-    data: {
-      labels: datas,
-      datasets: [{
-        label: "Evolução",
-        data: valores,
-        borderColor: "#ff7a18",
-        backgroundColor: "rgba(255,122,24,0.2)",
-        fill: true,
-        tension: 0.3
-      }]
+  graficoLinha = new Chart(
+    canvas.getContext("2d"),
+    {
+      type: "line",
+
+      data: {
+
+        labels: datas,
+
+        datasets: [
+          {
+            label: "Evolução",
+
+            data: valores,
+
+            borderColor: "#ff7a18",
+
+            backgroundColor:
+              "rgba(255,122,24,0.2)",
+
+            fill: true,
+
+            tension: 0.3
+          }
+        ]
+      }
     }
-  });
+  );
 }
 
 function formatarData(data) {
+
   if (!data) return "sem data";
 
   let partes = data.split("-");
-  return `${partes[2]}/${partes[1]}/${partes[0]}`;
+
+  return `
+    ${partes[2]}/${partes[1]}/${partes[0]}
+  `;
 }
 
 function limparCampos() {
+
   document.getElementById("nome").value = "";
+
   document.getElementById("valor").value = "";
+
   document.getElementById("corridas").value = "";
+
   document.getElementById("data").value = "";
 }
 
 async function resetSemana() {
-  if (!confirm("Deseja apagar TODAS as corridas?")) return;
+
+  if (
+    !confirm(
+      "Deseja apagar TODAS as corridas?"
+    )
+  ) {
+    return;
+  }
 
   try {
-    let documentos = await getDocs(collection(db, "corridas"));
+
+    let documentos =
+      await getDocs(collection(db, "corridas"));
 
     documentos.forEach(async documento => {
+
       await deleteDoc(documento.ref);
     });
 
     ranking = [];
+
     corridasFirebase = [];
 
-    salvarLocal();
     atualizarTudo();
 
     alert("🔥 Corridas apagadas!");
 
   } catch (erro) {
+
     console.error(erro);
+
     alert("Erro ao apagar");
   }
 }
 
-function salvarLocal() {
-  localStorage.setItem("ranking", JSON.stringify(ranking));
-}
-
 window.entrar = entrar;
+
 window.cadastrar = cadastrar;
+
 window.sair = sair;
+
 window.adicionar = adicionar;
+
 window.abrirTela = abrirTela;
+
 window.resetSemana = resetSemana;
+
 window.excluirCorrida = excluirCorrida;
+
 window.editarCorrida = editarCorrida;
