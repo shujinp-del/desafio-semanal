@@ -37,11 +37,11 @@ const app =
     : initializeApp(firebaseConfig);
 
 const db = getFirestore(app);
-
 const auth = getAuth(app);
 
 let usuarioAtual = null;
 let dadosUsuario = null;
+
 let ranking = [];
 let corridasFirebase = [];
 let rankingMetas = [];
@@ -51,6 +51,38 @@ let graficoLinha;
 
 let editandoId = null;
 let pararSincronia = null;
+
+function usuarioEhAdmin() {
+  return (
+    dadosUsuario &&
+    (
+      dadosUsuario.papel === "admin" ||
+      dadosUsuario.status === "admin"
+    )
+  );
+}
+
+function aplicarPrivacidadeMenus() {
+  let botaoGeral =
+    document.getElementById("botaoGeral");
+
+  let botaoAdmin =
+    document.getElementById("botaoAdmin");
+
+  if (botaoGeral) {
+    botaoGeral.style.display =
+      usuarioEhAdmin()
+        ? "block"
+        : "none";
+  }
+
+  if (botaoAdmin) {
+    botaoAdmin.style.display =
+      usuarioEhAdmin()
+        ? "block"
+        : "none";
+  }
+}
 
 // ================================
 // LOGIN
@@ -151,7 +183,6 @@ function entrar() {
 }
 
 function sair() {
-
   signOut(auth);
 }
 
@@ -164,26 +195,21 @@ onAuthStateChanged(
     let menu =
       document.getElementById("menuApp");
 
-    let botaoAdmin =
-      document.getElementById("botaoAdmin");
-
     let usuarioLogado =
       document.getElementById("usuarioLogado");
 
     if (pararSincronia) {
-
       pararSincronia();
-
       pararSincronia = null;
     }
 
     if (!usuario) {
 
-      if (menu)
+      if (menu) {
         menu.style.display = "none";
+      }
 
-      if (botaoAdmin)
-        botaoAdmin.style.display = "none";
+      aplicarPrivacidadeMenus();
 
       abrirTela("loginTela");
 
@@ -227,11 +253,11 @@ onAuthStateChanged(
       dadosUsuario.status !== "admin"
     ) {
 
-      if (menu)
+      if (menu) {
         menu.style.display = "none";
+      }
 
-      if (botaoAdmin)
-        botaoAdmin.style.display = "none";
+      aplicarPrivacidadeMenus();
 
       mostrarStatusLogin(
         "⏳ Sua conta está aguardando aprovação."
@@ -242,19 +268,13 @@ onAuthStateChanged(
       return;
     }
 
-    if (menu)
+    if (menu) {
       menu.style.display = "flex";
-
-    if (botaoAdmin) {
-
-      botaoAdmin.style.display =
-        dadosUsuario.papel === "admin"
-          ? "block"
-          : "none";
     }
 
-    if (usuarioLogado) {
+    aplicarPrivacidadeMenus();
 
+    if (usuarioLogado) {
       usuarioLogado.innerText =
         `Logado como: ${usuario.email}`;
     }
@@ -302,7 +322,6 @@ function iniciarSincronia() {
           if (
             estaNaSemanaAtual(corrida.data)
           ) {
-
             corridasSemana.push(corrida);
           }
         }
@@ -755,7 +774,7 @@ async function atualizarAdmin() {
 
   if (!lista) return;
 
-  if (!dadosUsuario || dadosUsuario.papel !== "admin") {
+  if (!usuarioEhAdmin()) {
     lista.innerHTML =
       "<li>Acesso restrito.</li>";
     return;
@@ -918,6 +937,24 @@ function formatarData(data) {
 
 function abrirTela(id) {
 
+  if (
+    id === "historicoTela" &&
+    !usuarioEhAdmin()
+  ) {
+    alert("Acesso restrito ao admin.");
+    abrirTela("home");
+    return;
+  }
+
+  if (
+    id === "adminTela" &&
+    !usuarioEhAdmin()
+  ) {
+    alert("Acesso restrito ao admin.");
+    abrirTela("home");
+    return;
+  }
+
   document
     .querySelectorAll(".tela")
     .forEach(tela => {
@@ -959,6 +996,8 @@ function abrirTela(id) {
 }
 
 function atualizarTudo() {
+
+  aplicarPrivacidadeMenus();
 
   atualizarRanking();
 
@@ -1258,12 +1297,31 @@ function atualizarMetricas() {
 // GRÁFICOS
 // ================================
 
+function obterRankingParaGrafico() {
+
+  if (usuarioEhAdmin()) {
+    return ranking;
+  }
+
+  let minhasSemana =
+    corridasFirebase.filter(
+      item =>
+        item.uid === usuarioAtual?.uid &&
+        estaNaSemanaAtual(item.data)
+    );
+
+  return montarRanking(minhasSemana);
+}
+
 function atualizarGrafico() {
 
   let canvas =
     document.getElementById("grafico");
 
   if (!canvas) return;
+
+  let dadosGrafico =
+    obterRankingParaGrafico();
 
   if (grafico) {
     grafico.destroy();
@@ -1276,10 +1334,10 @@ function atualizarGrafico() {
         type: "doughnut",
         data: {
           labels:
-            ranking.map(m => m.nome),
+            dadosGrafico.map(m => m.nome),
           datasets: [{
             data:
-              ranking.map(m => m.valor),
+              dadosGrafico.map(m => m.valor),
             backgroundColor: [
               "#2563eb",
               "#dc2626",
@@ -1305,9 +1363,12 @@ function atualizarGraficoLinha() {
 
   if (!canvas) return;
 
+  let dadosGrafico =
+    obterRankingParaGrafico();
+
   let totais = {};
 
-  ranking.forEach(motorista => {
+  dadosGrafico.forEach(motorista => {
 
     motorista.historico.forEach(item => {
 
@@ -1338,7 +1399,9 @@ function atualizarGraficoLinha() {
         data: {
           labels: datas,
           datasets: [{
-            label: "Evolução",
+            label: usuarioEhAdmin()
+              ? "Evolução geral"
+              : "Minha evolução",
             data: valores,
             borderColor: "#ff7a18",
             backgroundColor:
@@ -1358,11 +1421,8 @@ function atualizarGraficoLinha() {
 function limparCampos() {
 
   document.getElementById("nome").value = "";
-
   document.getElementById("valor").value = "";
-
   document.getElementById("corridas").value = "";
-
   document.getElementById("data").value = "";
 }
 
