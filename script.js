@@ -969,6 +969,11 @@ function abrirTela(id) {
   }
 
   if (id === "metasTela") {
+    if (id === "metasTela") {
+  atualizarMetas();
+  atualizarRankingMetas();
+  atualizarMelhorDia();
+}
     atualizarMetas();
     atualizarRankingMetas();
   }
