@@ -142,7 +142,6 @@ onAuthStateChanged(auth, async usuario => {
   if (dadosUsuario.status !== "ativo" && dadosUsuario.status !== "admin") {
     if (menu) menu.style.display = "none";
     if (botaoAdmin) botaoAdmin.style.display = "none";
-
     mostrarStatusLogin("⏳ Sua conta está aguardando aprovação.");
     abrirTela("loginTela");
     return;
@@ -151,8 +150,7 @@ onAuthStateChanged(auth, async usuario => {
   if (menu) menu.style.display = "flex";
 
   if (botaoAdmin) {
-    botaoAdmin.style.display =
-      dadosUsuario.papel === "admin" ? "block" : "none";
+    botaoAdmin.style.display = dadosUsuario.papel === "admin" ? "block" : "none";
   }
 
   if (usuarioLogado) {
@@ -318,7 +316,6 @@ async function salvarMeta() {
     });
 
     dadosUsuario.metaSemanal = meta;
-
     atualizarMetas();
 
     alert("🎯 Meta salva!");
@@ -335,6 +332,7 @@ function atualizarMetas() {
   let totalEl = document.getElementById("valorMetaTotal");
   let progressoEl = document.getElementById("progressoMeta");
   let inputMeta = document.getElementById("metaSemanal");
+  let badgeEl = document.getElementById("badgeMeta");
 
   if (!atualEl || !totalEl || !progressoEl) return;
 
@@ -361,12 +359,30 @@ function atualizarMetas() {
 
   if (meta > 0) {
     progresso = Math.min(
-      100,
+      150,
       Math.round((totalAtual / meta) * 100)
     );
   }
 
-  progressoEl.innerText = `${progresso}%`;
+  progressoEl.innerText = `${Math.min(progresso, 100)}%`;
+
+  if (badgeEl) {
+    if (meta <= 0) {
+      badgeEl.innerHTML = "😴 Defina uma meta para ganhar badges";
+    } else if (progresso >= 120) {
+      badgeEl.innerHTML = "🔥 Ultra Meta — passou de 120%";
+    } else if (progresso >= 100) {
+      badgeEl.innerHTML = "🏆 Meta Batida — desafio concluído";
+    } else if (progresso >= 75) {
+      badgeEl.innerHTML = "🥇 Ouro — 75% da meta";
+    } else if (progresso >= 50) {
+      badgeEl.innerHTML = "🥈 Prata — 50% da meta";
+    } else if (progresso >= 25) {
+      badgeEl.innerHTML = "🥉 Bronze — 25% da meta";
+    } else {
+      badgeEl.innerHTML = "🚀 Começando — siga lançando corridas";
+    }
+  }
 }
 
 async function atualizarAdmin() {
@@ -389,33 +405,14 @@ async function atualizarAdmin() {
 
     lista.innerHTML += `
       <li>
-        <div class="posicao">
-          👤 ${usuario.email || "sem email"}
-        </div>
-
+        <div class="posicao">👤 ${usuario.email || "sem email"}</div>
         <br>
-
-        <div>
-          Status: <strong>${usuario.status}</strong>
-        </div>
-
-        <div>
-          Papel: <strong>${usuario.papel}</strong>
-        </div>
-
+        <div>Status: <strong>${usuario.status}</strong></div>
+        <div>Papel: <strong>${usuario.papel}</strong></div>
         <br>
-
-        <button onclick="aprovarUsuario('${id}')">
-          ✅ Aprovar
-        </button>
-
-        <button onclick="bloquearUsuario('${id}')">
-          🚫 Bloquear
-        </button>
-
-        <button onclick="tornarAdmin('${id}')">
-          👑 Tornar admin
-        </button>
+        <button onclick="aprovarUsuario('${id}')">✅ Aprovar</button>
+        <button onclick="bloquearUsuario('${id}')">🚫 Bloquear</button>
+        <button onclick="tornarAdmin('${id}')">👑 Tornar admin</button>
       </li>
     `;
   });
@@ -481,10 +478,12 @@ function abrirTela(id) {
 
   if (id === "metasTela") atualizarMetas();
   if (id === "adminTela") atualizarAdmin();
+
   if (id === "graficoTela") {
     atualizarGrafico();
     atualizarGraficoLinha();
   }
+
   if (id === "historicoTela") atualizarHistoricoMensal();
   if (id === "minhasTela") atualizarMinhasCorridas();
 }
