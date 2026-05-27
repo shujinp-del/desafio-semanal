@@ -506,6 +506,88 @@ function atualizarMetas() {
 }
 
 function atualizarMelhorDia() {
+  function atualizarPiorDia() {
+
+  let nomeEl =
+    document.getElementById("piorDiaNome");
+
+  let valorEl =
+    document.getElementById("piorDiaValor");
+
+  let corridasEl =
+    document.getElementById("piorDiaCorridas");
+
+  if (
+    !nomeEl ||
+    !valorEl ||
+    !corridasEl ||
+    !usuarioAtual
+  ) return;
+
+  let mapa = {};
+
+  corridasFirebase
+    .filter(item =>
+      item.uid === usuarioAtual.uid &&
+      estaNaSemanaAtual(item.data)
+    )
+    .forEach(item => {
+
+      if (!mapa[item.data]) {
+
+        mapa[item.data] = {
+          valor: 0,
+          corridas: 0
+        };
+      }
+
+      mapa[item.data].valor +=
+        Number(item.valor);
+
+      mapa[item.data].corridas +=
+        Number(item.corridas || 0);
+    });
+
+  let piorData = null;
+
+  Object.keys(mapa).forEach(data => {
+
+    if (
+      !piorData ||
+      mapa[data].valor <
+      mapa[piorData].valor
+    ) {
+
+      piorData = data;
+    }
+  });
+
+  if (!piorData) {
+
+    nomeEl.innerText = "-";
+    valorEl.innerText = "R$ 0";
+    corridasEl.innerText = "0";
+
+    return;
+  }
+
+  let dataObj =
+    new Date(piorData + "T00:00:00");
+
+  nomeEl.innerText =
+    dataObj.toLocaleDateString(
+      "pt-BR",
+      {
+        weekday: "long"
+      }
+    );
+
+  valorEl.innerText =
+    `R$ ${mapa[piorData].valor}`;
+
+  corridasEl.innerText =
+    mapa[piorData].corridas;
+}
   let nomeEl = document.getElementById("melhorDiaNome");
   let valorEl = document.getElementById("melhorDiaValor");
   let corridasEl = document.getElementById("melhorDiaCorridas");
@@ -733,6 +815,7 @@ function abrirTela(id) {
     atualizarMetas();
     atualizarRankingMetas();
     atualizarMelhorDia();
+    atualizarPiorDia();
   }
 
   if (id === "adminTela") atualizarAdmin();
@@ -762,6 +845,7 @@ function atualizarTudo() {
   atualizarMetas();
   atualizarRankingMetas();
   atualizarMelhorDia();
+  atualizarPiorDia();
 }
 
 function atualizarRanking() {
