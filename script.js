@@ -16,7 +16,10 @@ import {
   getDocs,
   deleteDoc,
   doc,
-  updateDoc
+  updateDoc,
+  setDoc,
+  getDoc,
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -33,23 +36,58 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 let usuarioAtual = null;
+let dadosUsuario = null;
 let ranking = [];
 let corridasFirebase = [];
 let grafico;
 let graficoLinha;
 let editandoId = null;
+let pararSincronia = null;
 
-function cadastrar() {
-  let email = document.getElementById("emailLogin").value;
+function mostrarStatusLogin(texto) {
+  let card = document.querySelector("#loginTela .card");
+  if (!card) return;
+
+  let status = document.getElementById("statusLogin");
+
+  if (!status) {
+    status = document.createElement("p");
+    status.id = "statusLogin";
+    status.className = "subtitulo";
+    card.appendChild(status);
+  }
+
+  status.innerText = texto;
+}
+
+async function cadastrar() {
+  let email = document.getElementById("emailLogin").value.trim();
   let senha = document.getElementById("senhaLogin").value;
 
-  createUserWithEmailAndPassword(auth, email, senha)
-    .then(() => alert("Conta criada com sucesso!"))
-    .catch(erro => alert(erro.message));
+  if (!email || !senha) {
+    alert("Digite email e senha");
+    return;
+  }
+
+  try {
+    let credencial = await createUserWithEmailAndPassword(auth, email, senha);
+
+    await setDoc(doc(db, "usuarios", credencial.user.uid), {
+      email: email,
+      status: "pendente",
+      papel: "motorista",
+      criadoEm: serverTimestamp()
+    });
+
+    alert("Conta criada! Aguarde aprovação do administrador.");
+
+  } catch (erro) {
+    alert(erro.message);
+  }
 }
 
 function entrar() {
-  let email = document.getElementById("emailLogin").value;
+  let email = document.getElementById("emailLogin").value.trim();
   let senha = document.getElementById("senhaLogin").value;
 
   signInWithEmailAndPassword(auth, email, senha)
@@ -60,25 +98,63 @@ function sair() {
   signOut(auth);
 }
 
-onAuthStateChanged(auth, usuario => {
+onAuthStateChanged(auth, async usuario => {
   usuarioAtual = usuario;
 
   let menu = document.getElementById("menuApp");
   let usuarioLogado = document.getElementById("usuarioLogado");
 
-  if (usuario) {
-    if (menu) menu.style.display = "flex";
-    if (usuarioLogado) usuarioLogado.innerText = `Logado como: ${usuario.email}`;
-    abrirTela("home");
-    iniciarSincronia();
-  } else {
+  if (pararSincronia) {
+    pararSincronia();
+    pararSincronia = null;
+  }
+
+  if (!usuario) {
     if (menu) menu.style.display = "none";
     abrirTela("loginTela");
+    return;
   }
+
+  let usuarioRef = doc(db, "usuarios", usuario.uid);
+  let usuarioSnap = await getDoc(usuarioRef);
+
+  if (!usuarioSnap.exists()) {
+    await setDoc(usuarioRef, {
+      email: usuario.email,
+      status: "pendente",
+      papel: "motorista",
+      criadoEm: serverTimestamp()
+    });
+
+    dadosUsuario = {
+      email: usuario.email,
+      status: "pendente",
+      papel: "motorista"
+    };
+  } else {
+    dadosUsuario = usuarioSnap.data();
+  }
+
+  if (dadosUsuario.status !== "ativo" && dadosUsuario.status !== "admin") {
+    if (menu) menu.style.display = "none";
+    mostrarStatusLogin("⏳ Sua conta está aguardando aprovação.");
+    abrirTela("loginTela");
+    return;
+  }
+
+  if (menu) menu.style.display = "flex";
+
+  if (usuarioLogado) {
+    usuarioLogado.innerText = `Logado como: ${usuario.email}`;
+  }
+
+  mostrarStatusLogin("");
+  abrirTela("home");
+  iniciarSincronia();
 });
 
 function iniciarSincronia() {
-  onSnapshot(collection(db, "corridas"), snapshot => {
+  pararSincronia = onSnapshot(collection(db, "corridas"), snapshot => {
     let todasCorridas = [];
     let corridasSemana = [];
 
@@ -148,6 +224,11 @@ async function adicionar() {
     return;
   }
 
+  if (!dadosUsuario || (dadosUsuario.status !== "ativo" && dadosUsuario.status !== "admin")) {
+    alert("Sua conta ainda não foi aprovada");
+    return;
+  }
+
   let nome = document.getElementById("nome").value.trim();
   let valor = Number(document.getElementById("valor").value);
   let corridas = Number(document.getElementById("corridas").value);
@@ -174,6 +255,7 @@ async function adicionar() {
 
       alert("✏️ Corrida editada!");
       editandoId = null;
+
     } else {
       await addDoc(collection(db, "corridas"), {
         nome,
@@ -197,7 +279,6 @@ async function adicionar() {
 
 function editarCorrida(id) {
   let corrida = corridasFirebase.find(item => item.id === id);
-
   if (!corrida) return;
 
   document.getElementById("nome").value = corrida.nome;
@@ -206,7 +287,6 @@ function editarCorrida(id) {
   document.getElementById("data").value = corrida.data;
 
   editandoId = id;
-
   abrirTela("home");
 }
 
@@ -443,18 +523,17 @@ function atualizarGrafico() {
       labels: ranking.map(m => m.nome),
       datasets: [{
         data: ranking.map(m => m.valor),
-  backgroundColor: [
-  "#2563eb",
-  "#dc2626",
-  "#16a34a",
-  "#facc15",
-  "#9333ea",
-  "#f97316",
-  "#06b6d4",
-  "#ec4899",
-  "#111827",
-  "#84cc16"
-  ]
+        backgroundColor: [
+          "#2563eb",
+          "#dc2626",
+          "#16a34a",
+          "#facc15",
+          "#9333ea",
+          "#f97316",
+          "#06b6d4",
+          "#ec4899",
+          "#111827",
+          "#84cc16"
         ]
       }]
     }
