@@ -454,7 +454,7 @@ function atualizarGrafico() {
   "#ec4899",
   "#111827",
   "#84cc16"
-]
+
         ]
       }]
     }
