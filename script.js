@@ -651,6 +651,53 @@ function formatarData(data) {
 }
 
 function abrirTela(id) {
+  function atualizarMelhorDia() {
+  let nomeEl = document.getElementById("melhorDiaNome");
+  let valorEl = document.getElementById("melhorDiaValor");
+  let corridasEl = document.getElementById("melhorDiaCorridas");
+
+  if (!nomeEl || !valorEl || !corridasEl || !usuarioAtual) return;
+
+  let mapa = {};
+
+  corridasFirebase
+    .filter(item =>
+      item.uid === usuarioAtual.uid &&
+      estaNaSemanaAtual(item.data)
+    )
+    .forEach(item => {
+      if (!mapa[item.data]) {
+        mapa[item.data] = { valor: 0, corridas: 0 };
+      }
+
+      mapa[item.data].valor += Number(item.valor);
+      mapa[item.data].corridas += Number(item.corridas || 0);
+    });
+
+  let melhorData = null;
+
+  Object.keys(mapa).forEach(data => {
+    if (!melhorData || mapa[data].valor > mapa[melhorData].valor) {
+      melhorData = data;
+    }
+  });
+
+  if (!melhorData) {
+    nomeEl.innerText = "-";
+    valorEl.innerText = "R$ 0";
+    corridasEl.innerText = "0";
+    return;
+  }
+
+  let dataObj = new Date(melhorData + "T00:00:00");
+
+  nomeEl.innerText = dataObj.toLocaleDateString("pt-BR", {
+    weekday: "long"
+  });
+
+  valorEl.innerText = `R$ ${mapa[melhorData].valor}`;
+  corridasEl.innerText = mapa[melhorData].corridas;
+}
   if (
     id === "historicoTela" &&
     !usuarioEhAdmin()
