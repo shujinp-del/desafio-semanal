@@ -31,9 +31,7 @@
 
         <input id="senhaLogin" type="password" placeholder="Senha">
 
-        <button onclick="entrar()">
-          Entrar
-        </button>
+        <button onclick="entrar()">Entrar</button>
 
         <button class="secundario" onclick="cadastrar()">
           Criar conta
@@ -42,8 +40,6 @@
       </div>
 
     </section>
-
-
 
     <section id="home" class="tela">
 
@@ -87,9 +83,7 @@
 
         <input type="date" id="data">
 
-        <button onclick="adicionar()">
-          Adicionar corrida
-        </button>
+        <button onclick="adicionar()">Adicionar corrida</button>
 
         <button class="secundario" onclick="resetSemana()">
           Resetar tudo
@@ -98,8 +92,6 @@
       </div>
 
     </section>
-
-
 
     <section id="minhasTela" class="tela">
 
@@ -110,20 +102,13 @@
       </p>
 
       <div class="card">
-
         <h2>Total pessoal</h2>
-
-        <strong id="meuTotal">
-          R$ 0
-        </strong>
-
+        <strong id="meuTotal">R$ 0</strong>
       </div>
 
       <ul id="listaMinhas"></ul>
 
     </section>
-
-
 
     <section id="rankingTela" class="tela">
 
@@ -137,8 +122,6 @@
 
     </section>
 
-
-
     <section id="historicoTela" class="tela">
 
       <h1>🌎 Painel Geral</h1>
@@ -148,20 +131,25 @@
       </p>
 
       <div class="card">
-
         <h2>Total do mês</h2>
-
-        <strong id="totalHistoricoMensal">
-          R$ 0
-        </strong>
-
+        <strong id="totalHistoricoMensal">R$ 0</strong>
       </div>
 
       <ul id="listaHistorico"></ul>
 
     </section>
 
+    <section id="adminTela" class="tela">
 
+      <h1>👑 Painel Admin</h1>
+
+      <p class="subtitulo">
+        Aprovação de motoristas
+      </p>
+
+      <ul id="listaAdminUsuarios"></ul>
+
+    </section>
 
     <section id="graficoTela" class="tela">
 
@@ -176,11 +164,8 @@
       </div>
 
       <div class="card">
-
         <h2>📈 Evolução por data</h2>
-
         <canvas id="graficoLinha"></canvas>
-
       </div>
 
       <div class="metricas">
@@ -198,8 +183,6 @@
       </div>
 
     </section>
-
-
 
     <nav class="menu" id="menuApp">
 
@@ -226,6 +209,11 @@
       <button onclick="abrirTela('graficoTela')">
         📊
         <span>Gráfico</span>
+      </button>
+
+      <button id="botaoAdmin" onclick="abrirTela('adminTela')" style="display:none;">
+        👑
+        <span>Admin</span>
       </button>
 
     </nav>
