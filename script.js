@@ -31,29 +31,50 @@ const firebaseConfig = {
   appId: "1:948247090731:web:fb36df17768ce636f07c6e"
 };
 
-const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+const app =
+  getApps().length
+    ? getApp()
+    : initializeApp(firebaseConfig);
+
 const db = getFirestore(app);
+
 const auth = getAuth(app);
 
 let usuarioAtual = null;
 let dadosUsuario = null;
 let ranking = [];
 let corridasFirebase = [];
+let rankingMetas = [];
+
 let grafico;
 let graficoLinha;
+
 let editandoId = null;
 let pararSincronia = null;
 
+// ================================
+// LOGIN
+// ================================
+
 function mostrarStatusLogin(texto) {
-  let card = document.querySelector("#loginTela .card");
+
+  let card =
+    document.querySelector("#loginTela .card");
+
   if (!card) return;
 
-  let status = document.getElementById("statusLogin");
+  let status =
+    document.getElementById("statusLogin");
 
   if (!status) {
-    status = document.createElement("p");
+
+    status =
+      document.createElement("p");
+
     status.id = "statusLogin";
+
     status.className = "subtitulo";
+
     card.appendChild(status);
   }
 
@@ -61,143 +82,256 @@ function mostrarStatusLogin(texto) {
 }
 
 async function cadastrar() {
-  let email = document.getElementById("emailLogin").value.trim();
-  let senha = document.getElementById("senhaLogin").value;
+
+  let email =
+    document.getElementById("emailLogin")
+      .value
+      .trim();
+
+  let senha =
+    document.getElementById("senhaLogin")
+      .value;
 
   if (!email || !senha) {
+
     alert("Digite email e senha");
+
     return;
   }
 
   try {
-    let credencial = await createUserWithEmailAndPassword(auth, email, senha);
 
-    await setDoc(doc(db, "usuarios", credencial.user.uid), {
-      email,
-      status: "pendente",
-      papel: "motorista",
-      metaSemanal: 0,
-      criadoEm: serverTimestamp()
-    });
+    let credencial =
+      await createUserWithEmailAndPassword(
+        auth,
+        email,
+        senha
+      );
 
-    alert("Conta criada! Aguarde aprovação.");
+    await setDoc(
+      doc(db, "usuarios", credencial.user.uid),
+      {
+        email,
+        status: "pendente",
+        papel: "motorista",
+        metaSemanal: 0,
+        criadoEm: serverTimestamp()
+      }
+    );
+
+    alert(
+      "Conta criada! Aguarde aprovação."
+    );
+
   } catch (erro) {
+
     alert(erro.message);
   }
 }
 
 function entrar() {
-  let email = document.getElementById("emailLogin").value.trim();
-  let senha = document.getElementById("senhaLogin").value;
 
-  signInWithEmailAndPassword(auth, email, senha)
-    .catch(erro => alert(erro.message));
+  let email =
+    document.getElementById("emailLogin")
+      .value
+      .trim();
+
+  let senha =
+    document.getElementById("senhaLogin")
+      .value;
+
+  signInWithEmailAndPassword(
+    auth,
+    email,
+    senha
+  )
+    .catch(
+      erro => alert(erro.message)
+    );
 }
 
 function sair() {
+
   signOut(auth);
 }
 
-onAuthStateChanged(auth, async usuario => {
-  usuarioAtual = usuario;
+onAuthStateChanged(
+  auth,
+  async usuario => {
 
-  let menu = document.getElementById("menuApp");
-  let botaoAdmin = document.getElementById("botaoAdmin");
-  let usuarioLogado = document.getElementById("usuarioLogado");
+    usuarioAtual = usuario;
 
-  if (pararSincronia) {
-    pararSincronia();
-    pararSincronia = null;
-  }
+    let menu =
+      document.getElementById("menuApp");
 
-  if (!usuario) {
-    if (menu) menu.style.display = "none";
-    if (botaoAdmin) botaoAdmin.style.display = "none";
-    abrirTela("loginTela");
-    return;
-  }
+    let botaoAdmin =
+      document.getElementById("botaoAdmin");
 
-  let usuarioRef = doc(db, "usuarios", usuario.uid);
-  let usuarioSnap = await getDoc(usuarioRef);
+    let usuarioLogado =
+      document.getElementById("usuarioLogado");
 
-  if (!usuarioSnap.exists()) {
-    await setDoc(usuarioRef, {
-      email: usuario.email,
-      status: "pendente",
-      papel: "motorista",
-      metaSemanal: 0,
-      criadoEm: serverTimestamp()
-    });
+    if (pararSincronia) {
 
-    dadosUsuario = {
-      email: usuario.email,
-      status: "pendente",
-      papel: "motorista",
-      metaSemanal: 0
-    };
-  } else {
-    dadosUsuario = usuarioSnap.data();
-  }
+      pararSincronia();
 
-  if (dadosUsuario.status !== "ativo" && dadosUsuario.status !== "admin") {
-    if (menu) menu.style.display = "none";
-    if (botaoAdmin) botaoAdmin.style.display = "none";
-    mostrarStatusLogin("⏳ Sua conta está aguardando aprovação.");
-    abrirTela("loginTela");
-    return;
-  }
+      pararSincronia = null;
+    }
 
-  if (menu) menu.style.display = "flex";
+    if (!usuario) {
 
-  if (botaoAdmin) {
-    botaoAdmin.style.display = dadosUsuario.papel === "admin" ? "block" : "none";
-  }
+      if (menu)
+        menu.style.display = "none";
 
-  if (usuarioLogado) {
-    usuarioLogado.innerText = `Logado como: ${usuario.email}`;
-  }
+      if (botaoAdmin)
+        botaoAdmin.style.display = "none";
 
-  mostrarStatusLogin("");
-  abrirTela("home");
-  iniciarSincronia();
-});
+      abrirTela("loginTela");
 
-function iniciarSincronia() {
-  pararSincronia = onSnapshot(collection(db, "corridas"), snapshot => {
-    let todasCorridas = [];
-    let corridasSemana = [];
+      return;
+    }
 
-    snapshot.forEach(docSnap => {
-      let item = docSnap.data();
+    let usuarioRef =
+      doc(db, "usuarios", usuario.uid);
 
-      let corrida = {
-        id: docSnap.id,
-        ...item
+    let usuarioSnap =
+      await getDoc(usuarioRef);
+
+    if (!usuarioSnap.exists()) {
+
+      await setDoc(
+        usuarioRef,
+        {
+          email: usuario.email,
+          status: "pendente",
+          papel: "motorista",
+          metaSemanal: 0,
+          criadoEm: serverTimestamp()
+        }
+      );
+
+      dadosUsuario = {
+        email: usuario.email,
+        status: "pendente",
+        papel: "motorista",
+        metaSemanal: 0
       };
 
-      if (corrida.nome && corrida.valor && corrida.data) {
-        todasCorridas.push(corrida);
+    } else {
 
-        if (estaNaSemanaAtual(corrida.data)) {
-          corridasSemana.push(corrida);
+      dadosUsuario =
+        usuarioSnap.data();
+    }
+
+    if (
+      dadosUsuario.status !== "ativo" &&
+      dadosUsuario.status !== "admin"
+    ) {
+
+      if (menu)
+        menu.style.display = "none";
+
+      if (botaoAdmin)
+        botaoAdmin.style.display = "none";
+
+      mostrarStatusLogin(
+        "⏳ Sua conta está aguardando aprovação."
+      );
+
+      abrirTela("loginTela");
+
+      return;
+    }
+
+    if (menu)
+      menu.style.display = "flex";
+
+    if (botaoAdmin) {
+
+      botaoAdmin.style.display =
+        dadosUsuario.papel === "admin"
+          ? "block"
+          : "none";
+    }
+
+    if (usuarioLogado) {
+
+      usuarioLogado.innerText =
+        `Logado como: ${usuario.email}`;
+    }
+
+    mostrarStatusLogin("");
+
+    abrirTela("home");
+
+    iniciarSincronia();
+  }
+);
+
+// ================================
+// FIREBASE
+// ================================
+
+function iniciarSincronia() {
+
+  pararSincronia = onSnapshot(
+    collection(db, "corridas"),
+    snapshot => {
+
+      let todasCorridas = [];
+
+      let corridasSemana = [];
+
+      snapshot.forEach(docSnap => {
+
+        let item =
+          docSnap.data();
+
+        let corrida = {
+          id: docSnap.id,
+          ...item
+        };
+
+        if (
+          corrida.nome &&
+          corrida.valor &&
+          corrida.data
+        ) {
+
+          todasCorridas.push(corrida);
+
+          if (
+            estaNaSemanaAtual(corrida.data)
+          ) {
+
+            corridasSemana.push(corrida);
+          }
         }
-      }
-    });
+      });
 
-    corridasFirebase = todasCorridas;
-    ranking = montarRanking(corridasSemana);
+      corridasFirebase =
+        todasCorridas;
 
-    atualizarTudo();
-  });
+      ranking =
+        montarRanking(corridasSemana);
+
+      atualizarRankingMetas();
+
+      atualizarTudo();
+    }
+  );
 }
 
 function montarRanking(corridas) {
+
   let mapa = {};
 
   corridas.forEach(item => {
-    let chave = item.nome.toLowerCase();
+
+    let chave =
+      item.nome.toLowerCase();
 
     if (!mapa[chave]) {
+
       mapa[chave] = {
         nome: item.nome,
         valor: 0,
@@ -206,8 +340,11 @@ function montarRanking(corridas) {
       };
     }
 
-    mapa[chave].valor += Number(item.valor);
-    mapa[chave].corridas += Number(item.corridas || 0);
+    mapa[chave].valor +=
+      Number(item.valor);
+
+    mapa[chave].corridas +=
+      Number(item.corridas || 0);
 
     mapa[chave].historico.push({
       id: item.id,
@@ -217,312 +354,86 @@ function montarRanking(corridas) {
     });
   });
 
-  let lista = Object.values(mapa);
-  lista.sort((a, b) => b.valor - a.valor);
+  let lista =
+    Object.values(mapa);
+
+  lista.sort(
+    (a, b) =>
+      b.valor - a.valor
+  );
 
   return lista;
 }
 
-async function adicionar() {
-  if (!usuarioAtual) {
-    alert("Faça login primeiro");
-    return;
-  }
+// ================================
+// RANKING METAS
+// ================================
 
-  if (!dadosUsuario || (dadosUsuario.status !== "ativo" && dadosUsuario.status !== "admin")) {
-    alert("Sua conta ainda não foi aprovada");
-    return;
-  }
+async function atualizarRankingMetas() {
 
-  let nome = document.getElementById("nome").value.trim();
-  let valor = Number(document.getElementById("valor").value);
-  let corridas = Number(document.getElementById("corridas").value);
-  let data = document.getElementById("data").value;
-
-  if (!nome || valor <= 0 || !data) {
-    alert("Preencha nome, valor e data");
-    return;
-  }
-
-  try {
-    if (editandoId) {
-      await updateDoc(doc(db, "corridas", editandoId), {
-        nome,
-        valor,
-        corridas,
-        data,
-        uid: usuarioAtual.uid,
-        email: usuarioAtual.email
-      });
-
-      alert("✏️ Corrida editada!");
-      editandoId = null;
-    } else {
-      await addDoc(collection(db, "corridas"), {
-        nome,
-        valor,
-        corridas,
-        data,
-        uid: usuarioAtual.uid,
-        email: usuarioAtual.email,
-        criadoEm: new Date().toISOString()
-      });
-    }
-
-    limparCampos();
-  } catch (erro) {
-    console.error(erro);
-    alert("Erro ao salvar");
-  }
-}
-
-function editarCorrida(id) {
-  let corrida = corridasFirebase.find(item => item.id === id);
-  if (!corrida) return;
-
-  document.getElementById("nome").value = corrida.nome;
-  document.getElementById("valor").value = corrida.valor;
-  document.getElementById("corridas").value = corrida.corridas;
-  document.getElementById("data").value = corrida.data;
-
-  editandoId = id;
-  abrirTela("home");
-}
-
-async function excluirCorrida(id) {
-  if (!confirm("Deseja excluir esta corrida?")) return;
-
-  try {
-    await deleteDoc(doc(db, "corridas", id));
-  } catch (erro) {
-    console.error(erro);
-    alert("Erro ao excluir");
-  }
-}
-
-async function salvarMeta() {
-  if (!usuarioAtual) return;
-
-  let meta = Number(document.getElementById("metaSemanal").value);
-
-  if (!meta || meta <= 0) {
-    alert("Digite uma meta válida");
-    return;
-  }
-
-  try {
-    await updateDoc(doc(db, "usuarios", usuarioAtual.uid), {
-      metaSemanal: meta
-    });
-
-    dadosUsuario.metaSemanal = meta;
-    atualizarMetas();
-
-    alert("🎯 Meta salva!");
-  } catch (erro) {
-    console.error(erro);
-    alert("Erro ao salvar meta");
-  }
-}
-
-function atualizarMetas() {
-  if (!usuarioAtual) return;
-
-  let atualEl = document.getElementById("valorMetaAtual");
-  let totalEl = document.getElementById("valorMetaTotal");
-  let progressoEl = document.getElementById("progressoMeta");
-  let inputMeta = document.getElementById("metaSemanal");
-  let badgeEl = document.getElementById("badgeMeta");
-  let notificacaoEl = document.getElementById("notificacaoMeta");
-
-  if (!atualEl || !totalEl || !progressoEl) return;
-
-  let minhasSemana = corridasFirebase.filter(item =>
-    item.uid === usuarioAtual.uid &&
-    estaNaSemanaAtual(item.data)
-  );
-
-  let totalAtual = minhasSemana.reduce(
-    (soma, item) => soma + Number(item.valor),
-    0
-  );
-
-  let meta = Number(dadosUsuario?.metaSemanal || 0);
-
-  if (inputMeta && meta > 0) {
-    inputMeta.value = meta;
-  }
-
-  atualEl.innerText = `R$ ${totalAtual}`;
-  totalEl.innerText = `R$ ${meta}`;
-
-  let progresso = 0;
-
-  if (meta > 0) {
-    progresso = Math.min(
-      150,
-      Math.round((totalAtual / meta) * 100)
-    );
-  }
-
-  progressoEl.innerText = `${Math.min(progresso, 100)}%`;
-
-  if (badgeEl) {
-    if (meta <= 0) {
-      badgeEl.innerHTML = "😴 Defina uma meta para ganhar badges";
-    } else if (progresso >= 120) {
-      badgeEl.innerHTML = "🔥 Ultra Meta — passou de 120%";
-    } else if (progresso >= 100) {
-      badgeEl.innerHTML = "🏆 Meta Batida — desafio concluído";
-    } else if (progresso >= 75) {
-      badgeEl.innerHTML = "🥇 Ouro — 75% da meta";
-    } else if (progresso >= 50) {
-      badgeEl.innerHTML = "🥈 Prata — 50% da meta";
-    } else if (progresso >= 25) {
-      badgeEl.innerHTML = "🥉 Bronze — 25% da meta";
-    } else {
-      badgeEl.innerHTML = "🚀 Começando — siga lançando corridas";
-    }
-  }
-
-  if (notificacaoEl) {
-    let faltam = meta - totalAtual;
-
-    if (meta <= 0) {
-      notificacaoEl.innerHTML = "🚀 Defina uma meta para começar";
-    } else if (faltam <= 0) {
-      notificacaoEl.innerHTML = "🏆 Parabéns! Você bateu sua meta semanal!";
-    } else if (faltam <= meta * 0.1) {
-      notificacaoEl.innerHTML = `🔥 Falta pouco! Só R$ ${faltam} para bater sua meta.`;
-    } else {
-      notificacaoEl.innerHTML = `🔔 Faltam R$ ${faltam} para sua meta semanal.`;
-    }
-  }
-}
-
-async function atualizarAdmin() {
-  let lista = document.getElementById("listaAdminUsuarios");
+  let lista =
+    document.getElementById("rankingMetas");
 
   if (!lista) return;
 
-  if (!dadosUsuario || dadosUsuario.papel !== "admin") {
-    lista.innerHTML = "<li>Acesso restrito.</li>";
-    return;
-  }
-
   lista.innerHTML = "";
 
-  let usuariosSnap = await getDocs(collection(db, "usuarios"));
+  let usuariosSnap =
+    await getDocs(
+      collection(db, "usuarios")
+    );
+
+  let rankingTemp = [];
 
   usuariosSnap.forEach(docSnap => {
-    let usuario = docSnap.data();
-    let id = docSnap.id;
 
-    lista.innerHTML += `
-      <li>
-        <div class="posicao">👤 ${usuario.email || "sem email"}</div>
-        <br>
-        <div>Status: <strong>${usuario.status}</strong></div>
-        <div>Papel: <strong>${usuario.papel}</strong></div>
-        <br>
-        <button onclick="aprovarUsuario('${id}')">✅ Aprovar</button>
-        <button onclick="bloquearUsuario('${id}')">🚫 Bloquear</button>
-        <button onclick="tornarAdmin('${id}')">👑 Tornar admin</button>
-      </li>
-    `;
-  });
-}
+    let usuario =
+      docSnap.data();
 
-async function aprovarUsuario(id) {
-  await updateDoc(doc(db, "usuarios", id), {
-    status: "ativo"
-  });
+    if (
+      !usuario.metaSemanal ||
+      usuario.metaSemanal <= 0
+    ) {
+      return;
+    }
 
-  alert("Usuário aprovado!");
-  atualizarAdmin();
-}
+    let minhas =
+      corridasFirebase.filter(
+        item =>
+          item.email === usuario.email &&
+          estaNaSemanaAtual(item.data)
+      );
 
-async function bloquearUsuario(id) {
-  await updateDoc(doc(db, "usuarios", id), {
-    status: "bloqueado"
-  });
+    let total =
+      minhas.reduce(
+        (soma, item) =>
+          soma + Number(item.valor),
+        0
+      );
 
-  alert("Usuário bloqueado!");
-  atualizarAdmin();
-}
+    let progresso =
+      Math.round(
+        (total / usuario.metaSemanal) * 100
+      );
 
-async function tornarAdmin(id) {
-  await updateDoc(doc(db, "usuarios", id), {
-    status: "ativo",
-    papel: "admin"
+    rankingTemp.push({
+      email: usuario.email,
+      progresso,
+      total,
+      meta: usuario.metaSemanal
+    });
   });
 
-  alert("Usuário virou admin!");
-  atualizarAdmin();
-}
+  rankingTemp.sort(
+    (a, b) =>
+      b.progresso - a.progresso
+  );
 
-function estaNaSemanaAtual(data) {
-  let hoje = new Date();
-  let inicioSemana = new Date(hoje);
-  let diaSemana = hoje.getDay();
+  rankingMetas = rankingTemp;
+    rankingTemp.forEach((item, index) => {
 
-  let diferenca = diaSemana === 0 ? -6 : 1 - diaSemana;
-
-  inicioSemana.setDate(hoje.getDate() + diferenca);
-  inicioSemana.setHours(0, 0, 0, 0);
-
-  let fimSemana = new Date(inicioSemana);
-  fimSemana.setDate(inicioSemana.getDate() + 6);
-  fimSemana.setHours(23, 59, 59, 999);
-
-  let dataCorrida = new Date(data + "T00:00:00");
-
-  return dataCorrida >= inicioSemana && dataCorrida <= fimSemana;
-}
-
-function abrirTela(id) {
-  document.querySelectorAll(".tela").forEach(tela => {
-    tela.classList.remove("ativa");
-  });
-
-  let tela = document.getElementById(id);
-
-  if (tela) {
-    tela.classList.add("ativa");
-  }
-
-  if (id === "metasTela") atualizarMetas();
-  if (id === "adminTela") atualizarAdmin();
-
-  if (id === "graficoTela") {
-    atualizarGrafico();
-    atualizarGraficoLinha();
-  }
-
-  if (id === "historicoTela") atualizarHistoricoMensal();
-  if (id === "minhasTela") atualizarMinhasCorridas();
-}
-
-function atualizarTudo() {
-  atualizarRanking();
-  atualizarLider();
-  atualizarMetricas();
-  atualizarGrafico();
-  atualizarGraficoLinha();
-  atualizarHistoricoMensal();
-  atualizarMinhasCorridas();
-  atualizarMetas();
-}
-
-function atualizarRanking() {
-  let lista = document.getElementById("ranking");
-
-  if (!lista) return;
-
-  lista.innerHTML = "";
-
-  ranking.forEach((m, index) => {
-    let medalha = `${index + 1}º`;
+    let medalha =
+      `${index + 1}º`;
 
     if (index === 0) medalha = "🥇";
     if (index === 1) medalha = "🥈";
@@ -530,95 +441,750 @@ function atualizarRanking() {
 
     lista.innerHTML += `
       <li>
-        <div class="posicao">${medalha} ${m.nome}</div>
+        <div class="posicao">
+          ${medalha} ${item.email}
+        </div>
+
         <br>
-        <div class="valor">💰 R$ ${m.valor}</div>
-        <div>🚗 ${m.corridas} corridas</div>
+
+        <div class="valor">
+          🎯 ${item.progresso}%
+        </div>
+
+        <div>
+          💰 R$ ${item.total} de R$ ${item.meta}
+        </div>
       </li>
     `;
   });
 }
 
-function atualizarMinhasCorridas() {
-  let lista = document.getElementById("listaMinhas");
-  let totalEl = document.getElementById("meuTotal");
+// ================================
+// CORRIDAS
+// ================================
 
-  if (!lista || !totalEl || !usuarioAtual) return;
+async function adicionar() {
+
+  if (!usuarioAtual) {
+    alert("Faça login primeiro");
+    return;
+  }
+
+  if (
+    !dadosUsuario ||
+    (
+      dadosUsuario.status !== "ativo" &&
+      dadosUsuario.status !== "admin"
+    )
+  ) {
+    alert("Sua conta ainda não foi aprovada");
+    return;
+  }
+
+  let nome =
+    document.getElementById("nome").value.trim();
+
+  let valor =
+    Number(document.getElementById("valor").value);
+
+  let corridas =
+    Number(document.getElementById("corridas").value);
+
+  let data =
+    document.getElementById("data").value;
+
+  if (!nome || valor <= 0 || !data) {
+    alert("Preencha nome, valor e data");
+    return;
+  }
+
+  try {
+
+    if (editandoId) {
+
+      await updateDoc(
+        doc(db, "corridas", editandoId),
+        {
+          nome,
+          valor,
+          corridas,
+          data,
+          uid: usuarioAtual.uid,
+          email: usuarioAtual.email
+        }
+      );
+
+      alert("✏️ Corrida editada!");
+      editandoId = null;
+
+    } else {
+
+      await addDoc(
+        collection(db, "corridas"),
+        {
+          nome,
+          valor,
+          corridas,
+          data,
+          uid: usuarioAtual.uid,
+          email: usuarioAtual.email,
+          criadoEm: new Date().toISOString()
+        }
+      );
+    }
+
+    limparCampos();
+
+  } catch (erro) {
+
+    console.error(erro);
+    alert("Erro ao salvar");
+  }
+}
+
+function editarCorrida(id) {
+
+  let corrida =
+    corridasFirebase.find(
+      item => item.id === id
+    );
+
+  if (!corrida) return;
+
+  document.getElementById("nome").value =
+    corrida.nome;
+
+  document.getElementById("valor").value =
+    corrida.valor;
+
+  document.getElementById("corridas").value =
+    corrida.corridas;
+
+  document.getElementById("data").value =
+    corrida.data;
+
+  editandoId = id;
+
+  abrirTela("home");
+}
+
+async function excluirCorrida(id) {
+
+  if (!confirm("Deseja excluir esta corrida?")) {
+    return;
+  }
+
+  try {
+
+    await deleteDoc(
+      doc(db, "corridas", id)
+    );
+
+  } catch (erro) {
+
+    console.error(erro);
+    alert("Erro ao excluir");
+  }
+}
+
+// ================================
+// METAS
+// ================================
+
+async function salvarMeta() {
+
+  if (!usuarioAtual) return;
+
+  let meta =
+    Number(
+      document.getElementById("metaSemanal").value
+    );
+
+  if (!meta || meta <= 0) {
+    alert("Digite uma meta válida");
+    return;
+  }
+
+  try {
+
+    await updateDoc(
+      doc(db, "usuarios", usuarioAtual.uid),
+      {
+        metaSemanal: meta
+      }
+    );
+
+    dadosUsuario.metaSemanal = meta;
+
+    atualizarMetas();
+
+    atualizarRankingMetas();
+
+    alert("🎯 Meta salva!");
+
+  } catch (erro) {
+
+    console.error(erro);
+    alert("Erro ao salvar meta");
+  }
+}
+
+function atualizarMetas() {
+
+  if (!usuarioAtual) return;
+
+  let atualEl =
+    document.getElementById("valorMetaAtual");
+
+  let totalEl =
+    document.getElementById("valorMetaTotal");
+
+  let progressoEl =
+    document.getElementById("progressoMeta");
+
+  let inputMeta =
+    document.getElementById("metaSemanal");
+
+  let badgeEl =
+    document.getElementById("badgeMeta");
+
+  let notificacaoEl =
+    document.getElementById("notificacaoMeta");
+
+  if (!atualEl || !totalEl || !progressoEl) {
+    return;
+  }
+
+  let minhasSemana =
+    corridasFirebase.filter(
+      item =>
+        item.uid === usuarioAtual.uid &&
+        estaNaSemanaAtual(item.data)
+    );
+
+  let totalAtual =
+    minhasSemana.reduce(
+      (soma, item) =>
+        soma + Number(item.valor),
+      0
+    );
+
+  let meta =
+    Number(dadosUsuario?.metaSemanal || 0);
+
+  if (inputMeta && meta > 0) {
+    inputMeta.value = meta;
+  }
+
+  atualEl.innerText =
+    `R$ ${totalAtual}`;
+
+  totalEl.innerText =
+    `R$ ${meta}`;
+
+  let progresso = 0;
+
+  if (meta > 0) {
+
+    progresso =
+      Math.min(
+        150,
+        Math.round(
+          (totalAtual / meta) * 100
+        )
+      );
+  }
+
+  progressoEl.innerText =
+    `${Math.min(progresso, 100)}%`;
+
+  if (badgeEl) {
+
+    if (meta <= 0) {
+      badgeEl.innerHTML =
+        "😴 Defina uma meta para ganhar badges";
+    } else if (progresso >= 120) {
+      badgeEl.innerHTML =
+        "🔥 Ultra Meta — passou de 120%";
+    } else if (progresso >= 100) {
+      badgeEl.innerHTML =
+        "🏆 Meta Batida — desafio concluído";
+    } else if (progresso >= 75) {
+      badgeEl.innerHTML =
+        "🥇 Ouro — 75% da meta";
+    } else if (progresso >= 50) {
+      badgeEl.innerHTML =
+        "🥈 Prata — 50% da meta";
+    } else if (progresso >= 25) {
+      badgeEl.innerHTML =
+        "🥉 Bronze — 25% da meta";
+    } else {
+      badgeEl.innerHTML =
+        "🚀 Começando — siga lançando corridas";
+    }
+  }
+
+  if (notificacaoEl) {
+
+    let faltam = meta - totalAtual;
+
+    if (meta <= 0) {
+      notificacaoEl.innerHTML =
+        "🚀 Defina uma meta para começar";
+    } else if (faltam <= 0) {
+      notificacaoEl.innerHTML =
+        "🏆 Parabéns! Você bateu sua meta semanal!";
+    } else if (faltam <= meta * 0.1) {
+      notificacaoEl.innerHTML =
+        `🔥 Falta pouco! Só R$ ${faltam} para bater sua meta.`;
+    } else {
+      notificacaoEl.innerHTML =
+        `🔔 Faltam R$ ${faltam} para sua meta semanal.`;
+    }
+  }
+}
+
+// ================================
+// ADMIN
+// ================================
+
+async function atualizarAdmin() {
+
+  let lista =
+    document.getElementById("listaAdminUsuarios");
+
+  if (!lista) return;
+
+  if (!dadosUsuario || dadosUsuario.papel !== "admin") {
+    lista.innerHTML =
+      "<li>Acesso restrito.</li>";
+    return;
+  }
 
   lista.innerHTML = "";
 
-  let minhas = corridasFirebase.filter(item => item.uid === usuarioAtual.uid);
+  let usuariosSnap =
+    await getDocs(
+      collection(db, "usuarios")
+    );
 
-  let total = minhas.reduce(
-    (soma, item) => soma + Number(item.valor),
-    0
-  );
+  usuariosSnap.forEach(docSnap => {
 
-  minhas.sort((a, b) => new Date(b.data) - new Date(a.data));
+    let usuario =
+      docSnap.data();
 
-  minhas.forEach(item => {
+    let id =
+      docSnap.id;
+
     lista.innerHTML += `
       <li>
-        <div class="posicao">🚗 ${item.nome}</div>
+        <div class="posicao">
+          👤 ${usuario.email || "sem email"}
+        </div>
+
         <br>
-        <div class="valor">💰 R$ ${item.valor}</div>
-        <div>📅 ${formatarData(item.data)}</div>
-        <div>🛣️ ${item.corridas || 0} corridas</div>
+
+        <div>
+          Status: <strong>${usuario.status}</strong>
+        </div>
+
+        <div>
+          Papel: <strong>${usuario.papel}</strong>
+        </div>
+
         <br>
-        <button onclick="editarCorrida('${item.id}')">✏️ Editar</button>
-        <button onclick="excluirCorrida('${item.id}')">🗑️ Excluir</button>
+
+        <button onclick="aprovarUsuario('${id}')">
+          ✅ Aprovar
+        </button>
+
+        <button onclick="bloquearUsuario('${id}')">
+          🚫 Bloquear
+        </button>
+
+        <button onclick="tornarAdmin('${id}')">
+          👑 Tornar admin
+        </button>
+      </li>
+    `;
+  });
+}
+
+async function aprovarUsuario(id) {
+
+  await updateDoc(
+    doc(db, "usuarios", id),
+    {
+      status: "ativo"
+    }
+  );
+
+  alert("Usuário aprovado!");
+
+  atualizarAdmin();
+
+  atualizarRankingMetas();
+}
+
+async function bloquearUsuario(id) {
+
+  await updateDoc(
+    doc(db, "usuarios", id),
+    {
+      status: "bloqueado"
+    }
+  );
+
+  alert("Usuário bloqueado!");
+
+  atualizarAdmin();
+
+  atualizarRankingMetas();
+}
+
+async function tornarAdmin(id) {
+
+  await updateDoc(
+    doc(db, "usuarios", id),
+    {
+      status: "ativo",
+      papel: "admin"
+    }
+  );
+
+  alert("Usuário virou admin!");
+
+  atualizarAdmin();
+
+  atualizarRankingMetas();
+}
+
+// ================================
+// DATAS
+// ================================
+
+function estaNaSemanaAtual(data) {
+
+  let hoje = new Date();
+
+  let inicioSemana =
+    new Date(hoje);
+
+  let diaSemana =
+    hoje.getDay();
+
+  let diferenca =
+    diaSemana === 0
+      ? -6
+      : 1 - diaSemana;
+
+  inicioSemana.setDate(
+    hoje.getDate() + diferenca
+  );
+
+  inicioSemana.setHours(0, 0, 0, 0);
+
+  let fimSemana =
+    new Date(inicioSemana);
+
+  fimSemana.setDate(
+    inicioSemana.getDate() + 6
+  );
+
+  fimSemana.setHours(23, 59, 59, 999);
+
+  let dataCorrida =
+    new Date(data + "T00:00:00");
+
+  return (
+    dataCorrida >= inicioSemana &&
+    dataCorrida <= fimSemana
+  );
+}
+
+function formatarData(data) {
+
+  if (!data) return "sem data";
+
+  let partes =
+    data.split("-");
+
+  return `${partes[2]}/${partes[1]}/${partes[0]}`;
+}
+
+// ================================
+// TELAS
+// ================================
+
+function abrirTela(id) {
+
+  document
+    .querySelectorAll(".tela")
+    .forEach(tela => {
+      tela.classList.remove("ativa");
+    });
+
+  let tela =
+    document.getElementById(id);
+
+  if (tela) {
+    tela.classList.add("ativa");
+  }
+
+  if (id === "metasTela") {
+    atualizarMetas();
+    atualizarRankingMetas();
+  }
+
+  if (id === "adminTela") {
+    atualizarAdmin();
+  }
+
+  if (id === "graficoTela") {
+    atualizarGrafico();
+    atualizarGraficoLinha();
+  }
+
+  if (id === "historicoTela") {
+    atualizarHistoricoMensal();
+  }
+
+  if (id === "minhasTela") {
+    atualizarMinhasCorridas();
+  }
+
+  if (id === "rankingTela") {
+    atualizarRankingMetas();
+  }
+}
+
+function atualizarTudo() {
+
+  atualizarRanking();
+
+  atualizarLider();
+
+  atualizarMetricas();
+
+  atualizarGrafico();
+
+  atualizarGraficoLinha();
+
+  atualizarHistoricoMensal();
+
+  atualizarMinhasCorridas();
+
+  atualizarMetas();
+
+  atualizarRankingMetas();
+}
+
+// ================================
+// RANKING FINANCEIRO
+// ================================
+
+function atualizarRanking() {
+
+  let lista =
+    document.getElementById("ranking");
+
+  if (!lista) return;
+
+  lista.innerHTML = "";
+
+  ranking.forEach((m, index) => {
+
+    let medalha =
+      `${index + 1}º`;
+
+    if (index === 0) medalha = "🥇";
+    if (index === 1) medalha = "🥈";
+    if (index === 2) medalha = "🥉";
+
+    lista.innerHTML += `
+      <li>
+        <div class="posicao">
+          ${medalha} ${m.nome}
+        </div>
+
+        <br>
+
+        <div class="valor">
+          💰 R$ ${m.valor}
+        </div>
+
+        <div>
+          🚗 ${m.corridas} corridas
+        </div>
+      </li>
+    `;
+  });
+}
+
+// ================================
+// MINHAS / HISTÓRICO
+// ================================
+
+function atualizarMinhasCorridas() {
+
+  let lista =
+    document.getElementById("listaMinhas");
+
+  let totalEl =
+    document.getElementById("meuTotal");
+
+  if (!lista || !totalEl || !usuarioAtual) {
+    return;
+  }
+
+  lista.innerHTML = "";
+
+  let minhas =
+    corridasFirebase.filter(
+      item => item.uid === usuarioAtual.uid
+    );
+
+  let total =
+    minhas.reduce(
+      (soma, item) =>
+        soma + Number(item.valor),
+      0
+    );
+
+  minhas.sort(
+    (a, b) =>
+      new Date(b.data) - new Date(a.data)
+  );
+
+  minhas.forEach(item => {
+
+    lista.innerHTML += `
+      <li>
+        <div class="posicao">
+          🚗 ${item.nome}
+        </div>
+
+        <br>
+
+        <div class="valor">
+          💰 R$ ${item.valor}
+        </div>
+
+        <div>
+          📅 ${formatarData(item.data)}
+        </div>
+
+        <div>
+          🛣️ ${item.corridas || 0} corridas
+        </div>
+
+        <br>
+
+        <button onclick="editarCorrida('${item.id}')">
+          ✏️ Editar
+        </button>
+
+        <button onclick="excluirCorrida('${item.id}')">
+          🗑️ Excluir
+        </button>
       </li>
     `;
   });
 
-  totalEl.innerText = `R$ ${total}`;
+  totalEl.innerText =
+    `R$ ${total}`;
 }
 
 function atualizarHistoricoMensal() {
-  let lista = document.getElementById("listaHistorico");
-  let totalEl = document.getElementById("totalHistoricoMensal");
+
+  let lista =
+    document.getElementById("listaHistorico");
+
+  let totalEl =
+    document.getElementById("totalHistoricoMensal");
 
   if (!lista || !totalEl) return;
 
   lista.innerHTML = "";
 
   let total = 0;
+
   let hoje = new Date();
-  let mesAtual = hoje.getMonth();
-  let anoAtual = hoje.getFullYear();
 
-  let corridasMes = corridasFirebase.filter(item => {
-    if (!item.data) return false;
+  let mesAtual =
+    hoje.getMonth();
 
-    let data = new Date(item.data + "T00:00:00");
+  let anoAtual =
+    hoje.getFullYear();
 
-    return data.getMonth() === mesAtual && data.getFullYear() === anoAtual;
-  });
+  let corridasMes =
+    corridasFirebase.filter(item => {
 
-  corridasMes.sort((a, b) => new Date(b.data) - new Date(a.data));
+      if (!item.data) return false;
+
+      let data =
+        new Date(item.data + "T00:00:00");
+
+      return (
+        data.getMonth() === mesAtual &&
+        data.getFullYear() === anoAtual
+      );
+    });
+
+  corridasMes.sort(
+    (a, b) =>
+      new Date(b.data) - new Date(a.data)
+  );
 
   corridasMes.forEach(item => {
+
     total += Number(item.valor);
 
     lista.innerHTML += `
       <li>
-        <div class="posicao">🚗 ${item.nome}</div>
+        <div class="posicao">
+          🚗 ${item.nome}
+        </div>
+
         <br>
-        <div class="valor">💰 R$ ${item.valor}</div>
-        <div>📅 ${formatarData(item.data)}</div>
-        <div>🛣️ ${item.corridas || 0} corridas</div>
+
+        <div class="valor">
+          💰 R$ ${item.valor}
+        </div>
+
+        <div>
+          📅 ${formatarData(item.data)}
+        </div>
+
+        <div>
+          🛣️ ${item.corridas || 0} corridas
+        </div>
+
         <br>
-        <button onclick="editarCorrida('${item.id}')">✏️ Editar</button>
-        <button onclick="excluirCorrida('${item.id}')">🗑️ Excluir</button>
+
+        <button onclick="editarCorrida('${item.id}')">
+          ✏️ Editar
+        </button>
+
+        <button onclick="excluirCorrida('${item.id}')">
+          🗑️ Excluir
+        </button>
       </li>
     `;
   });
 
-  totalEl.innerText = `R$ ${total}`;
+  totalEl.innerText =
+    `R$ ${total}`;
 }
 
+// ================================
+// MÉTRICAS / LÍDER
+// ================================
+
 function atualizarLider() {
-  let lider = document.getElementById("liderSemana");
+
+  let lider =
+    document.getElementById("liderSemana");
 
   if (!lider) return;
 
@@ -627,43 +1193,75 @@ function atualizarLider() {
     return;
   }
 
-  let top = ranking[0];
+  let top =
+    ranking[0];
 
   lider.innerHTML = `
     <div class="lider-card">
       🏆 LÍDER
+
       <h2>${top.nome}</h2>
-      <strong>R$ ${top.valor}</strong>
+
+      <strong>
+        R$ ${top.valor}
+      </strong>
+
       <br><br>
+
       🚗 ${top.corridas} corridas
     </div>
   `;
 }
 
 function atualizarMetricas() {
-  let total = ranking.reduce(
-    (soma, m) => soma + Number(m.valor),
-    0
-  );
 
-  let corridas = ranking.reduce(
-    (soma, m) => soma + Number(m.corridas),
-    0
-  );
+  let total =
+    ranking.reduce(
+      (soma, m) =>
+        soma + Number(m.valor),
+      0
+    );
 
-  let homeTotal = document.getElementById("homeTotal");
-  let homeMensal = document.getElementById("homeMensal");
-  let totalSemana = document.getElementById("totalSemana");
-  let totalCorridas = document.getElementById("totalCorridas");
+  let corridas =
+    ranking.reduce(
+      (soma, m) =>
+        soma + Number(m.corridas),
+      0
+    );
 
-  if (homeTotal) homeTotal.innerText = `R$ ${total}`;
-  if (homeMensal) homeMensal.innerText = `R$ ${total}`;
-  if (totalSemana) totalSemana.innerText = `R$ ${total}`;
-  if (totalCorridas) totalCorridas.innerText = corridas;
+  let homeTotal =
+    document.getElementById("homeTotal");
+
+  let homeMensal =
+    document.getElementById("homeMensal");
+
+  let totalSemana =
+    document.getElementById("totalSemana");
+
+  let totalCorridas =
+    document.getElementById("totalCorridas");
+
+  if (homeTotal)
+    homeTotal.innerText = `R$ ${total}`;
+
+  if (homeMensal)
+    homeMensal.innerText = `R$ ${total}`;
+
+  if (totalSemana)
+    totalSemana.innerText = `R$ ${total}`;
+
+  if (totalCorridas)
+    totalCorridas.innerText = corridas;
 }
 
+// ================================
+// GRÁFICOS
+// ================================
+
 function atualizarGrafico() {
-  let canvas = document.getElementById("grafico");
+
+  let canvas =
+    document.getElementById("grafico");
 
   if (!canvas) return;
 
@@ -671,90 +1269,118 @@ function atualizarGrafico() {
     grafico.destroy();
   }
 
-  grafico = new Chart(canvas.getContext("2d"), {
-    type: "doughnut",
-    data: {
-      labels: ranking.map(m => m.nome),
-      datasets: [{
-        data: ranking.map(m => m.valor),
-        backgroundColor: [
-          "#2563eb",
-          "#dc2626",
-          "#16a34a",
-          "#facc15",
-          "#9333ea",
-          "#f97316",
-          "#06b6d4",
-          "#ec4899",
-          "#111827",
-          "#84cc16"
-        ]
-      }]
-    }
-  });
+  grafico =
+    new Chart(
+      canvas.getContext("2d"),
+      {
+        type: "doughnut",
+        data: {
+          labels:
+            ranking.map(m => m.nome),
+          datasets: [{
+            data:
+              ranking.map(m => m.valor),
+            backgroundColor: [
+              "#2563eb",
+              "#dc2626",
+              "#16a34a",
+              "#facc15",
+              "#9333ea",
+              "#f97316",
+              "#06b6d4",
+              "#ec4899",
+              "#111827",
+              "#84cc16"
+            ]
+          }]
+        }
+      }
+    );
 }
 
 function atualizarGraficoLinha() {
-  let canvas = document.getElementById("graficoLinha");
+
+  let canvas =
+    document.getElementById("graficoLinha");
 
   if (!canvas) return;
 
   let totais = {};
 
   ranking.forEach(motorista => {
+
     motorista.historico.forEach(item => {
+
       if (!totais[item.data]) {
         totais[item.data] = 0;
       }
 
-      totais[item.data] += Number(item.valor);
+      totais[item.data] +=
+        Number(item.valor);
     });
   });
 
-  let datas = Object.keys(totais).sort();
-  let valores = datas.map(data => totais[data]);
+  let datas =
+    Object.keys(totais).sort();
+
+  let valores =
+    datas.map(data => totais[data]);
 
   if (graficoLinha) {
     graficoLinha.destroy();
   }
 
-  graficoLinha = new Chart(canvas.getContext("2d"), {
-    type: "line",
-    data: {
-      labels: datas,
-      datasets: [{
-        label: "Evolução",
-        data: valores,
-        borderColor: "#ff7a18",
-        backgroundColor: "rgba(255,122,24,0.2)",
-        fill: true,
-        tension: 0.3
-      }]
-    }
-  });
+  graficoLinha =
+    new Chart(
+      canvas.getContext("2d"),
+      {
+        type: "line",
+        data: {
+          labels: datas,
+          datasets: [{
+            label: "Evolução",
+            data: valores,
+            borderColor: "#ff7a18",
+            backgroundColor:
+              "rgba(255,122,24,0.2)",
+            fill: true,
+            tension: 0.3
+          }]
+        }
+      }
+    );
 }
 
-function formatarData(data) {
-  if (!data) return "sem data";
-
-  let partes = data.split("-");
-  return `${partes[2]}/${partes[1]}/${partes[0]}`;
-}
+// ================================
+// UTIL
+// ================================
 
 function limparCampos() {
+
   document.getElementById("nome").value = "";
+
   document.getElementById("valor").value = "";
+
   document.getElementById("corridas").value = "";
+
   document.getElementById("data").value = "";
 }
 
 async function resetSemana() {
-  if (!confirm("Deseja apagar TODAS as corridas?")) return;
+
+  if (!confirm("Deseja apagar TODAS as corridas?")) {
+    return;
+  }
 
   try {
-    let documentos = await getDocs(collection(db, "corridas"));
+
+    let documentos =
+      await getDocs(
+        collection(db, "corridas")
+      );
 
     documentos.forEach(async documento => {
+
       await deleteDoc(documento.ref);
     });
 
@@ -764,11 +1390,17 @@ async function resetSemana() {
     atualizarTudo();
 
     alert("🔥 Corridas apagadas!");
+
   } catch (erro) {
+
     console.error(erro);
     alert("Erro ao apagar");
   }
 }
+
+// ================================
+// WINDOW
+// ================================
 
 window.entrar = entrar;
 window.cadastrar = cadastrar;
