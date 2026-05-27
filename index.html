@@ -3,11 +3,15 @@
 
 <head>
   <meta charset="UTF-8">
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Desafio Semanal</title>
 
   <link rel="stylesheet" href="style.css">
+
   <link rel="manifest" href="manifest.json">
+
   <meta name="theme-color" content="#ff7a18">
 </head>
 
@@ -27,13 +31,26 @@
 
         <h2>Login do motorista</h2>
 
-        <input id="emailLogin" type="email" placeholder="Email">
+        <input
+          id="emailLogin"
+          type="email"
+          placeholder="Email"
+        >
 
-        <input id="senhaLogin" type="password" placeholder="Senha">
+        <input
+          id="senhaLogin"
+          type="password"
+          placeholder="Senha"
+        >
 
-        <button onclick="entrar()">Entrar</button>
+        <button onclick="entrar()">
+          Entrar
+        </button>
 
-        <button class="secundario" onclick="cadastrar()">
+        <button
+          class="secundario"
+          onclick="cadastrar()"
+        >
           Criar conta
         </button>
 
@@ -43,11 +60,17 @@
 
     <section id="home" class="tela">
 
-      <button class="secundario" onclick="sair()">
+      <button
+        class="secundario"
+        onclick="sair()"
+      >
         Sair
       </button>
 
-      <p id="usuarioLogado" class="subtitulo"></p>
+      <p
+        id="usuarioLogado"
+        class="subtitulo"
+      ></p>
 
       <h1>🔥 Desafio</h1>
 
@@ -58,13 +81,23 @@
       <div class="dashboard-cards">
 
         <div class="mini-card">
+
           <small>Total Semana</small>
-          <strong id="homeTotal">R$ 0</strong>
+
+          <strong id="homeTotal">
+            R$ 0
+          </strong>
+
         </div>
 
         <div class="mini-card">
+
           <small>Total Mês</small>
-          <strong id="homeMensal">R$ 0</strong>
+
+          <strong id="homeMensal">
+            R$ 0
+          </strong>
+
         </div>
 
       </div>
@@ -75,19 +108,91 @@
 
         <h2>Nova corrida</h2>
 
-        <input id="nome" placeholder="Nome do motorista">
+        <input
+          id="nome"
+          placeholder="Nome do motorista"
+        >
 
-        <input id="valor" type="number" placeholder="Valor R$">
+        <input
+          id="valor"
+          type="number"
+          placeholder="Valor R$"
+        >
 
-        <input id="corridas" type="number" placeholder="Número de corridas">
+        <input
+          id="corridas"
+          type="number"
+          placeholder="Número de corridas"
+        >
 
-        <input type="date" id="data">
+        <input
+          type="date"
+          id="data"
+        >
 
-        <button onclick="adicionar()">Adicionar corrida</button>
+        <button onclick="adicionar()">
+          Adicionar corrida
+        </button>
 
-        <button class="secundario" onclick="resetSemana()">
+        <button
+          class="secundario"
+          onclick="resetSemana()"
+        >
           Resetar tudo
         </button>
+
+      </div>
+
+    </section>
+
+    <section id="metasTela" class="tela">
+
+      <h1>🎯 Metas</h1>
+
+      <p class="subtitulo">
+        Controle suas metas pessoais
+      </p>
+
+      <div class="card">
+
+        <h2>Meta semanal</h2>
+
+        <input
+          id="metaSemanal"
+          type="number"
+          placeholder="Ex: 3000"
+        >
+
+        <button onclick="salvarMeta()">
+          Salvar meta
+        </button>
+
+      </div>
+
+      <div class="card">
+
+        <h2>Seu progresso</h2>
+
+        <p>
+          💰 Atual:
+          <strong id="valorMetaAtual">
+            R$ 0
+          </strong>
+        </p>
+
+        <p>
+          🎯 Meta:
+          <strong id="valorMetaTotal">
+            R$ 0
+          </strong>
+        </p>
+
+        <p>
+          📈 Progresso:
+          <strong id="progressoMeta">
+            0%
+          </strong>
+        </p>
 
       </div>
 
@@ -102,8 +207,13 @@
       </p>
 
       <div class="card">
+
         <h2>Total pessoal</h2>
-        <strong id="meuTotal">R$ 0</strong>
+
+        <strong id="meuTotal">
+          R$ 0
+        </strong>
+
       </div>
 
       <ul id="listaMinhas"></ul>
@@ -131,8 +241,13 @@
       </p>
 
       <div class="card">
+
         <h2>Total do mês</h2>
-        <strong id="totalHistoricoMensal">R$ 0</strong>
+
+        <strong id="totalHistoricoMensal">
+          R$ 0
+        </strong>
+
       </div>
 
       <ul id="listaHistorico"></ul>
@@ -160,60 +275,108 @@
       </p>
 
       <div class="card">
+
         <canvas id="grafico"></canvas>
+
       </div>
 
       <div class="card">
+
         <h2>📈 Evolução por data</h2>
+
         <canvas id="graficoLinha"></canvas>
+
       </div>
 
       <div class="metricas">
 
         <div>
+
           <small>Total Semana</small>
-          <strong id="totalSemana">R$ 0</strong>
+
+          <strong id="totalSemana">
+            R$ 0
+          </strong>
+
         </div>
 
         <div>
+
           <small>Total Corridas</small>
-          <strong id="totalCorridas">0</strong>
+
+          <strong id="totalCorridas">
+            0
+          </strong>
+
         </div>
 
       </div>
 
     </section>
 
-    <nav class="menu" id="menuApp">
+    <nav
+      class="menu"
+      id="menuApp"
+    >
 
       <button onclick="abrirTela('home')">
+
         🏠
+
         <span>Home</span>
+
+      </button>
+
+      <button onclick="abrirTela('metasTela')">
+
+        🎯
+
+        <span>Metas</span>
+
       </button>
 
       <button onclick="abrirTela('minhasTela')">
+
         👤
+
         <span>Minhas</span>
+
       </button>
 
       <button onclick="abrirTela('rankingTela')">
+
         🏆
+
         <span>Ranking</span>
+
       </button>
 
       <button onclick="abrirTela('historicoTela')">
+
         🌎
+
         <span>Geral</span>
+
       </button>
 
       <button onclick="abrirTela('graficoTela')">
+
         📊
+
         <span>Gráfico</span>
+
       </button>
 
-      <button id="botaoAdmin" onclick="abrirTela('adminTela')" style="display:none;">
+      <button
+        id="botaoAdmin"
+        onclick="abrirTela('adminTela')"
+        style="display:none;"
+      >
+
         👑
+
         <span>Admin</span>
+
       </button>
 
     </nav>
@@ -222,7 +385,10 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <script type="module" src="script.js"></script>
+  <script
+    type="module"
+    src="script.js"
+  ></script>
 
 </body>
 
