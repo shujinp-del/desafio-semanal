@@ -698,6 +698,24 @@ if (mediaCorridaEl) {
     `R$ ${mediaCorrida.toFixed(2)}`;
 
 }
+let diasTrabalhados = new Set(
+  minhasSemana.map(item => item.data)
+).size;
+
+let mediaDiaria = 0;
+
+if (diasTrabalhados > 0) {
+  mediaDiaria =
+    totalAtual / diasTrabalhados;
+}
+
+let mediaDiariaEl =
+  document.getElementById("insightMediaDiaria");
+
+if (mediaDiariaEl) {
+  mediaDiariaEl.innerText =
+    `R$ ${mediaDiaria.toFixed(2)}`;
+}
 }
 
 function atualizarMelhorDia() {
