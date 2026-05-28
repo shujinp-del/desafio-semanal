@@ -1284,21 +1284,39 @@ function limparCampos() {
 }
 
 async function resetSemana() {
-  if (!confirm("Deseja apagar TODAS as corridas?")) return;
+  if (!usuarioEhAdmin()) {
+    alert("Apenas admin pode resetar os dados.");
+    return;
+  }
+
+  let confirmar = confirm(
+    "⚠️ Atenção: isso vai apagar TODAS as corridas do sistema. Deseja continuar?"
+  );
+
+  if (!confirmar) return;
+
+  let texto = prompt(
+    "Para confirmar, digite APAGAR em letras maiúsculas:"
+  );
+
+  if (texto !== "APAGAR") {
+    alert("Reset cancelado.");
+    return;
+  }
 
   try {
     let documentos = await getDocs(collection(db, "corridas"));
 
-    documentos.forEach(async documento => {
+    for (let documento of documentos.docs) {
       await deleteDoc(documento.ref);
-    });
+    }
 
     ranking = [];
     corridasFirebase = [];
 
     atualizarTudo();
 
-    alert("🔥 Corridas apagadas!");
+    alert("🔥 Corridas apagadas com segurança!");
   } catch (erro) {
     console.error(erro);
     alert("Erro ao apagar");
