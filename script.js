@@ -696,6 +696,7 @@ if (mediaCorridaEl) {
     `R$ ${mediaCorrida.toFixed(2)}`;
 
 }
+}
 
 function atualizarMelhorDia() {
 
