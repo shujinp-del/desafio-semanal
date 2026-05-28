@@ -795,7 +795,14 @@ async function atualizarAdmin() {
         <br>
         <button onclick="aprovarUsuario('${id}')">✅ Aprovar</button>
         <button onclick="bloquearUsuario('${id}')">🚫 Bloquear</button>
-        <button onclick="tornarAdmin('${id}')">👑 Tornar admin</button>async function removerAdmin(id) {
+        <button onclick="tornarAdmin('${id}')">👑 Tornar admin</button>
+        <button onclick="removerAdmin('${id}')">⬇️ Remover admin</button>
+        <button onclick="excluirConta('${id}', '${usuario.email}')">🗑️ Excluir conta</button>
+      </li>
+    `;
+  });
+}
+async function removerAdmin(id) {
   if (!confirm("Deseja remover o acesso admin deste usuário?")) {
     return;
   }
@@ -808,13 +815,6 @@ async function atualizarAdmin() {
   alert("Admin removido!");
 
   atualizarAdmin();
-}
-        <button onclick="removerAdmin('${id}')">⬇️ Remover admin</button>
-        <button onclick="excluirConta('${id}', '${usuario.email}')">🗑️ Excluir conta</button>
-      </li>
-    `;
-  });
-  window.removerAdmin = removerAdmin;
 }
 
 async function aprovarUsuario(id) {
@@ -1281,3 +1281,4 @@ window.bloquearUsuario = bloquearUsuario;
 window.tornarAdmin = tornarAdmin;
 window.salvarMeta = salvarMeta;
 window.excluirConta = excluirConta;
+window.removerAdmin = removerAdmin;
