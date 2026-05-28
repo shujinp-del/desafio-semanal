@@ -777,6 +777,119 @@ function atualizarMelhorDia() {
 }
 
 function atualizarPiorDia() {
+  function atualizarFechamentoMensal() {
+
+  if (!usuarioAtual) return;
+
+  let totalEl =
+    document.getElementById("fechamentoTotalMes");
+
+  let corridasEl =
+    document.getElementById("fechamentoCorridasMes");
+
+  let mediaEl =
+    document.getElementById("fechamentoMediaDiariaMes");
+
+  let melhorDiaEl =
+    document.getElementById("fechamentoMelhorDiaMes");
+
+  if (
+    !totalEl ||
+    !corridasEl ||
+    !mediaEl ||
+    !melhorDiaEl
+  ) return;
+
+  let hoje = new Date();
+
+  let mesAtual = hoje.getMonth();
+  let anoAtual = hoje.getFullYear();
+
+  let minhasMes =
+    corridasFirebase.filter(item => {
+
+      let data =
+        new Date(item.data + "T00:00:00");
+
+      return (
+        (
+          item.uid === usuarioAtual.uid ||
+          item.email === usuarioAtual.email
+        ) &&
+        data.getMonth() === mesAtual &&
+        data.getFullYear() === anoAtual
+      );
+    });
+
+  let totalMes =
+    minhasMes.reduce(
+      (soma, item) =>
+        soma + Number(item.valor),
+      0
+    );
+
+  let totalCorridas =
+    minhasMes.reduce(
+      (soma, item) =>
+        soma + Number(item.corridas || 0),
+      0
+    );
+
+  let diasTrabalhados = new Set(
+    minhasMes.map(item => item.data)
+  ).size;
+
+  let mediaDiaria = 0;
+
+  if (diasTrabalhados > 0) {
+    mediaDiaria =
+      totalMes / diasTrabalhados;
+  }
+
+  let mapaDias = {};
+
+  minhasMes.forEach(item => {
+
+    if (!mapaDias[item.data]) {
+      mapaDias[item.data] = 0;
+    }
+
+    mapaDias[item.data] +=
+      Number(item.valor);
+  });
+
+  let melhorDia = "-";
+  let maiorValor = 0;
+
+  Object.keys(mapaDias).forEach(data => {
+
+    if (mapaDias[data] > maiorValor) {
+
+      maiorValor = mapaDias[data];
+
+      let dataObj =
+        new Date(data + "T00:00:00");
+
+      melhorDia =
+        dataObj.toLocaleDateString(
+          "pt-BR",
+          { weekday: "long" }
+        );
+    }
+  });
+
+  totalEl.innerText =
+    `R$ ${totalMes.toFixed(2)}`;
+
+  corridasEl.innerText =
+    totalCorridas;
+
+  mediaEl.innerText =
+    `R$ ${mediaDiaria.toFixed(2)}`;
+
+  melhorDiaEl.innerText =
+    melhorDia;
+}
 
   let nomeEl = document.getElementById("piorDiaNome");
   let valorEl = document.getElementById("piorDiaValor");
@@ -1016,12 +1129,13 @@ function abrirTela(id) {
     tela.classList.add("ativa");
   }
 
-  if (id === "metasTela") {
-    atualizarMetas();
-    atualizarRankingMetas();
-    atualizarMelhorDia();
-    atualizarPiorDia();
-  }
+ if (id === "metasTela") {
+  atualizarMetas();
+  atualizarRankingMetas();
+  atualizarMelhorDia();
+  atualizarPiorDia();
+  atualizarFechamentoMensal();
+}
 
   if (id === "adminTela") {
     atualizarAdmin();
@@ -1060,6 +1174,7 @@ function atualizarTudo() {
   atualizarRankingMetas();
   atualizarMelhorDia();
   atualizarPiorDia();
+  atualizarFechamentoMensal();
 }
 
 function atualizarRanking() {
