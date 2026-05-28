@@ -795,9 +795,13 @@ function abrirTela(id) {
   let mapa = {};
 
   corridasFirebase
-    .filter(item =>
-      item.uid === usuarioAtual.uid &&
-      estaNaSemanaAtual(item.data)
+   .filter(item =>
+  (
+    item.uid === usuarioAtual.uid ||
+    item.email === usuarioAtual.email
+  ) &&
+  estaNaSemanaAtual(item.data)
+)
     )
     .forEach(item => {
       if (!mapa[item.data]) {
