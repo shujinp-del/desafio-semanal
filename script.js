@@ -1008,7 +1008,15 @@ function estaNaSemanaAtual(data) {
 
   return dataCorrida >= inicioSemana && dataCorrida <= fimSemana;
 }
-
+function formatarMoeda(valor) {
+  return Number(valor || 0).toLocaleString(
+    "pt-BR",
+    {
+      style: "currency",
+      currency: "BRL"
+    }
+  );
+}
 function formatarData(data) {
   if (!data) return "sem data";
   let partes = data.split("-");
