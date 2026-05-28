@@ -32,7 +32,6 @@ const firebaseConfig = {
 };
 
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
-
 const db = getFirestore(app);
 const auth = getAuth(app);
 
@@ -49,6 +48,13 @@ let graficoLinha;
 let editandoId = null;
 let pararSincronia = null;
 
+function formatarMoeda(valor) {
+  return Number(valor || 0).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL"
+  });
+}
+
 function usuarioEhAdmin() {
   return (
     dadosUsuario &&
@@ -64,34 +70,25 @@ function aplicarPrivacidadeMenus() {
   let botaoAdmin = document.getElementById("botaoAdmin");
 
   if (botaoGeral) {
-    botaoGeral.style.display =
-      usuarioEhAdmin() ? "block" : "none";
+    botaoGeral.style.display = usuarioEhAdmin() ? "block" : "none";
   }
 
   if (botaoAdmin) {
-    botaoAdmin.style.display =
-      usuarioEhAdmin() ? "block" : "none";
+    botaoAdmin.style.display = usuarioEhAdmin() ? "block" : "none";
   }
 }
 
 function mostrarStatusLogin(texto) {
-
-  let card =
-    document.querySelector("#loginTela .card");
+  let card = document.querySelector("#loginTela .card");
 
   if (!card) return;
 
-  let status =
-    document.getElementById("statusLogin");
+  let status = document.getElementById("statusLogin");
 
   if (!status) {
-
     status = document.createElement("p");
-
     status.id = "statusLogin";
-
     status.className = "subtitulo";
-
     card.appendChild(status);
   }
 
@@ -99,14 +96,8 @@ function mostrarStatusLogin(texto) {
 }
 
 async function cadastrar() {
-
-  let email =
-    document.getElementById("emailLogin")
-    .value.trim();
-
-  let senha =
-    document.getElementById("senhaLogin")
-    .value;
+  let email = document.getElementById("emailLogin").value.trim();
+  let senha = document.getElementById("senhaLogin").value;
 
   if (!email || !senha) {
     alert("Digite email e senha");
@@ -114,13 +105,11 @@ async function cadastrar() {
   }
 
   try {
-
-    let credencial =
-      await createUserWithEmailAndPassword(
-        auth,
-        email,
-        senha
-      );
+    let credencial = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      senha
+    );
 
     await setDoc(
       doc(db, "usuarios", credencial.user.uid),
@@ -134,29 +123,17 @@ async function cadastrar() {
     );
 
     alert("Conta criada! Aguarde aprovação.");
-
   } catch (erro) {
-
     alert(erro.message);
   }
 }
 
 function entrar() {
+  let email = document.getElementById("emailLogin").value.trim();
+  let senha = document.getElementById("senhaLogin").value;
 
-  let email =
-    document.getElementById("emailLogin")
-    .value.trim();
-
-  let senha =
-    document.getElementById("senhaLogin")
-    .value;
-
-  signInWithEmailAndPassword(
-    auth,
-    email,
-    senha
-  )
-  .catch(erro => alert(erro.message));
+  signInWithEmailAndPassword(auth, email, senha)
+    .catch(erro => alert(erro.message));
 }
 
 function sair() {
@@ -164,41 +141,30 @@ function sair() {
 }
 
 onAuthStateChanged(auth, async usuario => {
-
   usuarioAtual = usuario;
 
-  let menu =
-    document.getElementById("menuApp");
-
-  let usuarioLogado =
-    document.getElementById("usuarioLogado");
+  let menu = document.getElementById("menuApp");
+  let usuarioLogado = document.getElementById("usuarioLogado");
 
   if (pararSincronia) {
-
     pararSincronia();
-
     pararSincronia = null;
   }
 
   if (!usuario) {
-
-    if (menu) menu.style.display = "none";
+    if (menu) {
+      menu.style.display = "none";
+    }
 
     aplicarPrivacidadeMenus();
-
     abrirTela("loginTela");
-
     return;
   }
 
-  let usuarioRef =
-    doc(db, "usuarios", usuario.uid);
-
-  let usuarioSnap =
-    await getDoc(usuarioRef);
+  let usuarioRef = doc(db, "usuarios", usuario.uid);
+  let usuarioSnap = await getDoc(usuarioRef);
 
   if (!usuarioSnap.exists()) {
-
     await setDoc(usuarioRef, {
       email: usuario.email,
       status: "pendente",
@@ -213,9 +179,7 @@ onAuthStateChanged(auth, async usuario => {
       papel: "motorista",
       metaSemanal: 0
     };
-
   } else {
-
     dadosUsuario = usuarioSnap.data();
   }
 
@@ -223,28 +187,27 @@ onAuthStateChanged(auth, async usuario => {
     dadosUsuario.status !== "ativo" &&
     dadosUsuario.status !== "admin"
   ) {
-
-    if (menu) menu.style.display = "none";
+    if (menu) {
+      menu.style.display = "none";
+    }
 
     aplicarPrivacidadeMenus();
 
-    mostrarStatusLogin(
-      "⏳ Sua conta está aguardando aprovação."
-    );
+    mostrarStatusLogin("⏳ Sua conta está aguardando aprovação.");
 
     abrirTela("loginTela");
 
     return;
   }
 
-  if (menu) menu.style.display = "flex";
+  if (menu) {
+    menu.style.display = "flex";
+  }
 
   aplicarPrivacidadeMenus();
 
   if (usuarioLogado) {
-
-    usuarioLogado.innerText =
-      `Logado como: ${usuario.email}`;
+    usuarioLogado.innerText = `Logado como: ${usuario.email}`;
   }
 
   mostrarStatusLogin("");
@@ -255,16 +218,13 @@ onAuthStateChanged(auth, async usuario => {
 });
 
 function iniciarSincronia() {
-
   pararSincronia = onSnapshot(
     collection(db, "corridas"),
     snapshot => {
-
       let todasCorridas = [];
       let corridasSemana = [];
 
       snapshot.forEach(docSnap => {
-
         let item = docSnap.data();
 
         let corrida = {
@@ -277,13 +237,9 @@ function iniciarSincronia() {
           corrida.valor &&
           corrida.data
         ) {
-
           todasCorridas.push(corrida);
 
-          if (
-            estaNaSemanaAtual(corrida.data)
-          ) {
-
+          if (estaNaSemanaAtual(corrida.data)) {
             corridasSemana.push(corrida);
           }
         }
@@ -291,8 +247,7 @@ function iniciarSincronia() {
 
       corridasFirebase = todasCorridas;
 
-      ranking =
-        montarRanking(corridasSemana);
+      ranking = montarRanking(corridasSemana);
 
       atualizarRankingMetas();
 
@@ -302,16 +257,12 @@ function iniciarSincronia() {
 }
 
 function montarRanking(corridas) {
-
   let mapa = {};
 
   corridas.forEach(item => {
-
-    let chave =
-      item.nome.toLowerCase();
+    let chave = item.nome.toLowerCase();
 
     if (!mapa[chave]) {
-
       mapa[chave] = {
         nome: item.nome,
         valor: 0,
@@ -320,11 +271,8 @@ function montarRanking(corridas) {
       };
     }
 
-    mapa[chave].valor +=
-      Number(item.valor);
-
-    mapa[chave].corridas +=
-      Number(item.corridas || 0);
+    mapa[chave].valor += Number(item.valor);
+    mapa[chave].corridas += Number(item.corridas || 0);
 
     mapa[chave].historico.push({
       id: item.id,
@@ -342,40 +290,31 @@ function montarRanking(corridas) {
 }
 
 async function atualizarRankingMetas() {
-
-  let lista =
-    document.getElementById("rankingMetas");
+  let lista = document.getElementById("rankingMetas");
 
   if (!lista) return;
 
   lista.innerHTML = "";
 
-  let usuariosSnap =
-    await getDocs(collection(db, "usuarios"));
+  let usuariosSnap = await getDocs(collection(db, "usuarios"));
 
   let rankingTemp = [];
 
   usuariosSnap.forEach(docSnap => {
-
     let usuario = docSnap.data();
 
-    if (
-      !usuario.metaSemanal ||
-      usuario.metaSemanal <= 0
-    ) {
+    if (!usuario.metaSemanal || usuario.metaSemanal <= 0) {
       return;
     }
 
-    let minhas =
-      corridasFirebase.filter(
-        item =>
-          item.email === usuario.email &&
-          estaNaSemanaAtual(item.data)
-      );
+    let minhas = corridasFirebase.filter(
+      item =>
+        item.email === usuario.email &&
+        estaNaSemanaAtual(item.data)
+    );
 
     let total = minhas.reduce(
-      (soma, item) =>
-        soma + Number(item.valor),
+      (soma, item) => soma + Number(item.valor),
       0
     );
 
@@ -391,14 +330,11 @@ async function atualizarRankingMetas() {
     });
   });
 
-  rankingTemp.sort(
-    (a, b) => b.progresso - a.progresso
-  );
+  rankingTemp.sort((a, b) => b.progresso - a.progresso);
 
   rankingMetas = rankingTemp;
 
   rankingTemp.forEach((item, index) => {
-
     let medalha = `${index + 1}º`;
 
     if (index === 0) medalha = "🥇";
@@ -407,7 +343,6 @@ async function atualizarRankingMetas() {
 
     lista.innerHTML += `
       <li>
-
         <div class="posicao">
           ${medalha} ${item.email}
         </div>
@@ -419,16 +354,13 @@ async function atualizarRankingMetas() {
         </div>
 
         <div>
-          💰 R$ ${item.total}
-          de R$ ${item.meta}
+          💰 ${formatarMoeda(item.total)} de ${formatarMoeda(item.meta)}
         </div>
-
       </li>
     `;
   });
 }
 async function adicionar() {
-
   if (!usuarioAtual) {
     alert("Faça login primeiro");
     return;
@@ -456,55 +388,39 @@ async function adicionar() {
   }
 
   try {
-
     if (editandoId) {
-
-      await updateDoc(
-        doc(db, "corridas", editandoId),
-        {
-          nome,
-          valor,
-          corridas,
-          data,
-          uid: usuarioAtual.uid,
-          email: usuarioAtual.email
-        }
-      );
+      await updateDoc(doc(db, "corridas", editandoId), {
+        nome,
+        valor,
+        corridas,
+        data,
+        uid: usuarioAtual.uid,
+        email: usuarioAtual.email
+      });
 
       alert("✏️ Corrida editada!");
-
       editandoId = null;
-
     } else {
-
-      await addDoc(
-        collection(db, "corridas"),
-        {
-          nome,
-          valor,
-          corridas,
-          data,
-          uid: usuarioAtual.uid,
-          email: usuarioAtual.email,
-          criadoEm: new Date().toISOString()
-        }
-      );
+      await addDoc(collection(db, "corridas"), {
+        nome,
+        valor,
+        corridas,
+        data,
+        uid: usuarioAtual.uid,
+        email: usuarioAtual.email,
+        criadoEm: new Date().toISOString()
+      });
     }
 
     limparCampos();
-
   } catch (erro) {
-
     console.error(erro);
-
     alert("Erro ao salvar");
   }
 }
 
 function editarCorrida(id) {
-
-  let corrida =
-    corridasFirebase.find(item => item.id === id);
+  let corrida = corridasFirebase.find(item => item.id === id);
 
   if (!corrida) return;
 
@@ -519,27 +435,20 @@ function editarCorrida(id) {
 }
 
 async function excluirCorrida(id) {
-
   if (!confirm("Deseja excluir esta corrida?")) return;
 
   try {
-
     await deleteDoc(doc(db, "corridas", id));
-
   } catch (erro) {
-
     console.error(erro);
-
     alert("Erro ao excluir");
   }
 }
 
 async function salvarMeta() {
-
   if (!usuarioAtual) return;
 
-  let meta =
-    Number(document.getElementById("metaSemanal").value);
+  let meta = Number(document.getElementById("metaSemanal").value);
 
   if (!meta || meta <= 0) {
     alert("Digite uma meta válida");
@@ -547,13 +456,9 @@ async function salvarMeta() {
   }
 
   try {
-
-    await updateDoc(
-      doc(db, "usuarios", usuarioAtual.uid),
-      {
-        metaSemanal: meta
-      }
-    );
+    await updateDoc(doc(db, "usuarios", usuarioAtual.uid), {
+      metaSemanal: meta
+    });
 
     dadosUsuario.metaSemanal = meta;
 
@@ -561,19 +466,16 @@ async function salvarMeta() {
     atualizarRankingMetas();
     atualizarMelhorDia();
     atualizarPiorDia();
+    atualizarFechamentoMensal();
 
     alert("🎯 Meta salva!");
-
   } catch (erro) {
-
     console.error(erro);
-
     alert("Erro ao salvar meta");
   }
 }
 
 function atualizarMetas() {
-
   if (!usuarioAtual) return;
 
   let atualEl = document.getElementById("valorMetaAtual");
@@ -585,141 +487,113 @@ function atualizarMetas() {
 
   if (!atualEl || !totalEl || !progressoEl) return;
 
-  let minhasSemana =
-    corridasFirebase.filter(item =>
-      (
-        item.uid === usuarioAtual.uid ||
-        item.email === usuarioAtual.email
-      ) &&
-      estaNaSemanaAtual(item.data)
-    );
+  let minhasSemana = corridasFirebase.filter(item =>
+    (
+      item.uid === usuarioAtual.uid ||
+      item.email === usuarioAtual.email
+    ) &&
+    estaNaSemanaAtual(item.data)
+  );
 
-  let totalAtual =
-    minhasSemana.reduce(
-      (soma, item) => soma + Number(item.valor),
-      0
-    );
+  let totalAtual = minhasSemana.reduce(
+    (soma, item) => soma + Number(item.valor),
+    0
+  );
 
- let meta = Number(
-  (dadosUsuario && dadosUsuario.metaSemanal) || 0
-);
+  let meta = Number((dadosUsuario && dadosUsuario.metaSemanal) || 0);
 
   if (inputMeta && meta > 0) {
     inputMeta.value = meta;
   }
 
-  atualEl.innerText = `R$ ${totalAtual}`;
-  totalEl.innerText = `R$ ${meta}`;
+  atualEl.innerText = formatarMoeda(totalAtual);
+  totalEl.innerText = formatarMoeda(meta);
 
   let progresso = 0;
 
   if (meta > 0) {
-    progresso =
-      Math.min(
-        150,
-        Math.round((totalAtual / meta) * 100)
-      );
+    progresso = Math.min(
+      150,
+      Math.round((totalAtual / meta) * 100)
+    );
   }
 
-  progressoEl.innerText =
-    `${Math.min(progresso, 100)}%`;
+  progressoEl.innerText = `${Math.min(progresso, 100)}%`;
 
   if (badgeEl) {
-
     if (meta <= 0) {
-      badgeEl.innerHTML =
-        "😴 Defina uma meta para ganhar badges";
+      badgeEl.innerHTML = "😴 Defina uma meta para ganhar badges";
     } else if (progresso >= 120) {
-      badgeEl.innerHTML =
-        "🔥 Ultra Meta — passou de 120%";
+      badgeEl.innerHTML = "🔥 Ultra Meta — passou de 120%";
     } else if (progresso >= 100) {
-      badgeEl.innerHTML =
-        "🏆 Meta Batida — desafio concluído";
+      badgeEl.innerHTML = "🏆 Meta Batida — desafio concluído";
     } else if (progresso >= 75) {
-      badgeEl.innerHTML =
-        "🥇 Ouro — 75% da meta";
+      badgeEl.innerHTML = "🥇 Ouro — 75% da meta";
     } else if (progresso >= 50) {
-      badgeEl.innerHTML =
-        "🥈 Prata — 50% da meta";
+      badgeEl.innerHTML = "🥈 Prata — 50% da meta";
     } else if (progresso >= 25) {
-      badgeEl.innerHTML =
-        "🥉 Bronze — 25% da meta";
+      badgeEl.innerHTML = "🥉 Bronze — 25% da meta";
     } else {
-      badgeEl.innerHTML =
-        "🚀 Começando — siga lançando corridas";
+      badgeEl.innerHTML = "🚀 Começando — siga lançando corridas";
     }
   }
 
   if (notificacaoEl) {
-
     let faltam = meta - totalAtual;
 
     if (meta <= 0) {
-      notificacaoEl.innerHTML =
-        "🚀 Defina uma meta para começar";
+      notificacaoEl.innerHTML = "🚀 Defina uma meta para começar";
     } else if (faltam <= 0) {
-      notificacaoEl.innerHTML =
-        "🏆 Parabéns! Você bateu sua meta semanal!";
+      notificacaoEl.innerHTML = "🏆 Parabéns! Você bateu sua meta semanal!";
     } else if (faltam <= meta * 0.1) {
       notificacaoEl.innerHTML =
-        `🔥 Falta pouco! Só R$ ${faltam} para bater sua meta.`;
+        `🔥 Falta pouco! Só ${formatarMoeda(faltam)} para bater sua meta.`;
     } else {
       notificacaoEl.innerHTML =
-        `🔔 Faltam R$ ${faltam} para sua meta semanal.`;
+        `🔔 Faltam ${formatarMoeda(faltam)} para sua meta semanal.`;
     }
   }
-let totalCorridasSemana =
-  minhasSemana.reduce(
-    (soma, item) =>
-      soma + Number(item.corridas || 0),
+
+  let totalCorridasSemana = minhasSemana.reduce(
+    (soma, item) => soma + Number(item.corridas || 0),
     0
   );
 
-let mediaCorrida = 0;
+  let mediaCorrida = 0;
 
-if (totalCorridasSemana > 0) {
-  mediaCorrida =
-    totalAtual / totalCorridasSemana;
-}
+  if (totalCorridasSemana > 0) {
+    mediaCorrida = totalAtual / totalCorridasSemana;
+  }
 
-let totalCorridasEl =
-  document.getElementById("insightTotalCorridas");
+  let totalCorridasEl = document.getElementById("insightTotalCorridas");
+  let mediaCorridaEl = document.getElementById("insightMediaCorrida");
 
-let mediaCorridaEl =
-  document.getElementById("insightMediaCorrida");
+  if (totalCorridasEl) {
+    totalCorridasEl.innerText = totalCorridasSemana;
+  }
 
-if (totalCorridasEl) {
-  totalCorridasEl.innerText =
-    totalCorridasSemana;
-}
+  if (mediaCorridaEl) {
+    mediaCorridaEl.innerText = formatarMoeda(mediaCorrida);
+  }
 
-if (mediaCorridaEl) {
-  mediaCorridaEl.innerText =
-    `R$ ${mediaCorrida.toFixed(2)}`;
+  let diasTrabalhados = new Set(
+    minhasSemana.map(item => item.data)
+  ).size;
 
-}
-let diasTrabalhados = new Set(
-  minhasSemana.map(item => item.data)
-).size;
+  let mediaDiaria = 0;
 
-let mediaDiaria = 0;
+  if (diasTrabalhados > 0) {
+    mediaDiaria = totalAtual / diasTrabalhados;
+  }
 
-if (diasTrabalhados > 0) {
-  mediaDiaria =
-    totalAtual / diasTrabalhados;
-}
+  let mediaDiariaEl = document.getElementById("insightMediaDiaria");
 
-let mediaDiariaEl =
-  document.getElementById("insightMediaDiaria");
-
-if (mediaDiariaEl) {
-  mediaDiariaEl.innerText =
-    `R$ ${mediaDiaria.toFixed(2)}`;
-}
+  if (mediaDiariaEl) {
+    mediaDiariaEl.innerText = formatarMoeda(mediaDiaria);
+  }
 }
 
 function atualizarMelhorDia() {
-
   let nomeEl = document.getElementById("melhorDiaNome");
   let valorEl = document.getElementById("melhorDiaValor");
 
@@ -736,11 +610,8 @@ function atualizarMelhorDia() {
       estaNaSemanaAtual(item.data)
     )
     .forEach(item => {
-
       if (!mapa[item.data]) {
-        mapa[item.data] = {
-          valor: 0
-        };
+        mapa[item.data] = { valor: 0 };
       }
 
       mapa[item.data].valor += Number(item.valor);
@@ -749,148 +620,26 @@ function atualizarMelhorDia() {
   let melhorData = null;
 
   Object.keys(mapa).forEach(data => {
-
-    if (
-      !melhorData ||
-      mapa[data].valor > mapa[melhorData].valor
-    ) {
+    if (!melhorData || mapa[data].valor > mapa[melhorData].valor) {
       melhorData = data;
     }
   });
 
   if (!melhorData) {
     nomeEl.innerText = "-";
-    valorEl.innerText = "R$ 0";
+    valorEl.innerText = formatarMoeda(0);
     return;
   }
 
   let dataObj = new Date(melhorData + "T00:00:00");
 
-  nomeEl.innerText =
-    dataObj.toLocaleDateString(
-      "pt-BR",
-      { weekday: "long" }
-    );
-
-  valorEl.innerText =
-    `R$ ${mapa[melhorData].valor}`;
-}
-
-function atualizarFechamentoMensal() {
-
-  if (!usuarioAtual) return;
-
-  let totalEl =
-    document.getElementById("fechamentoTotalMes");
-
-  let corridasEl =
-    document.getElementById("fechamentoCorridasMes");
-
-  let mediaEl =
-    document.getElementById("fechamentoMediaDiariaMes");
-
-  let melhorDiaEl =
-    document.getElementById("fechamentoMelhorDiaMes");
-
-  if (
-    !totalEl ||
-    !corridasEl ||
-    !mediaEl ||
-    !melhorDiaEl
-  ) return;
-
-  let hoje = new Date();
-
-  let mesAtual = hoje.getMonth();
-  let anoAtual = hoje.getFullYear();
-
-  let minhasMes =
-    corridasFirebase.filter(item => {
-
-      if (!item.data) return false;
-
-      let data =
-        new Date(item.data + "T00:00:00");
-
-      return (
-        (
-          item.uid === usuarioAtual.uid ||
-          item.email === usuarioAtual.email
-        ) &&
-        data.getMonth() === mesAtual &&
-        data.getFullYear() === anoAtual
-      );
-    });
-
-  let totalMes =
-    minhasMes.reduce(
-      (soma, item) =>
-        soma + Number(item.valor),
-      0
-    );
-
-  let totalCorridas =
-    minhasMes.reduce(
-      (soma, item) =>
-        soma + Number(item.corridas || 0),
-      0
-    );
-
-  let diasTrabalhados = new Set(
-    minhasMes.map(item => item.data)
-  ).size;
-
-  let mediaDiaria = 0;
-
-  if (diasTrabalhados > 0) {
-    mediaDiaria =
-      totalMes / diasTrabalhados;
-  }
-
-  let mapaDias = {};
-
-  minhasMes.forEach(item => {
-
-    if (!mapaDias[item.data]) {
-      mapaDias[item.data] = 0;
-    }
-
-    mapaDias[item.data] +=
-      Number(item.valor);
+  nomeEl.innerText = dataObj.toLocaleDateString("pt-BR", {
+    weekday: "long"
   });
 
-  let melhorDia = "-";
-  let maiorValor = 0;
-
-  Object.keys(mapaDias).forEach(data => {
-
-    if (mapaDias[data] > maiorValor) {
-
-      maiorValor = mapaDias[data];
-
-      let dataObj =
-        new Date(data + "T00:00:00");
-
-      melhorDia =
-        dataObj.toLocaleDateString(
-          "pt-BR",
-          { weekday: "long" }
-        );
-    }
-  });
-
-  totalEl.innerText =
-    `R$ ${totalMes.toFixed(2)}`;
-
-  corridasEl.innerText =
-    totalCorridas;
-
-  mediaEl.innerText =
-    `R$ ${mediaDiaria.toFixed(2)}`;
-
-  melhorDiaEl.innerText =
-    melhorDia;
+  valorEl.innerText = formatarMoeda(mapa[melhorData].valor);
 }
+
 function atualizarPiorDia() {
   let nomeEl = document.getElementById("piorDiaNome");
   let valorEl = document.getElementById("piorDiaValor");
@@ -901,11 +650,17 @@ function atualizarPiorDia() {
 
   corridasFirebase
     .filter(item =>
-      (item.uid === usuarioAtual.uid || item.email === usuarioAtual.email) &&
+      (
+        item.uid === usuarioAtual.uid ||
+        item.email === usuarioAtual.email
+      ) &&
       estaNaSemanaAtual(item.data)
     )
     .forEach(item => {
-      if (!mapa[item.data]) mapa[item.data] = { valor: 0 };
+      if (!mapa[item.data]) {
+        mapa[item.data] = { valor: 0 };
+      }
+
       mapa[item.data].valor += Number(item.valor);
     });
 
@@ -919,7 +674,7 @@ function atualizarPiorDia() {
 
   if (!piorData) {
     nomeEl.innerText = "-";
-    valorEl.innerText = "R$ 0";
+    valorEl.innerText = formatarMoeda(0);
     return;
   }
 
@@ -929,11 +684,93 @@ function atualizarPiorDia() {
     weekday: "long"
   });
 
-  valorEl.innerText = `R$ ${mapa[piorData].valor}`;
+  valorEl.innerText = formatarMoeda(mapa[piorData].valor);
+}
+
+function atualizarFechamentoMensal() {
+  if (!usuarioAtual) return;
+
+  let totalEl = document.getElementById("fechamentoTotalMes");
+  let corridasEl = document.getElementById("fechamentoCorridasMes");
+  let mediaEl = document.getElementById("fechamentoMediaDiariaMes");
+  let melhorDiaEl = document.getElementById("fechamentoMelhorDiaMes");
+
+  if (!totalEl || !corridasEl || !mediaEl || !melhorDiaEl) return;
+
+  let hoje = new Date();
+
+  let mesAtual = hoje.getMonth();
+  let anoAtual = hoje.getFullYear();
+
+  let minhasMes = corridasFirebase.filter(item => {
+    if (!item.data) return false;
+
+    let data = new Date(item.data + "T00:00:00");
+
+    return (
+      (
+        item.uid === usuarioAtual.uid ||
+        item.email === usuarioAtual.email
+      ) &&
+      data.getMonth() === mesAtual &&
+      data.getFullYear() === anoAtual
+    );
+  });
+
+  let totalMes = minhasMes.reduce(
+    (soma, item) => soma + Number(item.valor),
+    0
+  );
+
+  let totalCorridas = minhasMes.reduce(
+    (soma, item) => soma + Number(item.corridas || 0),
+    0
+  );
+
+  let diasTrabalhados = new Set(
+    minhasMes.map(item => item.data)
+  ).size;
+
+  let mediaDiaria = 0;
+
+  if (diasTrabalhados > 0) {
+    mediaDiaria = totalMes / diasTrabalhados;
+  }
+
+  let mapaDias = {};
+
+  minhasMes.forEach(item => {
+    if (!mapaDias[item.data]) {
+      mapaDias[item.data] = 0;
+    }
+
+    mapaDias[item.data] += Number(item.valor);
+  });
+
+  let melhorDia = "-";
+  let maiorValor = 0;
+
+  Object.keys(mapaDias).forEach(data => {
+    if (mapaDias[data] > maiorValor) {
+      maiorValor = mapaDias[data];
+
+      let dataObj = new Date(data + "T00:00:00");
+
+      melhorDia = dataObj.toLocaleDateString("pt-BR", {
+        weekday: "long"
+      });
+    }
+  });
+
+  totalEl.innerText = formatarMoeda(totalMes);
+  corridasEl.innerText = totalCorridas;
+  mediaEl.innerText = formatarMoeda(mediaDiaria);
+  melhorDiaEl.innerText = melhorDia;
 }
 
 async function atualizarAdmin() {
   let lista = document.getElementById("listaAdminUsuarios");
+
   if (!lista) return;
 
   if (!usuarioEhAdmin()) {
@@ -967,14 +804,18 @@ async function atualizarAdmin() {
 
 async function aprovarUsuario(id) {
   await updateDoc(doc(db, "usuarios", id), { status: "ativo" });
+
   alert("Usuário aprovado!");
+
   atualizarAdmin();
   atualizarRankingMetas();
 }
 
 async function bloquearUsuario(id) {
   await updateDoc(doc(db, "usuarios", id), { status: "bloqueado" });
+
   alert("Usuário bloqueado!");
+
   atualizarAdmin();
   atualizarRankingMetas();
 }
@@ -986,6 +827,7 @@ async function tornarAdmin(id) {
   });
 
   alert("Usuário virou admin!");
+
   atualizarAdmin();
   atualizarRankingMetas();
 }
@@ -1008,18 +850,12 @@ function estaNaSemanaAtual(data) {
 
   return dataCorrida >= inicioSemana && dataCorrida <= fimSemana;
 }
-function formatarMoeda(valor) {
-  return Number(valor || 0).toLocaleString(
-    "pt-BR",
-    {
-      style: "currency",
-      currency: "BRL"
-    }
-  );
-}
+
 function formatarData(data) {
   if (!data) return "sem data";
+
   let partes = data.split("-");
+
   return `${partes[2]}/${partes[1]}/${partes[0]}`;
 }
 
@@ -1041,7 +877,10 @@ function abrirTela(id) {
   });
 
   let tela = document.getElementById(id);
-  if (tela) tela.classList.add("ativa");
+
+  if (tela) {
+    tela.classList.add("ativa");
+  }
 
   if (id === "metasTela") {
     atualizarMetas();
@@ -1051,20 +890,31 @@ function abrirTela(id) {
     atualizarFechamentoMensal();
   }
 
-  if (id === "adminTela") atualizarAdmin();
+  if (id === "adminTela") {
+    atualizarAdmin();
+  }
 
   if (id === "graficoTela") {
     atualizarGrafico();
     atualizarGraficoLinha();
   }
 
-  if (id === "historicoTela") atualizarHistoricoMensal();
-  if (id === "minhasTela") atualizarMinhasCorridas();
-  if (id === "rankingTela") atualizarRankingMetas();
+  if (id === "historicoTela") {
+    atualizarHistoricoMensal();
+  }
+
+    if (id === "minhasTela") {
+    atualizarMinhasCorridas();
+  }
+
+  if (id === "rankingTela") {
+    atualizarRankingMetas();
+  }
 }
 
 function atualizarTudo() {
   aplicarPrivacidadeMenus();
+
   atualizarRanking();
   atualizarLider();
   atualizarMetricas();
@@ -1081,12 +931,14 @@ function atualizarTudo() {
 
 function atualizarRanking() {
   let lista = document.getElementById("ranking");
+
   if (!lista) return;
 
   lista.innerHTML = "";
 
   ranking.forEach((m, index) => {
     let medalha = `${index + 1}º`;
+
     if (index === 0) medalha = "🥇";
     if (index === 1) medalha = "🥈";
     if (index === 2) medalha = "🥉";
@@ -1095,7 +947,7 @@ function atualizarRanking() {
       <li>
         <div class="posicao">${medalha} ${m.nome}</div>
         <br>
-        <div class="valor">💰 R$ ${m.valor}</div>
+        <div class="valor">💰 ${formatarMoeda(m.valor)}</div>
         <div>🚗 ${m.corridas} corridas</div>
       </li>
     `;
@@ -1111,10 +963,15 @@ function atualizarMinhasCorridas() {
   lista.innerHTML = "";
 
   let minhas = corridasFirebase.filter(
-    item => item.uid === usuarioAtual.uid || item.email === usuarioAtual.email
+    item =>
+      item.uid === usuarioAtual.uid ||
+      item.email === usuarioAtual.email
   );
 
-  let total = minhas.reduce((soma, item) => soma + Number(item.valor), 0);
+  let total = minhas.reduce(
+    (soma, item) => soma + Number(item.valor),
+    0
+  );
 
   minhas.sort((a, b) => new Date(b.data) - new Date(a.data));
 
@@ -1123,7 +980,7 @@ function atualizarMinhasCorridas() {
       <li>
         <div class="posicao">🚗 ${item.nome}</div>
         <br>
-        <div class="valor">💰 R$ ${item.valor}</div>
+        <div class="valor">💰 ${formatarMoeda(item.valor)}</div>
         <div>📅 ${formatarData(item.data)}</div>
         <div>🛣️ ${item.corridas || 0} corridas</div>
         <br>
@@ -1133,7 +990,7 @@ function atualizarMinhasCorridas() {
     `;
   });
 
-  totalEl.innerText = `R$ ${total}`;
+  totalEl.innerText = formatarMoeda(total);
 }
 
 function atualizarHistoricoMensal() {
@@ -1151,8 +1008,13 @@ function atualizarHistoricoMensal() {
 
   let corridasMes = corridasFirebase.filter(item => {
     if (!item.data) return false;
+
     let data = new Date(item.data + "T00:00:00");
-    return data.getMonth() === mesAtual && data.getFullYear() === anoAtual;
+
+    return (
+      data.getMonth() === mesAtual &&
+      data.getFullYear() === anoAtual
+    );
   });
 
   corridasMes.sort((a, b) => new Date(b.data) - new Date(a.data));
@@ -1164,7 +1026,7 @@ function atualizarHistoricoMensal() {
       <li>
         <div class="posicao">🚗 ${item.nome}</div>
         <br>
-        <div class="valor">💰 R$ ${item.valor}</div>
+        <div class="valor">💰 ${formatarMoeda(item.valor)}</div>
         <div>📅 ${formatarData(item.data)}</div>
         <div>🛣️ ${item.corridas || 0} corridas</div>
         <br>
@@ -1174,11 +1036,12 @@ function atualizarHistoricoMensal() {
     `;
   });
 
-  totalEl.innerText = `R$ ${total}`;
+  totalEl.innerText = formatarMoeda(total);
 }
 
 function atualizarLider() {
   let lider = document.getElementById("liderSemana");
+
   if (!lider) return;
 
   if (ranking.length === 0) {
@@ -1192,7 +1055,7 @@ function atualizarLider() {
     <div class="lider-card">
       🏆 LÍDER
       <h2>${top.nome}</h2>
-      <strong>R$ ${top.valor}</strong>
+      <strong>${formatarMoeda(top.valor)}</strong>
       <br><br>
       🚗 ${top.corridas} corridas
     </div>
@@ -1200,26 +1063,38 @@ function atualizarLider() {
 }
 
 function atualizarMetricas() {
-  let total = ranking.reduce((soma, m) => soma + Number(m.valor), 0);
-  let corridas = ranking.reduce((soma, m) => soma + Number(m.corridas), 0);
+  let total = ranking.reduce(
+    (soma, m) => soma + Number(m.valor),
+    0
+  );
+
+  let corridas = ranking.reduce(
+    (soma, m) => soma + Number(m.corridas),
+    0
+  );
 
   let homeTotal = document.getElementById("homeTotal");
   let homeMensal = document.getElementById("homeMensal");
   let totalSemana = document.getElementById("totalSemana");
   let totalCorridas = document.getElementById("totalCorridas");
 
-  if (homeTotal) homeTotal.innerText = `R$ ${total}`;
-  if (homeMensal) homeMensal.innerText = `R$ ${total}`;
-  if (totalSemana) totalSemana.innerText = `R$ ${total}`;
+  if (homeTotal) homeTotal.innerText = formatarMoeda(total);
+  if (homeMensal) homeMensal.innerText = formatarMoeda(total);
+  if (totalSemana) totalSemana.innerText = formatarMoeda(total);
   if (totalCorridas) totalCorridas.innerText = corridas;
 }
 
 function obterRankingParaGrafico() {
-  if (usuarioEhAdmin()) return ranking;
+  if (usuarioEhAdmin()) {
+    return ranking;
+  }
 
   let minhasSemana = corridasFirebase.filter(
     item =>
-      (item.uid === usuarioAtual?.uid || item.email === usuarioAtual?.email) &&
+      (
+        item.uid === usuarioAtual?.uid ||
+        item.email === usuarioAtual?.email
+      ) &&
       estaNaSemanaAtual(item.data)
   );
 
@@ -1228,11 +1103,14 @@ function obterRankingParaGrafico() {
 
 function atualizarGrafico() {
   let canvas = document.getElementById("grafico");
+
   if (!canvas) return;
 
   let dadosGrafico = obterRankingParaGrafico();
 
-  if (grafico) grafico.destroy();
+  if (grafico) {
+    grafico.destroy();
+  }
 
   grafico = new Chart(canvas.getContext("2d"), {
     type: "doughnut",
@@ -1241,8 +1119,16 @@ function atualizarGrafico() {
       datasets: [{
         data: dadosGrafico.map(m => m.valor),
         backgroundColor: [
-          "#2563eb", "#dc2626", "#16a34a", "#facc15", "#9333ea",
-          "#f97316", "#06b6d4", "#ec4899", "#111827", "#84cc16"
+          "#2563eb",
+          "#dc2626",
+          "#16a34a",
+          "#facc15",
+          "#9333ea",
+          "#f97316",
+          "#06b6d4",
+          "#ec4899",
+          "#111827",
+          "#84cc16"
         ]
       }]
     }
@@ -1251,6 +1137,7 @@ function atualizarGrafico() {
 
 function atualizarGraficoLinha() {
   let canvas = document.getElementById("graficoLinha");
+
   if (!canvas) return;
 
   let dadosGrafico = obterRankingParaGrafico();
@@ -1258,7 +1145,10 @@ function atualizarGraficoLinha() {
 
   dadosGrafico.forEach(motorista => {
     motorista.historico.forEach(item => {
-      if (!totais[item.data]) totais[item.data] = 0;
+      if (!totais[item.data]) {
+        totais[item.data] = 0;
+      }
+
       totais[item.data] += Number(item.valor);
     });
   });
@@ -1266,14 +1156,18 @@ function atualizarGraficoLinha() {
   let datas = Object.keys(totais).sort();
   let valores = datas.map(data => totais[data]);
 
-  if (graficoLinha) graficoLinha.destroy();
+  if (graficoLinha) {
+    graficoLinha.destroy();
+  }
 
   graficoLinha = new Chart(canvas.getContext("2d"), {
     type: "line",
     data: {
       labels: datas,
       datasets: [{
-        label: usuarioEhAdmin() ? "Evolução geral" : "Minha evolução",
+        label: usuarioEhAdmin()
+          ? "Evolução geral"
+          : "Minha evolução",
         data: valores,
         borderColor: "#ff7a18",
         backgroundColor: "rgba(255,122,24,0.2)",
@@ -1332,7 +1226,9 @@ async function resetSemana() {
 }
 
 async function excluirConta(id, email) {
-  if (!confirm("Tem certeza que deseja excluir esta conta e todas as corridas dela?")) return;
+  if (!confirm("Tem certeza que deseja excluir esta conta e todas as corridas dela?")) {
+    return;
+  }
 
   try {
     let corridasSnap = await getDocs(collection(db, "corridas"));
