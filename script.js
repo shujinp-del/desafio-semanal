@@ -795,11 +795,26 @@ async function atualizarAdmin() {
         <br>
         <button onclick="aprovarUsuario('${id}')">✅ Aprovar</button>
         <button onclick="bloquearUsuario('${id}')">🚫 Bloquear</button>
-        <button onclick="tornarAdmin('${id}')">👑 Tornar admin</button>
+        <button onclick="tornarAdmin('${id}')">👑 Tornar admin</button>async function removerAdmin(id) {
+  if (!confirm("Deseja remover o acesso admin deste usuário?")) {
+    return;
+  }
+
+  await updateDoc(doc(db, "usuarios", id), {
+    status: "ativo",
+    papel: "motorista"
+  });
+
+  alert("Admin removido!");
+
+  atualizarAdmin();
+}
+        <button onclick="removerAdmin('${id}')">⬇️ Remover admin</button>
         <button onclick="excluirConta('${id}', '${usuario.email}')">🗑️ Excluir conta</button>
       </li>
     `;
   });
+  window.removerAdmin = removerAdmin;
 }
 
 async function aprovarUsuario(id) {
