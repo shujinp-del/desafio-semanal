@@ -666,6 +666,35 @@ function atualizarMetas() {
         `🔔 Faltam R$ ${faltam} para sua meta semanal.`;
     }
   }
+let totalCorridasSemana =
+  minhasSemana.reduce(
+    (soma, item) =>
+      soma + Number(item.corridas || 0),
+    0
+  );
+
+let mediaCorrida = 0;
+
+if (totalCorridasSemana > 0) {
+  mediaCorrida =
+    totalAtual / totalCorridasSemana;
+}
+
+let totalCorridasEl =
+  document.getElementById("insightTotalCorridas");
+
+let mediaCorridaEl =
+  document.getElementById("insightMediaCorrida");
+
+if (totalCorridasEl) {
+  totalCorridasEl.innerText =
+    totalCorridasSemana;
+}
+
+if (mediaCorridaEl) {
+  mediaCorridaEl.innerText =
+    `R$ ${mediaCorrida.toFixed(2)}`;
+
 }
 
 function atualizarMelhorDia() {
