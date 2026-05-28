@@ -600,7 +600,9 @@ function atualizarMetas() {
       0
     );
 
-  let meta = Number(dadosUsuario?.metaSemanal || 0);
+ let meta = Number(
+  (dadosUsuario && dadosUsuario.metaSemanal) || 0
+);
 
   if (inputMeta && meta > 0) {
     inputMeta.value = meta;
