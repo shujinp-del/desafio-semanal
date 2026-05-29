@@ -382,15 +382,42 @@
 
     <section id="adminTela" class="tela">
 
-      <h1>👑 Painel Admin</h1>
+  <h1>👑 Painel Admin</h1>
 
-      <p class="subtitulo">
-        Aprovação de motoristas
-      </p>
+  <p class="subtitulo">
+    Controle do sistema e usuários
+  </p>
 
-      <ul id="listaAdminUsuarios"></ul>
+  <div class="card">
 
-    </section>
+    <h2>⚙️ Administração do Sistema</h2>
+
+    <button onclick="baixarBackup()">
+      💾 Baixar Backup
+    </button>
+
+    <button onclick="restaurarBackup()">
+      📤 Restaurar Backup
+    </button>
+
+    <button
+      class="secundario"
+      onclick="resetSemana()"
+    >
+      🗑️ Resetar Sistema
+    </button>
+
+  </div>
+
+  <div class="card">
+
+    <h2>👥 Gerenciar Usuários</h2>
+
+    <ul id="listaAdminUsuarios"></ul>
+
+  </div>
+
+</section>
 
     <section id="graficoTela" class="tela">
 
