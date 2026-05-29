@@ -1267,7 +1267,62 @@ async function excluirConta(id, email) {
     alert("Erro ao excluir conta");
   }
 }
+async function baixarBackup() {
+  if (!usuarioEhAdmin()) {
+    alert("Apenas admin pode baixar backup.");
+    return;
+  }
 
+  try {
+    let usuariosSnap = await getDocs(collection(db, "usuarios"));
+    let corridasSnap = await getDocs(collection(db, "corridas"));
+
+    let usuarios = [];
+    let corridas = [];
+
+    usuariosSnap.forEach(docSnap => {
+      usuarios.push({
+        id: docSnap.id,
+        ...docSnap.data()
+      });
+    });
+
+    corridasSnap.forEach(docSnap => {
+      corridas.push({
+        id: docSnap.id,
+        ...docSnap.data()
+      });
+    });
+
+    let backup = {
+      app: "Desafio Semanal",
+      tipo: "backup-completo",
+      versao: "1.0",
+      dataBackup: new Date().toISOString(),
+      usuarios,
+      corridas
+    };
+
+    let arquivo = new Blob(
+      [JSON.stringify(backup, null, 2)],
+      { type: "application/json" }
+    );
+
+    let url = URL.createObjectURL(arquivo);
+
+    let link = document.createElement("a");
+    link.href = url;
+    link.download = `backup-desafio-${Date.now()}.json`;
+    link.click();
+
+    URL.revokeObjectURL(url);
+
+    alert("✅ Backup baixado com sucesso!");
+  } catch (erro) {
+    console.error(erro);
+    alert("Erro ao baixar backup.");
+  }
+}
 window.entrar = entrar;
 window.cadastrar = cadastrar;
 window.sair = sair;
@@ -1282,3 +1337,4 @@ window.tornarAdmin = tornarAdmin;
 window.salvarMeta = salvarMeta;
 window.excluirConta = excluirConta;
 window.removerAdmin = removerAdmin;
+window.baixarBackup = baixarBackup;
