@@ -176,3 +176,84 @@ canvas {
   font-size: 11px;
   margin-top: 3px;
 }
+body {
+  background:
+    radial-gradient(circle at top left, rgba(255,122,24,0.28), transparent 32%),
+    radial-gradient(circle at top right, rgba(255,179,71,0.16), transparent 28%),
+    linear-gradient(180deg, #120804 0%, #050505 55%, #020202 100%);
+}
+
+.app {
+  background:
+    linear-gradient(180deg, rgba(24,18,14,0.98), rgba(5,5,5,0.98));
+  border-left: 1px solid rgba(255,255,255,0.05);
+  border-right: 1px solid rgba(255,255,255,0.05);
+}
+
+h1 {
+  letter-spacing: -0.8px;
+}
+
+.card,
+li,
+.mini-card,
+.metricas div {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.085), rgba(255,255,255,0.035));
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow:
+    0 18px 45px rgba(0,0,0,0.42),
+    inset 0 1px 0 rgba(255,255,255,0.06);
+  backdrop-filter: blur(12px);
+}
+
+.card h2 {
+  margin-top: 0;
+  color: #ffd29b;
+}
+
+button {
+  box-shadow: 0 10px 24px rgba(255,122,24,0.22);
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+button.secundario {
+  box-shadow: none;
+}
+
+input {
+  outline: none;
+}
+
+input:focus {
+  border-color: rgba(255,179,71,0.7);
+  box-shadow: 0 0 0 3px rgba(255,122,24,0.12);
+}
+
+.lider-card {
+  box-shadow: 0 18px 45px rgba(255,122,24,0.22);
+}
+
+.valor,
+.mini-card strong,
+.metricas strong {
+  color: #ffc36b;
+}
+
+.menu {
+  background: rgba(10,10,10,0.86);
+  backdrop-filter: blur(18px);
+}
+
+.menu button {
+  border-radius: 18px;
+}
+
+.menu button:hover {
+  color: white;
+  background: rgba(255,255,255,0.06);
+}
