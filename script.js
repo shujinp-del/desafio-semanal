@@ -1078,13 +1078,33 @@ function atualizarLider() {
 }
 
 function atualizarMetricas() {
-  let total = ranking.reduce(
+  let totalSemanaValor = ranking.reduce(
     (soma, m) => soma + Number(m.valor),
     0
   );
 
-  let corridas = ranking.reduce(
+  let corridasSemana = ranking.reduce(
     (soma, m) => soma + Number(m.corridas),
+    0
+  );
+
+  let hoje = new Date();
+  let mesAtual = hoje.getMonth();
+  let anoAtual = hoje.getFullYear();
+
+  let corridasMes = corridasFirebase.filter(item => {
+    if (!item.data) return false;
+
+    let data = new Date(item.data + "T00:00:00");
+
+    return (
+      data.getMonth() === mesAtual &&
+      data.getFullYear() === anoAtual
+    );
+  });
+
+  let totalMesValor = corridasMes.reduce(
+    (soma, item) => soma + Number(item.valor),
     0
   );
 
@@ -1093,10 +1113,10 @@ function atualizarMetricas() {
   let totalSemana = document.getElementById("totalSemana");
   let totalCorridas = document.getElementById("totalCorridas");
 
-  if (homeTotal) homeTotal.innerText = formatarMoeda(total);
-  if (homeMensal) homeMensal.innerText = formatarMoeda(total);
-  if (totalSemana) totalSemana.innerText = formatarMoeda(total);
-  if (totalCorridas) totalCorridas.innerText = corridas;
+  if (homeTotal) homeTotal.innerText = formatarMoeda(totalSemanaValor);
+  if (homeMensal) homeMensal.innerText = formatarMoeda(totalMesValor);
+  if (totalSemana) totalSemana.innerText = formatarMoeda(totalSemanaValor);
+  if (totalCorridas) totalCorridas.innerText = corridasSemana;
 }
 
 function obterRankingParaGrafico() {
