@@ -999,8 +999,17 @@ function atualizarMinhasCorridas() {
         <div class="posicao">🚗 ${item.nome}</div>
         <br>
         <div class="valor">💰 ${formatarMoeda(item.valor)}</div>
-        <div>📅 ${formatarData(item.data)}</div>
-        <div>🛣️ ${item.corridas || 0} corridas</div>
+        <div>
+  📅 ${formatarData(item.data)}
+</div>
+
+<div>
+  🏷️ ${item.origem || "Sem origem"}
+</div>
+
+<div>
+  🛣️ ${item.corridas || 0} corridas
+</div>
         <br>
         <button onclick="editarCorrida('${item.id}')">✏️ Editar</button>
         <button onclick="excluirCorrida('${item.id}')">🗑️ Excluir</button>
