@@ -125,10 +125,18 @@
           placeholder="Número de corridas"
         >
 
-        <input
-          type="date"
-          id="data"
-        >
+ 
+
+<select id="origem">
+  <option value="Uber">🟢 Uber</option>
+  <option value="99">🔵 99</option>
+  <option value="Particular">🟣 Particular</option>
+</select>
+
+<input
+  type="date"
+  id="data"
+>
 
         <button onclick="adicionar()">
           Adicionar corrida
