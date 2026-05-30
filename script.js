@@ -1057,34 +1057,62 @@ function atualizarHistoricoMensal() {
 function atualizarLider() {
   let lider = document.getElementById("liderSemana");
 
-  if (!lider) return;
+  if (!lider || !usuarioAtual) return;
 
-  if (ranking.length === 0) {
+  let minhasSemana = corridasFirebase.filter(
+    item =>
+      (
+        item.uid === usuarioAtual.uid ||
+        item.email === usuarioAtual.email
+      ) &&
+      estaNaSemanaAtual(item.data)
+  );
+
+  let total = minhasSemana.reduce(
+    (soma, item) => soma + Number(item.valor),
+    0
+  );
+
+  let corridas = minhasSemana.reduce(
+    (soma, item) => soma + Number(item.corridas || 0),
+    0
+  );
+
+  if (minhasSemana.length === 0) {
     lider.innerHTML = "";
     return;
   }
 
-  let top = ranking[0];
-
   lider.innerHTML = `
     <div class="lider-card">
-      🏆 LÍDER
-      <h2>${top.nome}</h2>
-      <strong>${formatarMoeda(top.valor)}</strong>
+      👤 MEU DESEMPENHO
+      <h2>${formatarMoeda(total)}</h2>
+      <strong>Semana atual</strong>
       <br><br>
-      🚗 ${top.corridas} corridas
+      🚗 ${corridas} corridas
     </div>
   `;
 }
 
 function atualizarMetricas() {
-  let totalSemanaValor = ranking.reduce(
-    (soma, m) => soma + Number(m.valor),
+  if (!usuarioAtual) return;
+
+  let minhasSemana = corridasFirebase.filter(
+    item =>
+      (
+        item.uid === usuarioAtual.uid ||
+        item.email === usuarioAtual.email
+      ) &&
+      estaNaSemanaAtual(item.data)
+  );
+
+  let totalSemanaValor = minhasSemana.reduce(
+    (soma, item) => soma + Number(item.valor),
     0
   );
 
-  let corridasSemana = ranking.reduce(
-    (soma, m) => soma + Number(m.corridas),
+  let corridasSemana = minhasSemana.reduce(
+    (soma, item) => soma + Number(item.corridas || 0),
     0
   );
 
@@ -1092,18 +1120,22 @@ function atualizarMetricas() {
   let mesAtual = hoje.getMonth();
   let anoAtual = hoje.getFullYear();
 
-  let corridasMes = corridasFirebase.filter(item => {
+  let minhasMes = corridasFirebase.filter(item => {
     if (!item.data) return false;
 
     let data = new Date(item.data + "T00:00:00");
 
     return (
+      (
+        item.uid === usuarioAtual.uid ||
+        item.email === usuarioAtual.email
+      ) &&
       data.getMonth() === mesAtual &&
       data.getFullYear() === anoAtual
     );
   });
 
-  let totalMesValor = corridasMes.reduce(
+  let totalMesValor = minhasMes.reduce(
     (soma, item) => soma + Number(item.valor),
     0
   );
