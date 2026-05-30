@@ -380,8 +380,8 @@ async function adicionar() {
   let nome = document.getElementById("nome").value.trim();
   let valor = Number(document.getElementById("valor").value);
   let corridas = Number(document.getElementById("corridas").value);
-  let data = document.getElementById("data").value;
   let origem = document.getElementById("origem").value;
+  let data = document.getElementById("data").value;
 
   if (!nome || valor <= 0 || !data) {
     alert("Preencha nome, valor e data");
@@ -390,29 +390,30 @@ async function adicionar() {
 
   try {
     if (editandoId) {
-     await updateDoc(doc(db, "corridas", editandoId), {
-  nome,
-  valor,
-  corridas,
-  data,
-  origem,
-  uid: usuarioAtual.uid,
-  email: usuarioAtual.email
-});
+      await updateDoc(doc(db, "corridas", editandoId), {
+        nome,
+        valor,
+        corridas,
+        data,
+        origem,
+        uid: usuarioAtual.uid,
+        email: usuarioAtual.email
+      });
 
       alert("✏️ Corrida editada!");
       editandoId = null;
     } else {
       await addDoc(collection(db, "corridas"), {
-  nome,
-  valor,
-  corridas,
-  data,
-  origem,
-  uid: usuarioAtual.uid,
-  email: usuarioAtual.email,
-  criadoEm: new Date().toISOString()
-});
+        nome,
+        valor,
+        corridas,
+        data,
+        origem,
+        uid: usuarioAtual.uid,
+        email: usuarioAtual.email,
+        criadoEm: new Date().toISOString()
+      });
+    }
 
     limparCampos();
   } catch (erro) {
