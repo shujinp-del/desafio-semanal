@@ -1055,6 +1055,7 @@ function atualizarHistoricoMensal() {
         <br>
         <div class="valor">💰 ${formatarMoeda(item.valor)}</div>
       <div>📅 ${formatarData(item.data)}</div>
+<div>📅 ${formatarData(item.data)}</div>
 <div>🏷️ ${item.origem || "Sem origem"}</div>
 <div>🛣️ ${item.corridas || 0} corridas</div>
         <br>
