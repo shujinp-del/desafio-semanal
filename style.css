@@ -324,3 +324,43 @@ select {
   margin-bottom: 6px;
   font-weight: bold;
 }
+#home .dashboard-cards {
+  margin-top: 18px;
+}
+
+#home .mini-card {
+  min-height: 115px;
+  border-radius: 30px;
+  padding: 22px;
+}
+
+#home .mini-card small {
+  font-size: 13px;
+  color: #cfcfcf;
+}
+
+#home .mini-card strong {
+  font-size: 27px;
+  color: #ffb347;
+}
+
+#home .card {
+  border-radius: 30px;
+}
+
+#home .card h3 {
+  font-size: 22px;
+  margin-bottom: 16px;
+}
+
+#home #totalUber,
+#home #total99,
+#home #totalParticular {
+  font-size: 19px;
+  font-weight: bold;
+}
+
+#home .lider-card {
+  margin: 18px 0;
+  border-radius: 34px;
+}
