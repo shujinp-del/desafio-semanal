@@ -1098,12 +1098,17 @@ function atualizarLider() {
   }
 
   lider.innerHTML = `
-    <div class="lider-card">
-      👤 MEU DESEMPENHO
+    <div class="lider-card desempenho-card">
+      <span class="desempenho-label">
+        👤 Meu desempenho
+      </span>
+
       <h2>${formatarMoeda(total)}</h2>
-      <strong>Semana atual</strong>
-      <br><br>
-      🚗 ${corridas} corridas
+
+      <div class="desempenho-info">
+        <span>📅 Semana atual</span>
+        <span>🚗 ${corridas} corridas</span>
+      </div>
     </div>
   `;
 }

@@ -291,3 +291,29 @@ select {
 .origem-linha:last-child {
   border-bottom: none;
 }
+.desempenho-card {
+  background:
+    linear-gradient(135deg, #ff7a18, #ffb347);
+  padding: 24px;
+}
+
+.desempenho-label {
+  display: block;
+  font-size: 14px;
+  font-weight: bold;
+  opacity: 0.9;
+  margin-bottom: 8px;
+}
+
+.desempenho-card h2 {
+  font-size: 34px;
+  margin: 8px 0 16px;
+}
+
+.desempenho-info {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 14px;
+  opacity: 0.95;
+}
