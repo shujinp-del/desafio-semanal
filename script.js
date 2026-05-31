@@ -212,7 +212,7 @@ onAuthStateChanged(auth, async usuario => {
 
   mostrarStatusLogin("");
 
-  abrirTela("novaCorridaTela");
+  abrirTela("home");
 
   iniciarSincronia();
 });
@@ -1054,7 +1054,7 @@ function atualizarHistoricoMensal() {
         <div class="posicao">🚗 ${item.nome}</div>
         <br>
         <div class="valor">💰 ${formatarMoeda(item.valor)}</div>
-      <div>📅 ${formatarData(item.data)}</div>
+    
 <div>📅 ${formatarData(item.data)}</div>
 <div>🏷️ ${item.origem || "Sem origem"}</div>
 <div>🛣️ ${item.corridas || 0} corridas</div><div class="dashboard-cards">
