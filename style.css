@@ -267,3 +267,27 @@ select {
   color: white;
   font-size: 15px;
 }
+/* Card Origem dos Ganhos */
+#totalUber,
+#total99,
+#totalParticular {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.card h3 {
+  font-size: 21px;
+  margin-bottom: 18px;
+}
+
+.origem-linha {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.origem-linha:last-child {
+  border-bottom: none;
+}
