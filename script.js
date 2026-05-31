@@ -207,7 +207,10 @@ onAuthStateChanged(auth, async usuario => {
   aplicarPrivacidadeMenus();
 
   if (usuarioLogado) {
-    usuarioLogado.innerText = `Logado como: ${usuario.email}`;
+    let nome = usuario.email.split("@")[0];
+
+usuarioLogado.innerText =
+  `👋 Bem-vindo, ${nome}`;
   }
 
   mostrarStatusLogin("");

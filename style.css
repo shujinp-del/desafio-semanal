@@ -317,3 +317,10 @@ select {
   font-size: 14px;
   opacity: 0.95;
 }
+.bem-vindo {
+  color: #ffb347;
+  font-size: 14px;
+  margin-top: -5px;
+  margin-bottom: 6px;
+  font-weight: bold;
+}
