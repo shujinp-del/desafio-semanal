@@ -383,3 +383,25 @@ select {
 .menu span {
   font-size: 10px;
 }
+#home .dashboard-cards {
+  gap: 16px;
+}
+
+#home .mini-card {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.09), rgba(255,255,255,0.035));
+  border-radius: 30px;
+  padding: 22px 16px;
+  min-height: 118px;
+}
+
+#home .mini-card small {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+#home .mini-card strong {
+  font-size: 26px;
+  line-height: 1.1;
+}
