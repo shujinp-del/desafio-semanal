@@ -543,3 +543,19 @@ select {
   border-radius: 14px;
   font-size: 13px;
 }
+.origem-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  font-size: 15px;
+}
+
+.origem-item:last-child {
+  border-bottom: none;
+}
+
+.origem-item strong {
+  font-size: 18px;
+}
