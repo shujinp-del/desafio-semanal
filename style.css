@@ -364,3 +364,22 @@ select {
   margin: 18px 0;
   border-radius: 34px;
 }
+.menu {
+  max-width: 360px;
+  padding: 8px;
+  border-radius: 28px;
+}
+
+.menu button {
+  border-radius: 18px;
+  font-size: 19px;
+  opacity: 0.85;
+}
+
+.menu button:hover {
+  opacity: 1;
+}
+
+.menu span {
+  font-size: 10px;
+}
