@@ -5,8 +5,10 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: radial-gradient(circle at top, #2a1200, #070707 45%);
-  color: white;
+  background:
+    radial-gradient(circle at top left, rgba(255,122,24,0.18), transparent 28%),
+    linear-gradient(180deg, #070707, #000);
+  color: #fff;
 }
 
 .app {
@@ -14,8 +16,8 @@ body {
   margin: auto;
   min-height: 100vh;
   padding: 22px;
-  padding-bottom: 95px;
-  background: linear-gradient(180deg, rgba(20,20,20,0.96), #050505);
+  padding-bottom: 105px;
+  background: linear-gradient(180deg, #0d0d0d, #050505);
 }
 
 .tela {
@@ -27,57 +29,36 @@ body {
 }
 
 h1 {
-  font-size: 32px;
-  margin-bottom: 6px;
+  font-size: 34px;
+  margin: 18px 0 6px;
+  letter-spacing: -1px;
+}
+
+h2,
+h3 {
+  margin-top: 0;
+  color: #fff;
 }
 
 .subtitulo {
-  color: #b8b8b8;
+  color: #aaa;
   margin-bottom: 22px;
 }
 
 .card,
-li {
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.1);
+li,
+.mini-card,
+.metricas div {
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,0.075),
+    rgba(255,255,255,0.025)
+  );
+  border: 1px solid rgba(255,255,255,0.11);
   border-radius: 28px;
   padding: 20px;
   margin-bottom: 18px;
-  box-shadow: 0 18px 45px rgba(0,0,0,0.35);
-}
-
-input {
-  width: 100%;
-  padding: 15px;
-  margin: 8px 0;
-  border-radius: 18px;
-  border: 1px solid rgba(255,255,255,0.12);
-  background: rgba(0,0,0,0.35);
-  color: white;
-  font-size: 15px;
-}
-
-input::placeholder {
-  color: #888;
-}
-
-button {
-  width: 100%;
-  padding: 15px;
-  margin-top: 10px;
-  border: none;
-  border-radius: 18px;
-  background: linear-gradient(135deg, #ff7a18, #ffb347);
-  color: white;
-  font-weight: bold;
-  font-size: 15px;
-  cursor: pointer;
-}
-
-button.secundario {
-  background: rgba(255,255,255,0.08);
-  color: white;
-  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 18px 42px rgba(0,0,0,0.45);
 }
 
 .dashboard-cards,
@@ -88,9 +69,84 @@ button.secundario {
   margin-bottom: 18px;
 }
 
+.mini-card {
+  min-height: 92px;
+}
+
+.mini-card small,
+.metricas small {
+  color: #aaa;
+  font-size: 13px;
+}
+
+.mini-card strong,
+.metricas strong {
+  display: block;
+  margin-top: 8px;
+  font-size: 23px;
+  color: #ffb347;
+}
+
+.lider-card {
+  background: linear-gradient(135deg, #ff7a18, #ffb347);
+  color: white;
+  padding: 26px;
+  border-radius: 32px;
+  margin: 18px 0;
+  box-shadow: 0 20px 45px rgba(255,122,24,0.25);
+}
+
 .lider-card h2 {
   font-size: 34px;
   margin: 10px 0;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 15px;
+  margin: 8px 0;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(0,0,0,0.38);
+  color: white;
+  font-size: 15px;
+  outline: none;
+}
+
+input::placeholder {
+  color: #777;
+}
+
+input:focus,
+select:focus {
+  border-color: rgba(255,122,24,0.8);
+  box-shadow: 0 0 0 3px rgba(255,122,24,0.12);
+}
+
+button {
+  width: 100%;
+  padding: 15px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #ff6a00, #ffb347);
+  color: white;
+  font-weight: bold;
+  font-size: 15px;
+  cursor: pointer;
+  box-shadow: 0 12px 28px rgba(255,122,24,0.22);
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+button.secundario {
+  background: rgba(255,255,255,0.07);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: none;
 }
 
 ul {
@@ -102,7 +158,7 @@ li {
 }
 
 .posicao {
-  font-size: 22px;
+  font-size: 21px;
   font-weight: bold;
 }
 
@@ -125,21 +181,29 @@ canvas {
   transform: translateX(-50%);
   max-width: 390px;
   width: calc(100% - 30px);
-  background: rgba(20,20,20,0.95);
+  background: rgba(10,10,10,0.88);
+  backdrop-filter: blur(18px);
   display: flex;
   justify-content: space-around;
   padding: 10px;
   border-radius: 30px;
-  box-shadow: 0 18px 45px rgba(0,0,0,0.5);
+  box-shadow: 0 18px 45px rgba(0,0,0,0.55);
   border: 1px solid rgba(255,255,255,0.1);
+  z-index: 50;
 }
 
 .menu button {
   background: transparent;
+  box-shadow: none;
   margin: 0;
   padding: 8px;
   color: #aaa;
   font-size: 20px;
+}
+
+.menu button:hover {
+  color: white;
+  background: rgba(255,255,255,0.06);
 }
 
 .menu span {
@@ -147,94 +211,31 @@ canvas {
   font-size: 11px;
   margin-top: 3px;
 }
-body {
-  background:
-    radial-gradient(circle at top left, rgba(255,122,24,0.28), transparent 32%),
-    radial-gradient(circle at top right, rgba(255,179,71,0.16), transparent 28%),
-    linear-gradient(180deg, #120804 0%, #050505 55%, #020202 100%);
+
+#totalUber {
+  color: #22c55e;
 }
 
-.app {
-  background:
-    linear-gradient(180deg, rgba(24,18,14,0.98), rgba(5,5,5,0.98));
-  border-left: 1px solid rgba(255,255,255,0.05);
-  border-right: 1px solid rgba(255,255,255,0.05);
+#total99 {
+  color: #3b82f6;
 }
 
-h1 {
-  letter-spacing: -0.8px;
+#totalParticular {
+  color: #a855f7;
 }
 
-.card,
-li,
-.mini-card,
-.metricas div {
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.085), rgba(255,255,255,0.035));
-  border: 1px solid rgba(255,255,255,0.12);
-  box-shadow:
-    0 18px 45px rgba(0,0,0,0.42),
-    inset 0 1px 0 rgba(255,255,255,0.06);
-  backdrop-filter: blur(12px);
-}
+@media (max-width: 380px) {
+  .app {
+    padding: 18px;
+    padding-bottom: 105px;
+  }
 
-.card h2 {
-  margin-top: 0;
-  color: #ffd29b;
-}
+  h1 {
+    font-size: 30px;
+  }
 
-button {
-  box-shadow: 0 10px 24px rgba(255,122,24,0.22);
-  transition: transform 0.15s ease, filter 0.15s ease;
-}
-
-button:active {
-  transform: scale(0.97);
-}
-
-button.secundario {
-  box-shadow: none;
-}
-
-input {
-  outline: none;
-}
-
-input:focus {
-  border-color: rgba(255,179,71,0.7);
-  box-shadow: 0 0 0 3px rgba(255,122,24,0.12);
-}
-
-.lider-card {
-  box-shadow: 0 18px 45px rgba(255,122,24,0.22);
-}
-
-.valor,
-.mini-card strong,
-.metricas strong {
-  color: #ffc36b;
-}
-
-.menu {
-  background: rgba(10,10,10,0.86);
-  backdrop-filter: blur(18px);
-}
-
-.menu button {
-  border-radius: 18px;
-}
-
-.menu button:hover {
-  color: white;
-  background: rgba(255,255,255,0.06);
-}
-select {
-  width: 100%;
-  padding: 15px;
-  margin: 8px 0;
-  border-radius: 18px;
-  border: 1px solid rgba(255,255,255,0.12);
-  background: rgba(0,0,0,0.35);
-  color: white;
-  font-size: 15px;
+  .mini-card strong,
+  .metricas strong {
+    font-size: 20px;
+  }
 }
