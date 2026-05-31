@@ -425,3 +425,78 @@ select {
   color: rgba(255,255,255,0.85);
   margin-bottom: 0;
 }
+/* ===== HOME PREMIUM ===== */
+
+#home h1 {
+  margin-top: 18px;
+  font-size: 34px;
+}
+
+#home .bem-vindo {
+  color: #ffb347;
+  font-weight: bold;
+  margin: 0 0 10px;
+}
+
+#home > .subtitulo {
+  margin-bottom: 20px;
+}
+
+.destaque-home {
+  background:
+    radial-gradient(circle at top right, rgba(255,255,255,0.18), transparent 28%),
+    linear-gradient(135deg, #ff6a00, #ffb347);
+  border: none;
+  padding: 26px;
+  border-radius: 34px;
+  box-shadow: 0 22px 55px rgba(255,122,24,0.28);
+}
+
+.destaque-home small {
+  font-size: 13px;
+  font-weight: bold;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+.destaque-home h2 {
+  font-size: 42px;
+  line-height: 1;
+  margin: 14px 0 10px;
+  color: white;
+}
+
+.destaque-home .subtitulo {
+  color: rgba(255,255,255,0.85);
+  margin: 0;
+}
+
+#home > .mini-card {
+  min-height: 95px;
+  border-radius: 30px;
+  padding: 22px;
+}
+
+#home > .mini-card small {
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+#home > .mini-card strong {
+  font-size: 28px;
+}
+
+#home .lider-card {
+  border-radius: 34px;
+  padding: 24px;
+  margin: 18px 0;
+}
+
+#home .card {
+  border-radius: 32px;
+}
+
+#home .card h3 {
+  font-size: 22px;
+  margin-bottom: 18px;
+}
