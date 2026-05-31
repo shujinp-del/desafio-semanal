@@ -212,7 +212,7 @@ onAuthStateChanged(auth, async usuario => {
 
   mostrarStatusLogin("");
 
-  abrirTela("home");
+  abrirTela("novaCorridaTela");
 
   iniciarSincronia();
 });

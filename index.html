@@ -58,7 +58,7 @@
 
     </section>
 
-    <section id="home" class="tela">
+   <section id="home" class="tela">
 
   <button
     class="secundario"
@@ -102,30 +102,52 @@
 
     <h3>📊 Origem dos ganhos</h3>
 
-<div class="origem-linha">
-  <span>🟢 Uber</span>
-  <strong id="totalUber">R$ 0,00</strong>
-</div>
+    <div>
+      🟢 Uber:
+      <strong id="totalUber">R$ 0,00</strong>
+    </div>
 
-<div class="origem-linha">
-  <span>🔵 99</span>
-  <strong id="total99">R$ 0,00</strong>
-</div>
+    <br>
 
-<div class="origem-linha">
-  <span>🟣 Particular</span>
-  <strong id="totalParticular">R$ 0,00</strong>
-</div>
+    <div>
+      🔵 99:
+      <strong id="total99">R$ 0,00</strong>
+    </div>
 
-</div>
+    <br>
 
-<div class="card">
+    <div>
+      🟣 Particular:
+      <strong id="totalParticular">R$ 0,00</strong>
+    </div>
 
-  <h2>Nova corrida</h2>
+  </div>
 
   <div class="card">
 
-    <h2>Nova corrida</h2>
+    <h2>🚗 Nova corrida</h2>
+
+    <p class="subtitulo">
+      Registre rapidamente seus ganhos.
+    </p>
+
+    <button onclick="abrirTela('novaCorridaTela')">
+      ➕ Abrir cadastro
+    </button>
+
+  </div>
+
+</section>
+
+<section id="novaCorridaTela" class="tela">
+
+  <h1>🚗 Nova Corrida</h1>
+
+  <p class="subtitulo">
+    Cadastre seus ganhos do dia
+  </p>
+
+  <div class="card">
 
     <input
       id="nome"
@@ -161,9 +183,9 @@
 
     <button
       class="secundario"
-      onclick="resetSemana()"
+      onclick="abrirTela('home')"
     >
-      Resetar tudo
+      Voltar
     </button>
 
   </div>
