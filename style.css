@@ -511,3 +511,35 @@ select {
 #home .card:not(.destaque-home):not(.lider-card) {
   padding: 24px;
 }
+.topo-home {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.botao-sair {
+  width: auto !important;
+  padding: 10px 18px !important;
+  min-height: auto !important;
+  border-radius: 16px !important;
+}
+.topo-home {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.topo-home h1 {
+  margin: 0 0 4px;
+}
+
+.botao-sair {
+  width: auto;
+  padding: 9px 14px;
+  margin-top: 4px;
+  border-radius: 14px;
+  font-size: 13px;
+}
