@@ -37,17 +37,16 @@
 
     <section id="home" class="tela">
       <div class="topo-home">
-  <div>
-    <h1>🔥 Desafio</h1>
-    <p id="usuarioLogado" class="bem-vindo"></p>
-  </div>
+        <div>
+          <h1>🔥 Desafio</h1>
+          <p id="usuarioLogado" class="bem-vindo"></p>
+        </div>
 
-  <button class="botao-sair" onclick="sair()">
-    Sair
-  </button>
-</div>
+        <button class="botao-sair" onclick="sair()">
+          Sair
+        </button>
+      </div>
 
-     
       <p class="subtitulo">
         Painel de ganhos
       </p>
@@ -77,20 +76,22 @@
       <div class="card">
         <h3>📊 Origem dos ganhos</h3>
 
-<div class="origem-item uber">
-  <span>🟢 Uber</span>
-  <strong id="totalUber">R$ 0,00</strong>
-</div>
+        <div class="origem-item">
+          <span>🟢 Uber</span>
+          <strong id="totalUber">R$ 0,00</strong>
+        </div>
 
-<div class="origem-item nove">
-  <span>🔵 99</span>
-  <strong id="total99">R$ 0,00</strong>
-</div>
+        <div class="origem-item">
+          <span>🔵 99</span>
+          <strong id="total99">R$ 0,00</strong>
+        </div>
 
-<div class="origem-item particular">
-  <span>🟣 Particular</span>
-  <strong id="totalParticular">R$ 0,00</strong>
-</div>
+        <div class="origem-item">
+          <span>🟣 Particular</span>
+          <strong id="totalParticular">R$ 0,00</strong>
+        </div>
+      </div>
+    </section>
 
     <section id="novaCorridaTela" class="tela">
       <h1>🚗 Nova Corrida</h1>
@@ -101,9 +102,7 @@
 
       <div class="card">
         <input id="nome" placeholder="Nome do motorista">
-
         <input id="valor" type="number" placeholder="Valor R$">
-
         <input id="corridas" type="number" placeholder="Número de corridas">
 
         <select id="origem">
@@ -173,7 +172,6 @@
 
       <div class="card">
         <h2>Meta semanal</h2>
-
         <input id="metaSemanal" type="number" placeholder="Ex: 3000">
 
         <button onclick="salvarMeta()">
@@ -357,7 +355,6 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
   <script type="module" src="script.js"></script>
 
 </body>
