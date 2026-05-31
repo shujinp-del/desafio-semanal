@@ -181,6 +181,39 @@
   </div>
 
 </section>
+<section id="maisTela" class="tela">
+
+  <h1>☰ Mais</h1>
+
+  <p class="subtitulo">
+    Outras opções do aplicativo
+  </p>
+
+  <div class="card">
+
+    <button onclick="abrirTela('minhasTela')">
+      👤 Minhas Corridas
+    </button>
+
+    <button onclick="abrirTela('rankingTela')">
+      🏆 Ranking
+    </button>
+
+    <button onclick="abrirTela('historicoTela')">
+      🌎 Geral
+    </button>
+
+    <button
+      id="botaoAdminMais"
+      onclick="abrirTela('adminTela')"
+      style="display:none;"
+    >
+      👑 Admin
+    </button>
+
+  </div>
+
+</section>
 
     <section id="metasTela" class="tela">
 
@@ -509,89 +542,27 @@
       id="menuApp"
     >
 
-      <button onclick="abrirTela('home')">
-
-        🏠
-
-        <span>Home</span>
-
-      </button>
-<button onclick="abrirTela('novaCorridaTela')">
-
-  ➕
-
-  <span>Corrida</span>
-
+     <button onclick="abrirTela('home')">
+  🏠
+  <span>Home</span>
 </button>
-      <button onclick="abrirTela('metasTela')">
 
-        🎯
+<button onclick="abrirTela('novaCorridaTela')">
+  ➕
+  <span>Corrida</span>
+</button>
 
-        <span>Metas</span>
+<button onclick="abrirTela('metasTela')">
+  🎯
+  <span>Metas</span>
+</button>
 
-      </button>
+<button onclick="abrirTela('graficoTela')">
+  📊
+  <span>Gráfico</span>
+</button>
 
-      <button onclick="abrirTela('minhasTela')">
-
-        👤
-
-        <span>Minhas</span>
-
-      </button>
-
-      <button onclick="abrirTela('rankingTela')">
-
-        🏆
-
-        <span>Ranking</span>
-
-      </button>
-
-      <button
-        id="botaoGeral"
-        onclick="abrirTela('historicoTela')"
-      >
-
-        🌎
-
-        <span>Geral</span>
-
-      </button>
-
-      <button
-        id="botaoGrafico"
-        onclick="abrirTela('graficoTela')"
-      >
-
-        📊
-
-        <span>Gráfico</span>
-
-      </button>
-
-      <button
-        id="botaoAdmin"
-        onclick="abrirTela('adminTela')"
-        style="display:none;"
-      >
-
-        👑
-
-        <span>Admin</span>
-
-      </button>
-
-    </nav>
-
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <script
-    type="module"
-    src="script.js"
-  ></script>
-
-</body>
-
-</html>
+<button onclick="abrirTela('maisTela')">
+  ☰
+  <span>Mais</span>
+</button>
