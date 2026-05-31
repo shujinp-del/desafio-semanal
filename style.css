@@ -500,3 +500,14 @@ select {
   font-size: 22px;
   margin-bottom: 18px;
 }
+#home .mini-card {
+  margin-bottom: 18px;
+}
+
+#home .mini-card strong {
+  font-size: 32px;
+}
+
+#home .card:not(.destaque-home):not(.lider-card) {
+  padding: 24px;
+}
