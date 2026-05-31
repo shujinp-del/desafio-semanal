@@ -405,3 +405,23 @@ select {
   font-size: 26px;
   line-height: 1.1;
 }
+.destaque-home {
+  background: linear-gradient(135deg, #ff7a18, #ffb347);
+  color: white;
+}
+
+.destaque-home small {
+  opacity: 0.9;
+  font-weight: bold;
+}
+
+.destaque-home h2 {
+  font-size: 42px;
+  margin: 12px 0 6px;
+  color: white;
+}
+
+.destaque-home .subtitulo {
+  color: rgba(255,255,255,0.85);
+  margin-bottom: 0;
+}
