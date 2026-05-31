@@ -186,35 +186,54 @@
   <h1>☰ Mais</h1>
 
   <p class="subtitulo">
-    Outras opções do aplicativo
+    Acesse outras áreas do app
   </p>
 
   <div class="card">
-
+    <h2>👤 Minhas Corridas</h2>
+    <p class="subtitulo">
+      Veja seu histórico pessoal de ganhos.
+    </p>
     <button onclick="abrirTela('minhasTela')">
-      👤 Minhas Corridas
+      Abrir minhas corridas
     </button>
+  </div>
 
+  <div class="card">
+    <h2>🏆 Ranking</h2>
+    <p class="subtitulo">
+      Compare o desempenho dos motoristas.
+    </p>
     <button onclick="abrirTela('rankingTela')">
-      🏆 Ranking
+      Abrir ranking
     </button>
+  </div>
 
+  <div class="card">
+    <h2>🌎 Geral</h2>
+    <p class="subtitulo">
+      Painel completo de corridas do mês.
+    </p>
     <button onclick="abrirTela('historicoTela')">
-      🌎 Geral
+      Abrir painel geral
     </button>
+  </div>
 
-    <button
-      id="botaoAdminMais"
-      onclick="abrirTela('adminTela')"
-      style="display:none;"
-    >
-      👑 Admin
+  <div
+    class="card"
+    id="botaoAdminMais"
+    style="display:none;"
+  >
+    <h2>👑 Admin</h2>
+    <p class="subtitulo">
+      Controle usuários, backup e segurança.
+    </p>
+    <button onclick="abrirTela('adminTela')">
+      Abrir admin
     </button>
-
   </div>
 
 </section>
-
     <section id="metasTela" class="tela">
 
       <h1>🎯 Metas</h1>
