@@ -1,17 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
   <meta charset="UTF-8">
-
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Desafio Semanal</title>
 
   <link rel="stylesheet" href="style.css">
-
   <link rel="manifest" href="manifest.json">
-
   <meta name="theme-color" content="#ff7a18">
 </head>
 
@@ -20,7 +15,6 @@
   <div class="app">
 
     <section id="loginTela" class="tela ativa">
-
       <h1>🔥 Desafio Semanal</h1>
 
       <p class="subtitulo">
@@ -28,229 +22,151 @@
       </p>
 
       <div class="card">
-
         <h2>Login do motorista</h2>
 
-        <input
-          id="emailLogin"
-          type="email"
-          placeholder="Email"
-        >
+        <input id="emailLogin" type="email" placeholder="Email">
+        <input id="senhaLogin" type="password" placeholder="Senha">
 
-        <input
-          id="senhaLogin"
-          type="password"
-          placeholder="Senha"
-        >
+        <button onclick="entrar()">Entrar</button>
 
-        <button onclick="entrar()">
-          Entrar
-        </button>
-
-        <button
-          class="secundario"
-          onclick="cadastrar()"
-        >
+        <button class="secundario" onclick="cadastrar()">
           Criar conta
         </button>
-
       </div>
-
     </section>
 
-   <section id="home" class="tela">
+    <section id="home" class="tela">
+      <button class="secundario" onclick="sair()">
+        Sair
+      </button>
 
-  <button
-    class="secundario"
-    onclick="sair()"
-  >
-    Sair
-  </button>
+      <h1>🔥 Desafio</h1>
 
-  <h1>🔥 Desafio</h1>
+      <p id="usuarioLogado" class="bem-vindo"></p>
 
-<p id="usuarioLogado" class="bem-vindo"></p>
+      <p class="subtitulo">
+        Painel de ganhos
+      </p>
 
-<p class="subtitulo">
-  Painel de ganhos
-</p>
-  <p class="subtitulo">
-    Painel de ganhos 
-  </p>
+      <div class="card destaque-home">
+        <small>Total da Semana</small>
 
-  <div class="card destaque-home">
+        <h2 id="homeTotal">
+          R$ 0
+        </h2>
 
-  <small>Total da Semana</small>
+        <p class="subtitulo">
+          Seus ganhos da semana atual
+        </p>
+      </div>
 
-  <h2 id="homeTotal">
-    R$ 0
-  </h2>
+      <div class="mini-card">
+        <small>Total Mês</small>
 
-  <p class="subtitulo">
-    Seus ganhos da semana atual
-  </p>
+        <strong id="homeMensal">
+          R$ 0
+        </strong>
+      </div>
 
-</div>
+      <div id="liderSemana"></div>
 
-<div class="dashboard-cards">
+      <div class="card">
+        <h3>📊 Origem dos ganhos</h3>
 
-  <div class="mini-card">
-    <small>Total Mês</small>
-    <strong id="homeMensal">
-      R$ 0
-    </strong>
-  </div>
+        <div>
+          🟢 Uber:
+          <strong id="totalUber">R$ 0,00</strong>
+        </div>
 
-  <div class="mini-card">
-    <small>Status</small>
-    <strong>
-      🔥 Ativo
-    </strong>
-  </div>
+        <br>
 
+        <div>
+          🔵 99:
+          <strong id="total99">R$ 0,00</strong>
+        </div>
 
-  </div>
+        <br>
 
-  <div id="liderSemana"></div>
+        <div>
+          🟣 Particular:
+          <strong id="totalParticular">R$ 0,00</strong>
+        </div>
+      </div>
+    </section>
 
-  <div class="card">
+    <section id="novaCorridaTela" class="tela">
+      <h1>🚗 Nova Corrida</h1>
 
-    <h3>📊 Origem dos ganhos</h3>
+      <p class="subtitulo">
+        Cadastre seus ganhos do dia
+      </p>
 
-    <div>
-      🟢 Uber:
-      <strong id="totalUber">R$ 0,00</strong>
-    </div>
+      <div class="card">
+        <input id="nome" placeholder="Nome do motorista">
 
-    <br>
+        <input id="valor" type="number" placeholder="Valor R$">
 
-    <div>
-      🔵 99:
-      <strong id="total99">R$ 0,00</strong>
-    </div>
+        <input id="corridas" type="number" placeholder="Número de corridas">
 
-    <br>
+        <select id="origem">
+          <option value="Uber">🟢 Uber</option>
+          <option value="99">🔵 99</option>
+          <option value="Particular">🟣 Particular</option>
+        </select>
 
-    <div>
-      🟣 Particular:
-      <strong id="totalParticular">R$ 0,00</strong>
-    </div>
+        <input type="date" id="data">
 
-  </div>
+        <button onclick="adicionar()">
+          Adicionar corrida
+        </button>
 
- 
+        <button class="secundario" onclick="abrirTela('home')">
+          Voltar
+        </button>
+      </div>
+    </section>
 
-   
+    <section id="maisTela" class="tela">
+      <h1>☰ Mais</h1>
 
-</section>
+      <p class="subtitulo">
+        Acesse outras áreas do app
+      </p>
 
-<section id="novaCorridaTela" class="tela">
+      <div class="card">
+        <h2>👤 Minhas Corridas</h2>
+        <p class="subtitulo">Veja seu histórico pessoal de ganhos.</p>
+        <button onclick="abrirTela('minhasTela')">
+          Abrir minhas corridas
+        </button>
+      </div>
 
-  <h1>🚗 Nova Corrida</h1>
+      <div class="card">
+        <h2>🏆 Ranking</h2>
+        <p class="subtitulo">Compare o desempenho dos motoristas.</p>
+        <button onclick="abrirTela('rankingTela')">
+          Abrir ranking
+        </button>
+      </div>
 
-  <p class="subtitulo">
-    Cadastre seus ganhos do dia
-  </p>
+      <div class="card">
+        <h2>🌎 Geral</h2>
+        <p class="subtitulo">Painel completo de corridas do mês.</p>
+        <button onclick="abrirTela('historicoTela')">
+          Abrir painel geral
+        </button>
+      </div>
 
-  <div class="card">
+      <div class="card" id="botaoAdminMais" style="display:none;">
+        <h2>👑 Admin</h2>
+        <p class="subtitulo">Controle usuários, backup e segurança.</p>
+        <button onclick="abrirTela('adminTela')">
+          Abrir admin
+        </button>
+      </div>
+    </section>
 
-    <input
-      id="nome"
-      placeholder="Nome do motorista"
-    >
-
-    <input
-      id="valor"
-      type="number"
-      placeholder="Valor R$"
-    >
-
-    <input
-      id="corridas"
-      type="number"
-      placeholder="Número de corridas"
-    >
-
-    <select id="origem">
-      <option value="Uber">🟢 Uber</option>
-      <option value="99">🔵 99</option>
-      <option value="Particular">🟣 Particular</option>
-    </select>
-
-    <input
-      type="date"
-      id="data"
-    >
-
-    <button onclick="adicionar()">
-      Adicionar corrida
-    </button>
-
-    <button
-      class="secundario"
-      onclick="abrirTela('home')"
-    >
-      Voltar
-    </button>
-
-  </div>
-
-</section>
-<section id="maisTela" class="tela">
-
-  <h1>☰ Mais</h1>
-
-  <p class="subtitulo">
-    Acesse outras áreas do app
-  </p>
-
-  <div class="card">
-    <h2>👤 Minhas Corridas</h2>
-    <p class="subtitulo">
-      Veja seu histórico pessoal de ganhos.
-    </p>
-    <button onclick="abrirTela('minhasTela')">
-      Abrir minhas corridas
-    </button>
-  </div>
-
-  <div class="card">
-    <h2>🏆 Ranking</h2>
-    <p class="subtitulo">
-      Compare o desempenho dos motoristas.
-    </p>
-    <button onclick="abrirTela('rankingTela')">
-      Abrir ranking
-    </button>
-  </div>
-
-  <div class="card">
-    <h2>🌎 Geral</h2>
-    <p class="subtitulo">
-      Painel completo de corridas do mês.
-    </p>
-    <button onclick="abrirTela('historicoTela')">
-      Abrir painel geral
-    </button>
-  </div>
-
-  <div
-    class="card"
-    id="botaoAdminMais"
-    style="display:none;"
-  >
-    <h2>👑 Admin</h2>
-    <p class="subtitulo">
-      Controle usuários, backup e segurança.
-    </p>
-    <button onclick="abrirTela('adminTela')">
-      Abrir admin
-    </button>
-  </div>
-
-</section>
     <section id="metasTela" class="tela">
-
       <h1>🎯 Metas</h1>
 
       <p class="subtitulo">
@@ -258,164 +174,56 @@
       </p>
 
       <div class="card">
-
         <h2>Meta semanal</h2>
 
-        <input
-          id="metaSemanal"
-          type="number"
-          placeholder="Ex: 3000"
-        >
+        <input id="metaSemanal" type="number" placeholder="Ex: 3000">
 
         <button onclick="salvarMeta()">
           Salvar meta
         </button>
-
       </div>
 
       <div class="card">
-
         <h2>Seu progresso</h2>
 
-        <p>
-          💰 Atual:
-          <strong id="valorMetaAtual">
-            R$ 0
-          </strong>
-        </p>
-
-        <p>
-          🎯 Meta:
-          <strong id="valorMetaTotal">
-            R$ 0
-          </strong>
-        </p>
-
-        <p>
-          📈 Progresso:
-          <strong id="progressoMeta">
-            0%
-          </strong>
-        </p>
-
+        <p>💰 Atual: <strong id="valorMetaAtual">R$ 0</strong></p>
+        <p>🎯 Meta: <strong id="valorMetaTotal">R$ 0</strong></p>
+        <p>📈 Progresso: <strong id="progressoMeta">0%</strong></p>
       </div>
 
       <div class="card">
-
         <h2>🧠 Insights da Semana</h2>
 
-        <p>
-          🔥 Melhor dia:
-          <strong id="melhorDiaNome">
-            -
-          </strong>
-        </p>
-
-        <p>
-          💰 Melhor valor:
-          <strong id="melhorDiaValor">
-            R$ 0
-          </strong>
-        </p>
-
-      
-
-        <p>
-          ⚠️ Pior dia:
-          <strong id="piorDiaNome">
-            -
-          </strong>
-        </p>
-
-        <p>
-          💸 Menor valor:
-          <strong id="piorDiaValor">
-            R$ 0
-          </strong>
-        </p>
-        <p>
-  🚗 Total de corridas:
-  <strong id="insightTotalCorridas">
-    0
-  </strong>
-</p>
-
-<p>
-  💰 Média por corrida:
-  <strong id="insightMediaCorrida">
-    R$ 0
-  </strong>
-</p>
-<p>
-  📆 Média diária:
-  <strong id="insightMediaDiaria">
-    R$ 0
-  </strong>
-</p>
-
+        <p>🔥 Melhor dia: <strong id="melhorDiaNome">-</strong></p>
+        <p>💰 Melhor valor: <strong id="melhorDiaValor">R$ 0</strong></p>
+        <p>⚠️ Pior dia: <strong id="piorDiaNome">-</strong></p>
+        <p>💸 Menor valor: <strong id="piorDiaValor">R$ 0</strong></p>
+        <p>🚗 Total de corridas: <strong id="insightTotalCorridas">0</strong></p>
+        <p>💰 Média por corrida: <strong id="insightMediaCorrida">R$ 0</strong></p>
+        <p>📆 Média diária: <strong id="insightMediaDiaria">R$ 0</strong></p>
       </div>
-      <div class="card">
-
-  <h2>🏆 Fechamento do Mês</h2>
-
-  <p>
-    📅 Total do mês:
-    <strong id="fechamentoTotalMes">
-      R$ 0
-    </strong>
-  </p>
-
-  <p>
-    🚗 Corridas no mês:
-    <strong id="fechamentoCorridasMes">
-      0
-    </strong>
-  </p>
-
-  <p>
-    💰 Média diária do mês:
-    <strong id="fechamentoMediaDiariaMes">
-      R$ 0
-    </strong>
-  </p>
-
-  <p>
-    🔥 Melhor dia do mês:
-    <strong id="fechamentoMelhorDiaMes">
-      -
-    </strong>
-  </p>
-
-</div>
 
       <div class="card">
+        <h2>🏆 Fechamento do Mês</h2>
 
+        <p>📅 Total do mês: <strong id="fechamentoTotalMes">R$ 0</strong></p>
+        <p>🚗 Corridas no mês: <strong id="fechamentoCorridasMes">0</strong></p>
+        <p>💰 Média diária do mês: <strong id="fechamentoMediaDiariaMes">R$ 0</strong></p>
+        <p>🔥 Melhor dia do mês: <strong id="fechamentoMelhorDiaMes">-</strong></p>
+      </div>
+
+      <div class="card">
         <h2>🏅 Badge Atual</h2>
-
-        <div id="badgeMeta">
-
-          😴 Sem badge ainda
-
-        </div>
-
+        <div id="badgeMeta">😴 Sem badge ainda</div>
       </div>
 
       <div class="card">
-
         <h2>🔔 Notificação</h2>
-
-        <div id="notificacaoMeta">
-
-          🚀 Defina uma meta para começar
-
-        </div>
-
+        <div id="notificacaoMeta">🚀 Defina uma meta para começar</div>
       </div>
-
     </section>
 
     <section id="minhasTela" class="tela">
-
       <h1>👤 Minhas Corridas</h1>
 
       <p class="subtitulo">
@@ -423,21 +231,14 @@
       </p>
 
       <div class="card">
-
         <h2>Total pessoal</h2>
-
-        <strong id="meuTotal">
-          R$ 0
-        </strong>
-
+        <strong id="meuTotal">R$ 0</strong>
       </div>
 
       <ul id="listaMinhas"></ul>
-
     </section>
 
     <section id="rankingTela" class="tela">
-
       <h1>🏆 Rankings</h1>
 
       <p class="subtitulo">
@@ -445,25 +246,17 @@
       </p>
 
       <div class="card">
-
         <h2>💰 Ranking Financeiro</h2>
-
         <ul id="ranking"></ul>
-
       </div>
 
       <div class="card">
-
         <h2>🎯 Ranking de Metas</h2>
-
         <ul id="rankingMetas"></ul>
-
       </div>
-
     </section>
 
     <section id="historicoTela" class="tela">
-
       <h1>🌎 Painel Geral</h1>
 
       <p class="subtitulo">
@@ -471,60 +264,43 @@
       </p>
 
       <div class="card">
-
         <h2>Total do mês</h2>
-
-        <strong id="totalHistoricoMensal">
-          R$ 0
-        </strong>
-
+        <strong id="totalHistoricoMensal">R$ 0</strong>
       </div>
 
       <ul id="listaHistorico"></ul>
-
     </section>
 
     <section id="adminTela" class="tela">
+      <h1>⚙️ Central de Controle</h1>
 
-  <h1>⚙️ Central de Controle</h1>
+      <p class="subtitulo">
+        Backup, segurança e gerenciamento do sistema
+      </p>
 
-  <p class="subtitulo">
-  Backup, segurança e gerenciamento do sistema
-</p>
+      <div class="card">
+        <h2>⚙️ Administração do Sistema</h2>
 
-  <div class="card">
+        <button onclick="baixarBackup()">
+          💾 Baixar Backup
+        </button>
 
-    <h2>⚙️ Administração do Sistema</h2>
+        <button onclick="restaurarBackup()">
+          📤 Restaurar Backup
+        </button>
 
-    <button onclick="baixarBackup()">
-      💾 Baixar Backup
-    </button>
+        <button class="secundario" onclick="resetSemana()">
+          🗑️ Resetar Sistema
+        </button>
+      </div>
 
-    <button onclick="restaurarBackup()">
-      📤 Restaurar Backup
-    </button>
-
-    <button
-      class="secundario"
-      onclick="resetSemana()"
-    >
-      🗑️ Resetar Sistema
-    </button>
-
-  </div>
-
-  <div class="card">
-
-    <h2>👥 Gerenciar Usuários</h2>
-
-    <ul id="listaAdminUsuarios"></ul>
-
-  </div>
-
-</section>
+      <div class="card">
+        <h2>👥 Gerenciar Usuários</h2>
+        <ul id="listaAdminUsuarios"></ul>
+      </div>
+    </section>
 
     <section id="graficoTela" class="tela">
-
       <h1>📊 Gráfico</h1>
 
       <p class="subtitulo">
@@ -532,85 +308,59 @@
       </p>
 
       <div class="card">
-
         <canvas id="grafico"></canvas>
-
       </div>
 
       <div class="card">
-
         <h2>📈 Evolução por data</h2>
-
         <canvas id="graficoLinha"></canvas>
-
       </div>
 
       <div class="metricas">
-
         <div>
-
           <small>Total Semana</small>
-
-          <strong id="totalSemana">
-            R$ 0
-          </strong>
-
+          <strong id="totalSemana">R$ 0</strong>
         </div>
 
         <div>
-
           <small>Total Corridas</small>
-
-          <strong id="totalCorridas">
-            0
-          </strong>
-
+          <strong id="totalCorridas">0</strong>
         </div>
-
       </div>
-
     </section>
 
-    <nav
-      class="menu"
-      id="menuApp"
-    >
+    <nav class="menu" id="menuApp">
+      <button onclick="abrirTela('home')">
+        🏠
+        <span>Home</span>
+      </button>
 
-     <button onclick="abrirTela('home')">
-  🏠
-  <span>Home</span>
-</button>
+      <button onclick="abrirTela('novaCorridaTela')">
+        ➕
+        <span>Corrida</span>
+      </button>
 
-<button onclick="abrirTela('novaCorridaTela')">
-  ➕
-  <span>Corrida</span>
-</button>
+      <button onclick="abrirTela('metasTela')">
+        🎯
+        <span>Metas</span>
+      </button>
 
-<button onclick="abrirTela('metasTela')">
-  🎯
-  <span>Metas</span>
-</button>
+      <button onclick="abrirTela('graficoTela')">
+        📊
+        <span>Gráfico</span>
+      </button>
 
-<button onclick="abrirTela('graficoTela')">
-  📊
-  <span>Gráfico</span>
-</button>
-
-<button onclick="abrirTela('maisTela')">
-  ☰
-  <span>Mais</span>
-</button>
+      <button onclick="abrirTela('maisTela')">
+        ☰
+        <span>Mais</span>
+      </button>
     </nav>
 
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <script
-    type="module"
-    src="script.js"
-  ></script>
+  <script type="module" src="script.js"></script>
 
 </body>
-
 </html>
