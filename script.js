@@ -1153,16 +1153,33 @@ function atualizarMetricas() {
     (soma, item) => soma + Number(item.valor),
     0
   );
+  let totalUber = minhasSemana
+  .filter(item => item.origem === "Uber")
+  .reduce((soma, item) => soma + Number(item.valor), 0);
+
+let total99 = minhasSemana
+  .filter(item => item.origem === "99")
+  .reduce((soma, item) => soma + Number(item.valor), 0);
+
+let totalParticular = minhasSemana
+  .filter(item => item.origem === "Particular")
+  .reduce((soma, item) => soma + Number(item.valor), 0);
 
   let homeTotal = document.getElementById("homeTotal");
   let homeMensal = document.getElementById("homeMensal");
   let totalSemana = document.getElementById("totalSemana");
   let totalCorridas = document.getElementById("totalCorridas");
+  let totalUberEl = document.getElementById("totalUber");
+let total99El = document.getElementById("total99");
+let totalParticularEl = document.getElementById("totalParticular");
 
   if (homeTotal) homeTotal.innerText = formatarMoeda(totalSemanaValor);
   if (homeMensal) homeMensal.innerText = formatarMoeda(totalMesValor);
   if (totalSemana) totalSemana.innerText = formatarMoeda(totalSemanaValor);
   if (totalCorridas) totalCorridas.innerText = corridasSemana;
+  if (totalUberEl) totalUberEl.innerText = formatarMoeda(totalUber);
+if (total99El) total99El.innerText = formatarMoeda(total99);
+if (totalParticularEl) totalParticularEl.innerText = formatarMoeda(totalParticular);
 }
 
 function obterRankingParaGrafico() {
