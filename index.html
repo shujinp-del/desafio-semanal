@@ -60,133 +60,115 @@
 
     <section id="home" class="tela">
 
-      <button
-        class="secundario"
-        onclick="sair()"
-      >
-        Sair
-      </button>
+  <button
+    class="secundario"
+    onclick="sair()"
+  >
+    Sair
+  </button>
 
-      <p
-        id="usuarioLogado"
-        class="subtitulo"
-      ></p>
+  <p
+    id="usuarioLogado"
+    class="subtitulo"
+  ></p>
 
-      <h1>🔥 Desafio</h1>
+  <h1>🔥 Desafio</h1>
 
-      <p class="subtitulo">
-        Painel de ganhos dos motoristas
-      </p>
+  <p class="subtitulo">
+    Painel de ganhos dos motoristas
+  </p>
 
-      <div class="dashboard-cards">
+  <div class="dashboard-cards">
 
-  <div class="mini-card">
+    <div class="mini-card">
+      <small>Total Semana</small>
+      <strong id="homeTotal">
+        R$ 0
+      </strong>
+    </div>
 
-    <small>Total Semana</small>
-
-    <strong id="homeTotal">
-      R$ 0
-    </strong>
-
-  </div>
-
-  <div class="mini-card">
-
-    <small>Total Mês</small>
-
-    <strong id="homeMensal">
-      R$ 0
-    </strong>
+    <div class="mini-card">
+      <small>Total Mês</small>
+      <strong id="homeMensal">
+        R$ 0
+      </strong>
+    </div>
 
   </div>
 
-</div>
-        <div class="mini-card">
+  <div id="liderSemana"></div>
 
-          <small>Total Mês</small>
+  <div class="card">
 
-          <strong id="homeMensal">
-            R$ 0
-          </strong>
+    <h3>📊 Origem dos ganhos</h3>
 
-        </div>
+    <div>
+      🟢 Uber:
+      <strong id="totalUber">R$ 0,00</strong>
+    </div>
 
-      </div>
+    <br>
 
-      <div id="liderSemana"></div>
-      <div class="card">
+    <div>
+      🔵 99:
+      <strong id="total99">R$ 0,00</strong>
+    </div>
 
-  <h3>📊 Origem dos ganhos</h3>
+    <br>
 
-  <div>
-    🟢 Uber:
-    <strong id="totalUber">R$ 0,00</strong>
+    <div>
+      🟣 Particular:
+      <strong id="totalParticular">R$ 0,00</strong>
+    </div>
+
   </div>
 
-  <br>
+  <div class="card">
 
-  <div>
-    🔵 99:
-    <strong id="total99">R$ 0,00</strong>
+    <h2>Nova corrida</h2>
+
+    <input
+      id="nome"
+      placeholder="Nome do motorista"
+    >
+
+    <input
+      id="valor"
+      type="number"
+      placeholder="Valor R$"
+    >
+
+    <input
+      id="corridas"
+      type="number"
+      placeholder="Número de corridas"
+    >
+
+    <select id="origem">
+      <option value="Uber">🟢 Uber</option>
+      <option value="99">🔵 99</option>
+      <option value="Particular">🟣 Particular</option>
+    </select>
+
+    <input
+      type="date"
+      id="data"
+    >
+
+    <button onclick="adicionar()">
+      Adicionar corrida
+    </button>
+
+    <button
+      class="secundario"
+      onclick="resetSemana()"
+    >
+      Resetar tudo
+    </button>
+
   </div>
 
-  <br>
-
-  <div>
-    🟣 Particular:
-    <strong id="totalParticular">R$ 0,00</strong>
-  </div>
-
-</div>
-
-      <div class="card">
-
-        <h2>Nova corrida</h2>
-
-        <input
-          id="nome"
-          placeholder="Nome do motorista"
-        >
-
-        <input
-          id="valor"
-          type="number"
-          placeholder="Valor R$"
-        >
-
-        <input
-          id="corridas"
-          type="number"
-          placeholder="Número de corridas"
-        >
-
- 
-
-<select id="origem">
-  <option value="Uber">🟢 Uber</option>
-  <option value="99">🔵 99</option>
-  <option value="Particular">🟣 Particular</option>
-</select>
-
-<input
-  type="date"
-  id="data"
->
-
-        <button onclick="adicionar()">
-          Adicionar corrida
-        </button>
-
-        <button
-          class="secundario"
-          onclick="resetSemana()"
-        >
-          Resetar tudo
-        </button>
-
-      </div>
-
-    </section>
+</section>
 
     <section id="metasTela" class="tela">
 
