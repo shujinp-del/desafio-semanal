@@ -1057,7 +1057,7 @@ function atualizarHistoricoMensal() {
       <div>📅 ${formatarData(item.data)}</div>
 <div>📅 ${formatarData(item.data)}</div>
 <div>🏷️ ${item.origem || "Sem origem"}</div>
-<div>🛣️ ${item.corridas || 0} corridas</div>
+<div>🛣️ ${item.corridas || 0} corridas</div><div class="dashboard-cards">
         <br>
         <button onclick="editarCorrida('${item.id}')">✏️ Editar</button>
         <button onclick="excluirCorrida('${item.id}')">🗑️ Excluir</button>
