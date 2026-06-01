@@ -447,6 +447,7 @@ function editarCorrida(id) {
 }
 
 async function excluirCorrida(id) {
+  if (!confirm("Deseja excluir esta corrida?")) return;
 
   try {
     await deleteDoc(doc(db, "corridas", id));
@@ -455,7 +456,6 @@ async function excluirCorrida(id) {
     alert("Erro ao excluir");
   }
 }
-
 async function salvarMeta() {
   if (!usuarioAtual) return;
 
