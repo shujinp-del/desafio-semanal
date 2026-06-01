@@ -430,15 +430,15 @@ function editarCorrida(id) {
 
   if (!corrida) return;
 
-  document.getElementById("nome").value = corrida.nome;
-  document.getElementById("valor").value = corrida.valor;
-  document.getElementById("corridas").value = corrida.corridas;
-  document.getElementById("data").value = corrida.data;
+ document.getElementById("nome").value = corrida.nome;
+document.getElementById("valor").value = corrida.valor;
+document.getElementById("corridas").value = corrida.corridas;
+document.getElementById("origem").value = corrida.origem || "Uber";
+document.getElementById("data").value = corrida.data;
 
-  editandoId = id;
+editandoId = id;
 
-  abrirTela("home");
-}
+abrirTela("novaCorridaTela");
 
 async function excluirCorrida(id) {
   if (!confirm("Deseja excluir esta corrida?")) return;
