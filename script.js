@@ -430,18 +430,23 @@ function editarCorrida(id) {
 
   if (!corrida) return;
 
- document.getElementById("nome").value = corrida.nome;
-document.getElementById("valor").value = corrida.valor;
-document.getElementById("corridas").value = corrida.corridas;
-document.getElementById("origem").value = corrida.origem || "Uber";
-document.getElementById("data").value = corrida.data;
+ function editarCorrida(id) {
+  let corrida = corridasFirebase.find(item => item.id === id);
 
-editandoId = id;
+  if (!corrida) return;
 
-abrirTela("novaCorridaTela");
+  document.getElementById("nome").value = corrida.nome;
+  document.getElementById("valor").value = corrida.valor;
+  document.getElementById("corridas").value = corrida.corridas;
+  document.getElementById("origem").value = corrida.origem || "Uber";
+  document.getElementById("data").value = corrida.data;
+
+  editandoId = id;
+
+  abrirTela("novaCorridaTela");
+}
 
 async function excluirCorrida(id) {
-  if (!confirm("Deseja excluir esta corrida?")) return;
 
   try {
     await deleteDoc(doc(db, "corridas", id));
