@@ -1463,7 +1463,7 @@ function atualizarHistoricoMensalCards() {
 
   let lista = Object.entries(meses);
 
-  lista.sort((a, b) => b[1].total - a[1].total);
+  lista.sort((a, b) => b[0].localeCompare(a[0]));
 
   if (lista.length === 0) {
     container.innerHTML = `
