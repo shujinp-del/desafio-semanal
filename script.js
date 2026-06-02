@@ -1463,8 +1463,13 @@ function atualizarHistoricoMensalCards() {
         <small>🏆 Melhor mês</small>
 
         <h2>${formatarMoeda(melhor[1].total)}</h2>
+let [anoMelhor, mesMelhor] = melhor[0].split("-");
 
-        <p>${melhor[0]}</p>
+let nomeMelhor =
+  nomesMeses[parseInt(mesMelhor) - 1] +
+  " " +
+  anoMelhor;
+        <p>${nomeMelhor}</p>
       </div>
     `;
   }
@@ -1480,10 +1485,30 @@ function atualizarHistoricoMensalCards() {
       dados.corridas > 0
         ? dados.total / dados.corridas
         : 0;
+let [ano, mesNumero] = mes.split("-");
 
+let nomesMeses = [
+  "Janeiro",
+  "Fevereiro",
+  "Março",
+  "Abril",
+  "Maio",
+  "Junho",
+  "Julho",
+  "Agosto",
+  "Setembro",
+  "Outubro",
+  "Novembro",
+  "Dezembro"
+];
+
+let nomeMes =
+  nomesMeses[parseInt(mesNumero) - 1] +
+  " " +
+  ano;
     container.innerHTML += `
       <div class="card">
-        <h3>${medalha} ${mes}</h3>
+        <h3>${medalha} ${nomeMes}</h3>
 
         <p>💰 ${formatarMoeda(dados.total)}</p>
 
