@@ -1419,9 +1419,16 @@ function atualizarHistoricoMensalCards() {
   let container = document.getElementById("historicoMensalCards");
   let melhorMesCard = document.getElementById("melhorMesCard");
 
-  if (!container || !usuarioAtual) return;
+  if (!container || !melhorMesCard || !usuarioAtual) return;
 
   container.innerHTML = "";
+  melhorMesCard.innerHTML = "";
+
+  let nomesMeses = [
+    "Janeiro", "Fevereiro", "Março", "Abril",
+    "Maio", "Junho", "Julho", "Agosto",
+    "Setembro", "Outubro", "Novembro", "Dezembro"
+  ];
 
   let meses = {};
 
@@ -1429,9 +1436,7 @@ function atualizarHistoricoMensalCards() {
     if (
       item.uid !== usuarioAtual.uid &&
       item.email !== usuarioAtual.email
-    ) {
-      return;
-    }
+    ) return;
 
     if (!item.data) return;
 
@@ -1455,24 +1460,29 @@ function atualizarHistoricoMensalCards() {
 
   lista.sort((a, b) => b[1].total - a[1].total);
 
-  if (lista.length > 0 && melhorMesCard) {
-    let melhor = lista[0];
-
-    melhorMesCard.innerHTML = `
-      <div class="card destaque-home">
-        <small>🏆 Melhor mês</small>
-
-        <h2>${formatarMoeda(melhor[1].total)}</h2>
-let [anoMelhor, mesMelhor] = melhor[0].split("-");
-
-let nomeMelhor =
-  nomesMeses[parseInt(mesMelhor) - 1] +
-  " " +
-  anoMelhor;
-        <p>${nomeMelhor}</p>
+  if (lista.length === 0) {
+    container.innerHTML = `
+      <div class="card">
+        Nenhum histórico encontrado.
       </div>
     `;
+    return;
   }
+
+  let melhor = lista[0];
+  let [anoMelhor, mesMelhor] = melhor[0].split("-");
+  let nomeMelhor =
+    nomesMeses[parseInt(mesMelhor) - 1] + " " + anoMelhor;
+
+  melhorMesCard.innerHTML = `
+    <div class="card destaque-home">
+      <small>🏆 Melhor mês</small>
+
+      <h2>${formatarMoeda(melhor[1].total)}</h2>
+
+      <p>${nomeMelhor}</p>
+    </div>
+  `;
 
   lista.forEach(([mes, dados], index) => {
     let medalha = "";
@@ -1481,31 +1491,15 @@ let nomeMelhor =
     if (index === 1) medalha = "🥈";
     if (index === 2) medalha = "🥉";
 
+    let [ano, mesNumero] = mes.split("-");
+    let nomeMes =
+      nomesMeses[parseInt(mesNumero) - 1] + " " + ano;
+
     let media =
       dados.corridas > 0
         ? dados.total / dados.corridas
         : 0;
-let [ano, mesNumero] = mes.split("-");
 
-let nomesMeses = [
-  "Janeiro",
-  "Fevereiro",
-  "Março",
-  "Abril",
-  "Maio",
-  "Junho",
-  "Julho",
-  "Agosto",
-  "Setembro",
-  "Outubro",
-  "Novembro",
-  "Dezembro"
-];
-
-let nomeMes =
-  nomesMeses[parseInt(mesNumero) - 1] +
-  " " +
-  ano;
     container.innerHTML += `
       <div class="card">
         <h3>${medalha} ${nomeMes}</h3>
