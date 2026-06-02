@@ -68,6 +68,7 @@ function usuarioEhAdmin() {
 function aplicarPrivacidadeMenus() {
   let botaoGeral = document.getElementById("botaoGeral");
   let botaoAdmin = document.getElementById("botaoAdmin");
+  let botaoAdminMais = document.getElementById("botaoAdminMais");
 
   if (botaoGeral) {
     botaoGeral.style.display = usuarioEhAdmin() ? "block" : "none";
@@ -75,6 +76,10 @@ function aplicarPrivacidadeMenus() {
 
   if (botaoAdmin) {
     botaoAdmin.style.display = usuarioEhAdmin() ? "block" : "none";
+  }
+
+  if (botaoAdminMais) {
+    botaoAdminMais.style.display = usuarioEhAdmin() ? "block" : "none";
   }
 }
 
