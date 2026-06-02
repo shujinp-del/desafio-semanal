@@ -430,14 +430,9 @@ function editarCorrida(id) {
 
   if (!corrida) return;
 
- function editarCorrida(id) {
-  let corrida = corridasFirebase.find(item => item.id === id);
-
-  if (!corrida) return;
-
   document.getElementById("nome").value = corrida.nome;
   document.getElementById("valor").value = corrida.valor;
-  document.getElementById("corridas").value = corrida.corridas;
+  document.getElementById("corridas").value = corrida.corridas || 0;
   document.getElementById("origem").value = corrida.origem || "Uber";
   document.getElementById("data").value = corrida.data;
 
