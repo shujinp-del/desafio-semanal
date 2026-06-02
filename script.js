@@ -921,16 +921,16 @@ function abrirTela(id) {
   }
 
   if (id === "graficoTela") {
+    atualizarComparativoSemanal();
     atualizarGrafico();
     atualizarGraficoLinha();
   }
 
   if (id === "historicoTela") {
-  atualizarHistoricoMensalCards();
-}
-  
+    atualizarHistoricoMensalCards();
+  }
 
-    if (id === "minhasTela") {
+  if (id === "minhasTela") {
     atualizarMinhasCorridas();
   }
 
@@ -1518,6 +1518,67 @@ function atualizarHistoricoMensalCards() {
     `;
   });
 }
+  
+function atualizarComparativoSemanal() {
+  let card = document.getElementById("comparativoSemanalCard");
+
+  if (!card || !usuarioAtual) return;
+
+  let hoje = new Date();
+
+  let inicioSemanaAtual = new Date(hoje);
+  inicioSemanaAtual.setDate(hoje.getDate() - hoje.getDay());
+
+  let inicioSemanaPassada = new Date(inicioSemanaAtual);
+  inicioSemanaPassada.setDate(inicioSemanaAtual.getDate() - 7);
+
+  let fimSemanaPassada = new Date(inicioSemanaAtual);
+
+  let totalAtual = 0;
+  let totalPassada = 0;
+
+  corridasFirebase.forEach(item => {
+    if (
+      item.uid !== usuarioAtual.uid &&
+      item.email !== usuarioAtual.email
+    ) return;
+
+    if (!item.data) return;
+
+    let data = new Date(item.data + "T00:00:00");
+
+    if (data >= inicioSemanaAtual) {
+      totalAtual += Number(item.valor || 0);
+    } else if (
+      data >= inicioSemanaPassada &&
+      data < fimSemanaPassada
+    ) {
+      totalPassada += Number(item.valor || 0);
+    }
+  });
+
+  let percentual = 0;
+
+  if (totalPassada > 0) {
+    percentual = ((totalAtual - totalPassada) / totalPassada) * 100;
+  }
+
+  let emoji = percentual >= 0 ? "🔥" : "📉";
+  let sinal = percentual >= 0 ? "+" : "";
+
+  card.innerHTML = `
+    <div class="card destaque-home">
+      <small>Comparação Semanal</small>
+
+      <h2>${emoji} ${sinal}${percentual.toFixed(1)}%</h2>
+
+      <p>Semana atual: ${formatarMoeda(totalAtual)}</p>
+
+      <p>Semana passada: ${formatarMoeda(totalPassada)}</p>
+    </div>
+  `;
+}
+
 window.entrar = entrar;
 window.cadastrar = cadastrar;
 window.sair = sair;
