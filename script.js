@@ -921,8 +921,9 @@ function abrirTela(id) {
   }
 
   if (id === "historicoTela") {
-    atualizarHistoricoMensal();
-  }
+  atualizarHistoricoMensalCards();
+}
+  
 
     if (id === "minhasTela") {
     atualizarMinhasCorridas();
@@ -1413,6 +1414,85 @@ async function baixarBackup() {
     console.error(erro);
     alert("Erro ao baixar backup.");
   }
+}
+function atualizarHistoricoMensalCards() {
+  let container = document.getElementById("historicoMensalCards");
+  let melhorMesCard = document.getElementById("melhorMesCard");
+
+  if (!container || !usuarioAtual) return;
+
+  container.innerHTML = "";
+
+  let meses = {};
+
+  corridasFirebase.forEach(item => {
+    if (
+      item.uid !== usuarioAtual.uid &&
+      item.email !== usuarioAtual.email
+    ) {
+      return;
+    }
+
+    if (!item.data) return;
+
+    let data = new Date(item.data + "T00:00:00");
+
+    let chave =
+      `${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, "0")}`;
+
+    if (!meses[chave]) {
+      meses[chave] = {
+        total: 0,
+        corridas: 0
+      };
+    }
+
+    meses[chave].total += Number(item.valor);
+    meses[chave].corridas += Number(item.corridas || 0);
+  });
+
+  let lista = Object.entries(meses);
+
+  lista.sort((a, b) => b[1].total - a[1].total);
+
+  if (lista.length > 0 && melhorMesCard) {
+    let melhor = lista[0];
+
+    melhorMesCard.innerHTML = `
+      <div class="card destaque-home">
+        <small>🏆 Melhor mês</small>
+
+        <h2>${formatarMoeda(melhor[1].total)}</h2>
+
+        <p>${melhor[0]}</p>
+      </div>
+    `;
+  }
+
+  lista.forEach(([mes, dados], index) => {
+    let medalha = "";
+
+    if (index === 0) medalha = "🥇";
+    if (index === 1) medalha = "🥈";
+    if (index === 2) medalha = "🥉";
+
+    let media =
+      dados.corridas > 0
+        ? dados.total / dados.corridas
+        : 0;
+
+    container.innerHTML += `
+      <div class="card">
+        <h3>${medalha} ${mes}</h3>
+
+        <p>💰 ${formatarMoeda(dados.total)}</p>
+
+        <p>🚗 ${dados.corridas} corridas</p>
+
+        <p>📈 Média ${formatarMoeda(media)}</p>
+      </div>
+    `;
+  });
 }
 window.entrar = entrar;
 window.cadastrar = cadastrar;
