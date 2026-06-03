@@ -1490,11 +1490,7 @@ function atualizarHistoricoMensalCards() {
   `;
 
   lista.forEach(([mes, dados], index) => {
-    let medalha = "";
-
-    if (index === 0) medalha = "🥇";
-    if (index === 1) medalha = "🥈";
-    if (index === 2) medalha = "🥉";
+   let icone = "📅";
 
     let [ano, mesNumero] = mes.split("-");
     let nomeMes =
@@ -1507,7 +1503,7 @@ function atualizarHistoricoMensalCards() {
 
     container.innerHTML += `
       <div class="card">
-        <h3>${medalha} ${nomeMes}</h3>
+        <h3>${icone} ${nomeMes}</h3>
 
         <p>💰 ${formatarMoeda(dados.total)}</p>
 
