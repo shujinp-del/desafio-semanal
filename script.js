@@ -927,8 +927,9 @@ function abrirTela(id) {
   }
 
   if (id === "historicoTela") {
-    atualizarHistoricoMensalCards();
-  }
+  atualizarHistoricoMensalCards();
+  atualizarHistoricoSemanal();
+}
 
   if (id === "minhasTela") {
     atualizarMinhasCorridas();
@@ -948,6 +949,7 @@ function atualizarTudo() {
   atualizarGrafico();
   atualizarGraficoLinha();
   atualizarHistoricoMensal();
+  atualizarHistoricoSemanal();
   atualizarMinhasCorridas();
   atualizarMetas();
   atualizarRankingMetas();
@@ -1514,7 +1516,98 @@ function atualizarHistoricoMensalCards() {
     `;
   });
 }
-  
+function obterInicioSemana(dataBase) {
+  let data = new Date(dataBase);
+  let diaSemana = data.getDay();
+
+  let diferenca = diaSemana === 0 ? -6 : 1 - diaSemana;
+
+  data.setDate(data.getDate() + diferenca);
+  data.setHours(0, 0, 0, 0);
+
+  return data;
+}
+
+function atualizarHistoricoSemanal() {
+  let container = document.getElementById("historicoSemanalCards");
+
+  if (!container || !usuarioAtual) return;
+
+  container.innerHTML = "";
+
+  let semanas = {};
+
+  corridasFirebase.forEach(item => {
+    if (
+      item.uid !== usuarioAtual.uid &&
+      item.email !== usuarioAtual.email
+    ) return;
+
+    if (!item.data) return;
+
+    let dataCorrida = new Date(item.data + "T00:00:00");
+    let inicioSemana = obterInicioSemana(dataCorrida);
+
+    let chave = inicioSemana.toISOString().slice(0, 10);
+
+    if (!semanas[chave]) {
+      let fimSemana = new Date(inicioSemana);
+      fimSemana.setDate(inicioSemana.getDate() + 6);
+
+      semanas[chave] = {
+        inicio: inicioSemana,
+        fim: fimSemana,
+        total: 0,
+        corridas: 0,
+        dias: new Set()
+      };
+    }
+
+    semanas[chave].total += Number(item.valor || 0);
+    semanas[chave].corridas += Number(item.corridas || 0);
+    semanas[chave].dias.add(item.data);
+  });
+
+  let lista = Object.entries(semanas);
+
+  lista.sort((a, b) => new Date(b[0]) - new Date(a[0]));
+
+  if (lista.length === 0) {
+    container.innerHTML = `
+      <div class="card">
+        Nenhum histórico semanal encontrado.
+      </div>
+    `;
+    return;
+  }
+
+  lista.forEach(([chave, dados], index) => {
+    let mediaCorrida =
+      dados.corridas > 0 ? dados.total / dados.corridas : 0;
+
+    let titulo = index === 0 ? "🔥 Semana atual" : "📅 Semana";
+
+    container.innerHTML += `
+      <div class="card">
+        <h3>${titulo}</h3>
+
+        <p>
+          ${formatarData(chave)} até ${formatarData(
+            dados.fim.toISOString().slice(0, 10)
+          )}
+        </p>
+
+        <p>💰 Total: ${formatarMoeda(dados.total)}</p>
+
+        <p>🚗 Corridas: ${dados.corridas}</p>
+
+        <p>📆 Dias trabalhados: ${dados.dias.size}</p>
+
+        <p>📈 Média por corrida: ${formatarMoeda(mediaCorrida)}</p>
+      </div>
+    `;
+  });
+}
 function atualizarComparativoSemanal() {
   let card = document.getElementById("comparativoSemanalCard");
 
