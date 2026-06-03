@@ -1,7 +1,7 @@
 {
-  "name": "Desafio Semanal",
-  "short_name": "Desafio",
-  "description": "Ranking semanal de motoristas",
+  "name": "MMS - O Melhor da Semana",
+"short_name": "MMS",
+"description": "Melhor Motorista da Semana",
   "start_url": "/desafio-semanal/",
   "scope": "/desafio-semanal/",
   "display": "standalone",

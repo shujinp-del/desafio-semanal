@@ -1476,7 +1476,9 @@ function atualizarHistoricoMensalCards() {
     return;
   }
 
-  let melhor = lista[0];
+let melhor = lista.reduce((maior, atual) => {
+  return atual[1].total > maior[1].total ? atual : maior;
+}, lista[0]);
   let [anoMelhor, mesMelhor] = melhor[0].split("-");
   let nomeMelhor =
     nomesMeses[parseInt(mesMelhor) - 1] + " " + anoMelhor;
@@ -1546,15 +1548,16 @@ function atualizarMelhorSemana() {
 
     let dataCorrida = new Date(item.data + "T00:00:00");
     let inicioSemana = obterInicioSemana(dataCorrida);
+    let fimSemana = new Date(inicioSemana);
+
+    fimSemana.setDate(inicioSemana.getDate() + 6);
+
     let chave = inicioSemana.toISOString().slice(0, 10);
 
     if (!semanas[chave]) {
-      let fimSemana = new Date(inicioSemana);
-      fimSemana.setDate(inicioSemana.getDate() + 6);
-
       semanas[chave] = {
-        inicio: inicioSemana,
-        fim: fimSemana,
+        inicio: chave,
+        fim: fimSemana.toISOString().slice(0, 10),
         total: 0,
         corridas: 0
       };
@@ -1564,7 +1567,7 @@ function atualizarMelhorSemana() {
     semanas[chave].corridas += Number(item.corridas || 0);
   });
 
-  let lista = Object.entries(semanas);
+  let lista = Object.values(semanas);
 
   if (lista.length === 0) {
     card.innerHTML = `
@@ -1575,9 +1578,9 @@ function atualizarMelhorSemana() {
     return;
   }
 
-  lista.sort((a, b) => b[1].total - a[1].total);
+  lista.sort((a, b) => b.total - a.total);
 
-  let melhor = lista[0][1];
+  let melhor = lista[0];
 
   card.innerHTML = `
     <div class="card destaque-home">
@@ -1586,15 +1589,16 @@ function atualizarMelhorSemana() {
       <h2>${formatarMoeda(melhor.total)}</h2>
 
       <p>
-        ${formatarData(melhor.inicio.toISOString().slice(0, 10))}
+        ${formatarData(melhor.inicio)}
         até
-        ${formatarData(melhor.fim.toISOString().slice(0, 10))}
+        ${formatarData(melhor.fim)}
       </p>
 
       <p>🚗 ${melhor.corridas} corridas</p>
     </div>
   `;
 }
+
 function atualizarComparativoSemanal() {
   let card = document.getElementById("comparativoSemanalCard");
 
