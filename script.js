@@ -926,9 +926,9 @@ function abrirTela(id) {
     atualizarGraficoLinha();
   }
 
-  if (id === "historicoTela") {
+if (id === "historicoTela") {
   atualizarHistoricoMensalCards();
-  atualizarHistoricoSemanal();
+  atualizarMelhorSemana();
 }
 
   if (id === "minhasTela") {
@@ -949,7 +949,7 @@ function atualizarTudo() {
   atualizarGrafico();
   atualizarGraficoLinha();
   atualizarHistoricoMensal();
-  atualizarHistoricoSemanal();
+  atualizarMelhorSemana();
   atualizarMinhasCorridas();
   atualizarMetas();
   atualizarRankingMetas();
@@ -1528,12 +1528,11 @@ function obterInicioSemana(dataBase) {
   return data;
 }
 
-function atualizarHistoricoSemanal() {
-  let container = document.getElementById("historicoSemanalCards");
 
-  if (!container || !usuarioAtual) return;
+function atualizarMelhorSemana() {
+  let card = document.getElementById("melhorSemanaCard");
 
-  container.innerHTML = "";
+  if (!card || !usuarioAtual) return;
 
   let semanas = {};
 
@@ -1547,7 +1546,6 @@ function atualizarHistoricoSemanal() {
 
     let dataCorrida = new Date(item.data + "T00:00:00");
     let inicioSemana = obterInicioSemana(dataCorrida);
-
     let chave = inicioSemana.toISOString().slice(0, 10);
 
     if (!semanas[chave]) {
@@ -1558,55 +1556,44 @@ function atualizarHistoricoSemanal() {
         inicio: inicioSemana,
         fim: fimSemana,
         total: 0,
-        corridas: 0,
-        dias: new Set()
+        corridas: 0
       };
     }
 
     semanas[chave].total += Number(item.valor || 0);
     semanas[chave].corridas += Number(item.corridas || 0);
-    semanas[chave].dias.add(item.data);
   });
 
   let lista = Object.entries(semanas);
 
-  lista.sort((a, b) => new Date(b[0]) - new Date(a[0]));
-
   if (lista.length === 0) {
-    container.innerHTML = `
+    card.innerHTML = `
       <div class="card">
-        Nenhum histórico semanal encontrado.
+        Nenhuma semana encontrada.
       </div>
     `;
     return;
   }
 
-  lista.forEach(([chave, dados], index) => {
-    let mediaCorrida =
-      dados.corridas > 0 ? dados.total / dados.corridas : 0;
+  lista.sort((a, b) => b[1].total - a[1].total);
 
-    let titulo = index === 0 ? "🔥 Semana atual" : "📅 Semana";
+  let melhor = lista[0][1];
 
-    container.innerHTML += `
-      <div class="card">
-        <h3>${titulo}</h3>
+  card.innerHTML = `
+    <div class="card destaque-home">
+      <small>🏆 Melhor semana da história</small>
 
-        <p>
-          ${formatarData(chave)} até ${formatarData(
-            dados.fim.toISOString().slice(0, 10)
-          )}
-        </p>
+      <h2>${formatarMoeda(melhor.total)}</h2>
 
-        <p>💰 Total: ${formatarMoeda(dados.total)}</p>
+      <p>
+        ${formatarData(melhor.inicio.toISOString().slice(0, 10))}
+        até
+        ${formatarData(melhor.fim.toISOString().slice(0, 10))}
+      </p>
 
-        <p>🚗 Corridas: ${dados.corridas}</p>
-
-        <p>📆 Dias trabalhados: ${dados.dias.size}</p>
-
-        <p>📈 Média por corrida: ${formatarMoeda(mediaCorrida)}</p>
-      </div>
-    `;
-  });
+      <p>🚗 ${melhor.corridas} corridas</p>
+    </div>
+  `;
 }
 function atualizarComparativoSemanal() {
   let card = document.getElementById("comparativoSemanalCard");
