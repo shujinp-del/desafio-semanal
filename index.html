@@ -260,9 +260,17 @@
     Evolução semanal e mensal dos seus resultados
   </p>
 
-  <h2>📅 Histórico Semanal</h2>
-  <div id="historicoSemanalCards" class="dashboard-cards"></div>
+  <div class="card">
+  <h2>🔎 Pesquisar Semana</h2>
 
+  <input type="date" id="dataPesquisaSemana">
+
+  <button onclick="pesquisarSemanaHistorico()">
+    Buscar semana
+  </button>
+</div>
+
+<div id="resultadoSemanaHistorico"></div>
   <h2>🏆 Histórico Mensal</h2>
   <div id="melhorMesCard"></div>
 

@@ -1667,6 +1667,101 @@ function atualizarComparativoSemanal() {
     </div>
   `;
 }
+function pesquisarSemanaHistorico() {
+  let input = document.getElementById("dataPesquisaSemana");
+  let resultado = document.getElementById("resultadoSemanaHistorico");
+
+  if (!input || !resultado || !usuarioAtual) return;
+
+  let dataEscolhida = input.value;
+
+  if (!dataEscolhida) {
+    alert("Escolha uma data");
+    return;
+  }
+
+  let inicioSemana = obterInicioSemana(
+    new Date(dataEscolhida + "T00:00:00")
+  );
+
+  let fimSemana = new Date(inicioSemana);
+  fimSemana.setDate(inicioSemana.getDate() + 6);
+  fimSemana.setHours(23, 59, 59, 999);
+
+  let corridasSemana = corridasFirebase.filter(item => {
+    if (!item.data) return false;
+
+    let dataCorrida = new Date(item.data + "T00:00:00");
+
+    return (
+      (
+        item.uid === usuarioAtual.uid ||
+        item.email === usuarioAtual.email
+      ) &&
+      dataCorrida >= inicioSemana &&
+      dataCorrida <= fimSemana
+    );
+  });
+
+  let total = corridasSemana.reduce(
+    (soma, item) => soma + Number(item.valor || 0),
+    0
+  );
+
+  let corridas = corridasSemana.reduce(
+    (soma, item) => soma + Number(item.corridas || 0),
+    0
+  );
+
+  let diasTrabalhados = new Set(
+    corridasSemana.map(item => item.data)
+  ).size;
+
+  let mediaCorrida = corridas > 0 ? total / corridas : 0;
+
+  resultado.innerHTML = `
+    <div class="card destaque-home">
+      <small>Semana pesquisada</small>
+
+      <h2>${formatarMoeda(total)}</h2>
+
+      <p>
+        ${formatarData(inicioSemana.toISOString().slice(0, 10))}
+        até
+        ${formatarData(fimSemana.toISOString().slice(0, 10))}
+      </p>
+
+      <p>🚗 Corridas: ${corridas}</p>
+      <p>📆 Dias trabalhados: ${diasTrabalhados}</p>
+      <p>📈 Média por corrida: ${formatarMoeda(mediaCorrida)}</p>
+    </div>
+  `;
+
+  if (corridasSemana.length === 0) {
+    resultado.innerHTML += `
+      <div class="card">
+        Nenhuma corrida encontrada nessa semana.
+      </div>
+    `;
+
+    return;
+  }
+
+  corridasSemana.sort((a, b) => new Date(b.data) - new Date(a.data));
+
+  corridasSemana.forEach(item => {
+    resultado.innerHTML += `
+      <div class="card">
+        <h3>🚗 ${item.nome}</h3>
+
+        <p>📅 ${formatarData(item.data)}</p>
+        <p>💰 ${formatarMoeda(item.valor)}</p>
+        <p>🛣️ ${item.corridas || 0} corridas</p>
+        <p>🏷️ ${item.origem || "Sem origem"}</p>
+      </div>
+    `;
+  });
+}
 
 window.entrar = entrar;
 window.cadastrar = cadastrar;
@@ -1683,3 +1778,4 @@ window.salvarMeta = salvarMeta;
 window.excluirConta = excluirConta;
 window.removerAdmin = removerAdmin;
 window.baixarBackup = baixarBackup;
+window.pesquisarSemanaHistorico = pesquisarSemanaHistorico;
