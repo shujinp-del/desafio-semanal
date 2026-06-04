@@ -1250,6 +1250,8 @@ let totalParticular = minhasSemana
   let homeMensal = document.getElementById("homeMensal");
   let totalSemana = document.getElementById("totalSemana");
   let totalCorridas = document.getElementById("totalCorridas");
+  let mediaCorridaGrafico = document.getElementById("mediaCorridaGrafico");
+let melhorDiaGrafico = document.getElementById("melhorDiaGrafico");
   let totalUberEl = document.getElementById("totalUber");
 let total99El = document.getElementById("total99");
 let totalParticularEl = document.getElementById("totalParticular");
@@ -1278,6 +1280,39 @@ if (homeTotal) homeTotal.innerText = formatarMoeda(totalSemanaValor);
 if (homeMensal) homeMensal.innerText = formatarMoeda(totalMesValor);
 if (totalSemana) totalSemana.innerText = formatarMoeda(totalSemanaValor);
 if (totalCorridas) totalCorridas.innerText = corridasSemana;
+let mediaGrafico =
+  corridasSemana > 0 ? totalSemanaValor / corridasSemana : 0;
+
+if (mediaCorridaGrafico) {
+  mediaCorridaGrafico.innerText = formatarMoeda(mediaGrafico);
+}
+
+let mapaDiasGrafico = {};
+
+minhasSemana.forEach(item => {
+  if (!mapaDiasGrafico[item.data]) {
+    mapaDiasGrafico[item.data] = 0;
+  }
+
+  mapaDiasGrafico[item.data] += Number(item.valor || 0);
+});
+
+let melhorDataGrafico = null;
+
+Object.keys(mapaDiasGrafico).forEach(data => {
+  if (
+    !melhorDataGrafico ||
+    mapaDiasGrafico[data] > mapaDiasGrafico[melhorDataGrafico]
+  ) {
+    melhorDataGrafico = data;
+  }
+});
+
+if (melhorDiaGrafico) {
+  melhorDiaGrafico.innerText = melhorDataGrafico
+    ? formatarData(melhorDataGrafico)
+    : "-";
+}
 
 if (totalCorridasHome) totalCorridasHome.innerText = corridasSemana;
 if (statusMetaHome) statusMetaHome.innerText = `${progressoMeta}%`;

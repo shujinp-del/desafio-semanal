@@ -423,35 +423,49 @@
       </div>
     </section>
 
-    <section id="graficoTela" class="tela">
-      <h1>📊 Gráfico</h1>
-      <div id="comparativoSemanalCard"></div>
+    <section id="graficoTela" class="tela grafico-v2">
 
-      <p class="subtitulo">
-        Participação de cada motorista
-      </p>
+  <h1>📊 Gráficos</h1>
 
-      <div class="card">
-        <canvas id="grafico"></canvas>
-      </div>
+  <p class="subtitulo">
+    Acompanhe sua evolução semanal
+  </p>
 
-      <div class="card">
-        <h2>📈 Evolução por data</h2>
-        <canvas id="graficoLinha"></canvas>
-      </div>
+  <div id="comparativoSemanalCard"></div>
 
-      <div class="metricas">
-        <div>
-          <small>Total Semana</small>
-          <strong id="totalSemana">R$ 0</strong>
-        </div>
+  <div class="card grafico-card-v2">
+    <h3>🥧 Participação dos motoristas</h3>
+    <canvas id="grafico"></canvas>
+  </div>
 
-        <div>
-          <small>Total Corridas</small>
-          <strong id="totalCorridas">0</strong>
-        </div>
-      </div>
-    </section>
+  <div class="card grafico-card-v2">
+    <h3>📈 Evolução diária</h3>
+    <canvas id="graficoLinha"></canvas>
+  </div>
+
+  <div class="grid-graficos-v2">
+    <div class="mini-card">
+      <small>💰 Total Semana</small>
+      <strong id="totalSemana">R$ 0</strong>
+    </div>
+
+    <div class="mini-card">
+      <small>🚗 Total Corridas</small>
+      <strong id="totalCorridas">0</strong>
+    </div>
+
+    <div class="mini-card">
+      <small>📈 Média por corrida</small>
+      <strong id="mediaCorridaGrafico">R$ 0</strong>
+    </div>
+
+    <div class="mini-card">
+      <small>👑 Melhor dia</small>
+      <strong id="melhorDiaGrafico">-</strong>
+    </div>
+  </div>
+
+</section>
 
     <nav class="menu" id="menuApp">
       <button onclick="abrirTela('home')">
