@@ -291,13 +291,30 @@
         </button>
       </div>
 
-      <div class="card">
-        <h2>Seu progresso</h2>
+      <div class="card progresso-meta-v2">
+  <h2>📈 Seu progresso</h2>
 
-        <p>💰 Atual: <strong id="valorMetaAtual">R$ 0</strong></p>
-        <p>🎯 Meta: <strong id="valorMetaTotal">R$ 0</strong></p>
-        <p>📈 Progresso: <strong id="progressoMeta">0%</strong></p>
-      </div>
+  <strong id="valorMetaAtual" class="valor-progresso-meta">
+    R$ 0
+  </strong>
+
+  <p class="meta-total-v2">
+    de <strong id="valorMetaTotal">R$ 0</strong>
+  </p>
+
+  <div class="barra-meta-v2">
+    <div id="barraMetaTela"></div>
+  </div>
+
+  <div class="linha-meta-v2">
+    <span>Progresso</span>
+    <strong id="progressoMeta">0%</strong>
+  </div>
+
+  <p id="faltaMetaTexto" class="falta-meta-v2">
+    Defina uma meta para começar
+  </p>
+</div>
 
       <div class="card">
         <h2>🧠 Insights da Semana</h2>
@@ -320,15 +337,30 @@
         <p>🔥 Melhor dia do mês: <strong id="fechamentoMelhorDiaMes">-</strong></p>
       </div>
 
-      <div class="card">
-        <h2>🏅 Badge Atual</h2>
-        <div id="badgeMeta">😴 Sem badge ainda</div>
-      </div>
+     <div class="card badge-card-v2">
+  <h2>🏅 Badge Atual</h2>
 
-      <div class="card">
-        <h2>🔔 Notificação</h2>
-        <div id="notificacaoMeta">🚀 Defina uma meta para começar</div>
-      </div>
+  <div id="badgeMeta" class="badge-texto">
+    🥉 BRONZE
+  </div>
+
+  <div class="badge-proximo">
+    Continue rodando para alcançar PRATA
+  </div>
+
+
+  <div class="badge-proximo">
+    Próximo nível disponível
+  </div>
+</div>
+
+  <div class="card notificacao-card-v2">
+  <h2>🔔 Notificação</h2>
+
+  <div id="notificacaoMeta" class="texto-notificacao">
+    🚀 Defina uma meta para começar
+  </div>
+</div>
     </section>
 
     <section id="minhasTela" class="tela">

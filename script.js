@@ -495,6 +495,8 @@ function atualizarMetas() {
   let inputMeta = document.getElementById("metaSemanal");
   let badgeEl = document.getElementById("badgeMeta");
   let notificacaoEl = document.getElementById("notificacaoMeta");
+  let barraMetaTela = document.getElementById("barraMetaTela");
+  let faltaMetaTexto = document.getElementById("faltaMetaTexto");
 
   if (!atualEl || !totalEl || !progressoEl) return;
 
@@ -507,7 +509,7 @@ function atualizarMetas() {
   );
 
   let totalAtual = minhasSemana.reduce(
-    (soma, item) => soma + Number(item.valor),
+    (soma, item) => soma + Number(item.valor || 0),
     0
   );
 
@@ -529,7 +531,26 @@ function atualizarMetas() {
     );
   }
 
-  progressoEl.innerText = `${Math.min(progresso, 100)}%`;
+  let progressoVisual = Math.min(progresso, 100);
+
+  progressoEl.innerText = `${progressoVisual}%`;
+
+  if (barraMetaTela) {
+    barraMetaTela.style.width = `${progressoVisual}%`;
+  }
+
+  if (faltaMetaTexto) {
+    if (meta > 0) {
+      let falta = Math.max(0, meta - totalAtual);
+
+      faltaMetaTexto.innerText =
+        falta > 0
+          ? `Faltam ${formatarMoeda(falta)} para atingir sua meta`
+          : "🎉 Meta semanal alcançada!";
+    } else {
+      faltaMetaTexto.innerText = "Defina uma meta para começar";
+    }
+  }
 
   if (badgeEl) {
     if (meta <= 0) {
@@ -1006,13 +1027,28 @@ function atualizarRanking() {
     if (index === 2) medalha = "🥉";
 
     lista.innerHTML += `
-      <li>
-        <div class="posicao">${medalha} ${m.nome}</div>
-        <br>
-        <div class="valor">💰 ${formatarMoeda(m.valor)}</div>
-        <div>🚗 ${m.corridas} corridas</div>
-      </li>
-    `;
+  <li class="ranking-card">
+
+    <div class="ranking-topo">
+      <span class="ranking-medalha">
+        ${medalha}
+      </span>
+
+      <span class="ranking-nome">
+        ${m.nome}
+      </span>
+    </div>
+
+    <div class="ranking-valor">
+      💰 ${formatarMoeda(m.valor)}
+    </div>
+
+    <div class="ranking-corridas">
+      🚗 ${m.corridas} corridas
+    </div>
+
+  </li>
+`;
   });
 }
 

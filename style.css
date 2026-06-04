@@ -692,7 +692,6 @@ canvas {
 .dica-corrida {
   margin-top: 18px;
   margin-bottom: 90px;
-}
 
   background:
     linear-gradient(
@@ -740,7 +739,7 @@ canvas {
 }
 
 .grid-graficos-v2 .mini-card {
-  min-height: 95px;
+  min-height: 120px;
   border-radius: 20px;
   padding: 16px;
   background:
@@ -758,5 +757,222 @@ canvas {
 }
 
 .grid-graficos-v2 .mini-card strong {
-  font-size: 1.05rem;
+  font-size: 1.45rem;
+  font-weight: 700;
+  display: block;
+  margin-top: 6px;
+}
+.ranking-card {
+  list-style: none;
+  padding: 18px;
+  margin-bottom: 14px;
+
+  border-radius: 22px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,122,24,0.10),
+      rgba(255,255,255,0.03)
+    );
+
+  border: 1px solid rgba(255,122,24,0.15);
+
+  transition: 0.3s;
+}
+
+.ranking-card:hover {
+  transform: translateY(-2px);
+}
+
+.ranking-topo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ranking-medalha {
+  font-size: 1.5rem;
+}
+
+.ranking-nome {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.ranking-valor {
+  margin-top: 12px;
+
+  font-size: 1.5rem;
+  font-weight: 700;
+
+  color: #ffb347;
+}
+
+.ranking-corridas {
+  margin-top: 6px;
+  opacity: 0.85;
+}
+.ranking-card:first-child {
+  border: 1px solid rgba(255, 215, 0, 0.45);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 176, 0, 0.18),
+      rgba(255, 255, 255, 0.04)
+    );
+
+  box-shadow:
+    0 0 22px rgba(255, 176, 0, 0.18);
+}
+
+.ranking-card:first-child .ranking-valor {
+  color: #ffcc33;
+}
+
+.ranking-card:first-child::before {
+  content: "CAMPEÃO";
+  display: inline-block;
+
+  margin-bottom: 10px;
+  padding: 4px 10px;
+
+  border-radius: 999px;
+
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+
+  color: #111827;
+  background: linear-gradient(135deg, #ffd700, #ff9f1c);
+}
+
+.ranking-nome {
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+.progresso-meta-v2 {
+  border: 1px solid rgba(255,122,24,0.25);
+  background:
+    radial-gradient(circle at top right, rgba(255,122,24,0.18), transparent 35%),
+    linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+}
+
+.valor-progresso-meta {
+  display: block;
+  margin-top: 16px;
+  font-size: 2rem;
+  color: #7ed957;
+}
+
+.meta-total-v2 {
+  margin: 6px 0 16px;
+  opacity: 0.85;
+}
+
+.barra-meta-v2 {
+  width: 100%;
+  height: 12px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.barra-meta-v2 div {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #ff7a18, #ffb000);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.linha-meta-v2 {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+  font-weight: 700;
+}
+
+.falta-meta-v2 {
+  margin-top: 14px;
+  padding: 12px;
+  border-radius: 14px;
+  background: rgba(0,0,0,0.22);
+  text-align: center;
+  opacity: 0.9;
+}
+.badge-card-v2 {
+  border: 1px solid rgba(255,184,0,.20);
+}
+
+.badge-texto {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-top: 10px;
+}
+
+.badge-proximo {
+  margin-top: 10px;
+  font-size: .85rem;
+  opacity: .75;
+}
+.notificacao-card-v2{
+    border:1px solid rgba(255,184,0,.25);
+    background:linear-gradient(
+        135deg,
+        rgba(255,184,0,.08),
+        rgba(255,122,24,.05)
+    );
+
+    width:100%;
+    box-sizing:border-box;
+}
+
+.texto-notificacao {
+  font-weight: 600;
+  line-height: 1.5;
+}
+.badge-texto{
+    font-size:1.2rem;
+    font-weight:700;
+    color:#ffb84d;
+}
+
+.badge-proximo{
+    margin-top:8px;
+    font-size:.85rem;
+    opacity:.8;
+}
+.notificacao-card-v2{
+    border:1px solid rgba(255,184,0,.25);
+    background:linear-gradient(
+        135deg,
+        rgba(255,184,0,.08),
+        rgba(255,122,24,.05)
+    );
+}
+
+.texto-notificacao{
+    line-height:1.5;
+    font-weight:600;
+}
+#metasTela .card{
+    margin-bottom:18px;
+}
+#metasTela .notificacao-card-v2 {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+#metasTela .texto-notificacao {
+  display: block;
+  max-width: 100%;
+  white-space: normal;
+  word-break: normal;
 }
