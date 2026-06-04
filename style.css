@@ -1007,9 +1007,34 @@ canvas {
 
 .historico-resumo{
   display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+.historico-resumo div{
+  display:flex;
   justify-content:space-between;
-  gap:10px;
-  text-align:center;
+  align-items:center;
+
+  padding:10px 12px;
+
+  border-radius:12px;
+
+  background:
+    rgba(255,255,255,.03);
+
+  border:
+    1px solid rgba(255,184,0,.10);
+}
+
+.historico-resumo span{
+  font-size:20px;
+  opacity:.85;
+}
+
+.historico-resumo strong{
+  color:#ffb84d;
+  font-size:18px;
+  font-weight:700;
 }
 
 .historico-resumo div{
@@ -1027,4 +1052,70 @@ canvas {
   display:block;
   color:#ffb84d;
   font-size:18px;
+}
+.historico-geral {
+  border: 1px solid rgba(255,184,0,.18);
+
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(255,122,24,.12),
+      transparent 35%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,.08),
+      rgba(255,255,255,.03)
+    );
+}
+
+.historico-resumo {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  text-align: center;
+}
+
+.historico-resumo div {
+  flex: 1;
+}
+
+.historico-resumo span {
+  display: block;
+  font-size: 11px;
+  opacity: .75;
+  margin-bottom: 8px;
+}
+
+.historico-resumo strong {
+  display: block;
+  color: #ffb84d;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+.card-mes-v2{
+  padding:18px;
+}
+
+.mes-topo{
+  margin-bottom:12px;
+}
+
+.mes-topo h3{
+  margin:0;
+  font-size:18px;
+  color:#fff;
+}
+
+.mes-total{
+  font-size:28px;
+  font-weight:bold;
+  color:#ffb347;
+  margin-bottom:12px;
+}
+
+.mes-info{
+  color:#d1d5db;
+  margin-top:6px;
+  font-size:14px;
 }

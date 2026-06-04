@@ -1743,16 +1743,26 @@ let melhor = lista.reduce((maior, atual) => {
         : 0;
 
     container.innerHTML += `
-      <div class="card">
-        <h3>${icone} ${nomeMes}</h3>
+  <div class="card card-mes-v2">
 
-        <p>💰 ${formatarMoeda(dados.total)}</p>
+    <div class="mes-topo">
+      <h3>${icone} ${nomeMes}</h3>
+    </div>
 
-        <p>🚗 ${dados.corridas} corridas</p>
+    <div class="mes-total">
+      ${formatarMoeda(dados.total)}
+    </div>
 
-        <p>📈 Média ${formatarMoeda(media)}</p>
-      </div>
-    `;
+    <div class="mes-info">
+      🚗 ${dados.corridas} corridas
+    </div>
+
+    <div class="mes-info">
+      📈 Média ${formatarMoeda(media)}
+    </div>
+
+  </div>
+`;
   });
 }
 function obterInicioSemana(dataBase) {
