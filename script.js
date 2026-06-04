@@ -942,6 +942,39 @@ if (id === "historicoTela") {
 
 function atualizarTudo() {
   aplicarPrivacidadeMenus();
+  let totalHojeCorrida =
+  document.getElementById("totalHojeCorrida");
+
+let corridasHojeCorrida =
+  document.getElementById("corridasHojeCorrida");
+
+let hoje = new Date().toISOString().split("T")[0];
+
+let corridasHoje = corridasFirebase.filter(item =>
+  item.data === hoje
+);
+
+let totalHoje = corridasHoje.reduce(
+  (soma, item) =>
+    soma + Number(item.valor || 0),
+  0
+);
+
+let qtdHoje = corridasHoje.reduce(
+  (soma, item) =>
+    soma + Number(item.corridas || 0),
+  0
+);
+
+if (totalHojeCorrida) {
+  totalHojeCorrida.innerText =
+    formatarMoeda(totalHoje);
+}
+
+if (corridasHojeCorrida) {
+  corridasHojeCorrida.innerText =
+    qtdHoje;
+}
 
   atualizarRanking();
   atualizarLider();
