@@ -1267,6 +1267,37 @@ if (xpAtual) {
 if (barraXp) {
   barraXp.style.width = `${(xpNivelAtual / 1000) * 100}%`;
 }
+let conquistaSequencia =
+  document.getElementById("conquistaSequencia");
+
+let conquistaFaturamento =
+  document.getElementById("conquistaFaturamento");
+
+let conquistaCorridas =
+  document.getElementById("conquistaCorridas");
+
+let conquistaMeta =
+  document.getElementById("conquistaMeta");
+
+if (conquistaSequencia) {
+  conquistaSequencia.innerText =
+    `${Math.min(7, corridasSemana)} dias`;
+}
+
+if (conquistaFaturamento) {
+  conquistaFaturamento.innerText =
+    formatarMoeda(totalSemanaValor);
+}
+
+if (conquistaCorridas) {
+  conquistaCorridas.innerText =
+    corridasSemana;
+}
+
+if (conquistaMeta) {
+  conquistaMeta.innerText =
+    `${progressoMeta}%`;
+}
 
 if (barraMetaHome) barraMetaHome.style.width = `${progressoMeta}%`;
 if (metaHomeValor) metaHomeValor.innerText = formatarMoeda(metaSemanal);
