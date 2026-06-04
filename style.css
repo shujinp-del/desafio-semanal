@@ -337,3 +337,254 @@ canvas {
 #comparativoSemanalCard p {
   margin: 5px 0;
 }
+.home-v2 {
+  padding-bottom: 90px;
+}
+
+.card-principal-v2 {
+  position: relative;
+  overflow: hidden;
+  padding: 24px;
+  border-radius: 26px;
+  background: linear-gradient(135deg, #ff7a18, #ffb000);
+  color: white;
+  box-shadow: 0 18px 40px rgba(255, 122, 24, 0.35);
+}
+
+.card-principal-v2 small {
+  font-size: 0.9rem;
+  opacity: 0.95;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.card-principal-v2 h2 {
+  font-size: 2.6rem;
+  margin: 12px 0 6px;
+}
+
+.card-principal-v2 p {
+  margin: 0 0 14px;
+  opacity: 0.95;
+}
+
+.barra-meta-home {
+  width: 100%;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 14px;
+}
+
+.barra-meta-home div {
+  height: 100%;
+  width: 0%;
+  background: white;
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.meta-home-info {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 10px;
+  font-size: 0.9rem;
+}
+
+.grid-home-v2 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.grid-home-v2 .mini-card {
+  min-height: 88px;
+  border-radius: 20px;
+  padding: 14px;
+}
+
+.grid-home-v2 .mini-card small {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.8rem;
+}
+
+.grid-home-v2 .mini-card strong {
+  font-size: 1rem;
+}
+
+.banner-home-v2 {
+  margin: 18px 0;
+  padding: 22px;
+  border-radius: 26px;
+  background:
+    radial-gradient(circle at top left, rgba(255, 176, 0, 0.35), transparent 35%),
+    linear-gradient(135deg, #111827, #1f2937);
+  color: white;
+  box-shadow: 0 16px 35px rgba(0, 0, 0, 0.25);
+}
+
+.banner-home-v2 h2 {
+  margin: 0 0 10px;
+  font-size: 1.25rem;
+}
+
+.banner-home-v2 p {
+  margin: 0;
+  opacity: 0.85;
+}
+
+@media (max-width: 430px) {
+  .card-principal-v2 h2 {
+    font-size: 2.1rem;
+  }
+
+  .grid-home-v2 {
+    grid-template-columns: 1fr;
+  }
+}
+.trofeu-principal {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  font-size: 90px;
+  opacity: 0.18;
+  pointer-events: none;
+}
+
+.card-principal-v2 {
+  position: relative;
+}
+.card-posicao-v2 {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 22px;
+  border-radius: 26px;
+  background:
+    radial-gradient(circle at left, rgba(147, 51, 234, 0.35), transparent 40%),
+    linear-gradient(135deg, #111827, #1f2937);
+  color: white;
+  border: 1px solid rgba(147, 51, 234, 0.35);
+}
+
+.posicao-medalha {
+  font-size: 58px;
+  min-width: 70px;
+  text-align: center;
+}
+
+.card-posicao-v2 small {
+  color: #c084fc;
+  text-transform: uppercase;
+  font-weight: 800;
+}
+
+.card-posicao-v2 h2 {
+  margin: 8px 0;
+  font-size: 1.3rem;
+}
+
+.card-posicao-v2 p {
+  margin: 0 0 14px;
+  opacity: 0.9;
+}
+
+.linha-posicao {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  border-top: 1px solid rgba(255,255,255,0.15);
+  padding-top: 12px;
+}
+.xp-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.xp-topo h2 {
+  margin: 0;
+}
+
+.barra-xp {
+  width: 100%;
+  height: 12px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 16px 0;
+}
+
+.barra-xp div {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    #ff7a18,
+    #ffb000
+  );
+  border-radius: 999px;
+  transition: 0.4s;
+}
+
+.texto-xp {
+  margin-top: 10px;
+}
+
+.recompensa-xp {
+  margin-top: 12px;
+  font-size: 0.95rem;
+}
+.origem-card-v2 {
+  margin-bottom: 90px;
+}
+
+.origem-grid-v2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.origem-box {
+  padding: 16px;
+  border-radius: 20px;
+  background: #111827;
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+.origem-box span {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.origem-box strong {
+  display: block;
+  font-size: 1.4rem;
+  margin-bottom: 6px;
+}
+
+.origem-box small {
+  opacity: 0.75;
+}
+
+.uber-box {
+  border-color: rgba(34,197,94,0.45);
+  box-shadow: inset 0 0 25px rgba(34,197,94,0.08);
+}
+
+.app99-box {
+  border-color: rgba(59,130,246,0.45);
+  box-shadow: inset 0 0 25px rgba(59,130,246,0.08);
+}
+
+.particular-box {
+  border-color: rgba(168,85,247,0.45);
+  box-shadow: inset 0 0 25px rgba(168,85,247,0.08);
+}

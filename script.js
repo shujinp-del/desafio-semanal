@@ -1084,6 +1084,10 @@ function atualizarLider() {
 
   if (!lider || !usuarioAtual) return;
 
+  let rankingSemana = montarRanking(
+    corridasFirebase.filter(item => estaNaSemanaAtual(item.data))
+  );
+
   let minhasSemana = corridasFirebase.filter(
     item =>
       (
@@ -1093,12 +1097,12 @@ function atualizarLider() {
       estaNaSemanaAtual(item.data)
   );
 
-  let total = minhasSemana.reduce(
-    (soma, item) => soma + Number(item.valor),
+  let totalUsuario = minhasSemana.reduce(
+    (soma, item) => soma + Number(item.valor || 0),
     0
   );
 
-  let corridas = minhasSemana.reduce(
+  let corridasUsuario = minhasSemana.reduce(
     (soma, item) => soma + Number(item.corridas || 0),
     0
   );
@@ -1108,17 +1112,45 @@ function atualizarLider() {
     return;
   }
 
+  let posicao = rankingSemana.findIndex(
+    item => item.valor === totalUsuario
+  ) + 1;
+
+  if (posicao <= 0) posicao = "-";
+
+  let liderGeral = rankingSemana[0];
+  let falta = 0;
+
+  if (liderGeral && liderGeral.valor > totalUsuario) {
+    falta = liderGeral.valor - totalUsuario;
+  }
+
+  let medalha = "🥉";
+
+  if (posicao === 1) medalha = "🥇";
+  if (posicao === 2) medalha = "🥈";
+  if (posicao === 3) medalha = "🥉";
+
+  let mensagem =
+    posicao === 1
+      ? "👑 Você está liderando a semana!"
+      : `🔥 Faltam ${formatarMoeda(falta)} para alcançar o líder`;
+
   lider.innerHTML = `
-    <div class="lider-card desempenho-card">
-      <span class="desempenho-label">
-        👤 Meu desempenho
-      </span>
+    <div class="card card-posicao-v2">
+      <div class="posicao-medalha">${medalha}</div>
 
-      <h2>${formatarMoeda(total)}</h2>
+      <div>
+        <small>Meu desempenho</small>
 
-      <div class="desempenho-info">
-        <span>📅 Semana atual</span>
-        <span>🚗 ${corridas} corridas</span>
+        <h2>Você está em ${posicao}º lugar</h2>
+
+        <p>${mensagem}</p>
+
+        <div class="linha-posicao">
+          <span>${formatarMoeda(totalUsuario)}</span>
+          <strong>${corridasUsuario} corridas</strong>
+        </div>
       </div>
     </div>
   `;
@@ -1188,14 +1220,84 @@ let totalParticular = minhasSemana
   let totalUberEl = document.getElementById("totalUber");
 let total99El = document.getElementById("total99");
 let totalParticularEl = document.getElementById("totalParticular");
+let porcentagemUberEl = document.getElementById("porcentagemUber");
+let porcentagem99El = document.getElementById("porcentagem99");
+let porcentagemParticularEl = document.getElementById("porcentagemParticular");
 
-  if (homeTotal) homeTotal.innerText = formatarMoeda(totalSemanaValor);
-  if (homeMensal) homeMensal.innerText = formatarMoeda(totalMesValor);
-  if (totalSemana) totalSemana.innerText = formatarMoeda(totalSemanaValor);
-  if (totalCorridas) totalCorridas.innerText = corridasSemana;
-  if (totalUberEl) totalUberEl.innerText = formatarMoeda(totalUber);
+ let totalCorridasHome = document.getElementById("totalCorridasHome");
+let statusMetaHome = document.getElementById("statusMetaHome");
+let barraMetaHome = document.getElementById("barraMetaHome");
+let metaHomeValor = document.getElementById("metaHomeValor");
+let metaHomePorcentagem = document.getElementById("metaHomePorcentagem");
+
+let metaSemanal = Number((dadosUsuario && dadosUsuario.metaSemanal) || 0);
+
+let progressoMeta = 0;
+
+if (metaSemanal > 0) {
+  progressoMeta = Math.min(
+    100,
+    Math.round((totalSemanaValor / metaSemanal) * 100)
+  );
+}
+
+if (homeTotal) homeTotal.innerText = formatarMoeda(totalSemanaValor);
+if (homeMensal) homeMensal.innerText = formatarMoeda(totalMesValor);
+if (totalSemana) totalSemana.innerText = formatarMoeda(totalSemanaValor);
+if (totalCorridas) totalCorridas.innerText = corridasSemana;
+
+if (totalCorridasHome) totalCorridasHome.innerText = corridasSemana;
+if (statusMetaHome) statusMetaHome.innerText = `${progressoMeta}%`;
+let nivelXp = document.getElementById("nivelXp");
+let xpAtual = document.getElementById("xpAtual");
+let barraXp = document.getElementById("barraXp");
+
+let xp = corridasSemana * 10;
+
+let nivel = Math.floor(xp / 1000) + 1;
+
+let xpNivelAtual = xp % 1000;
+
+if (nivelXp) nivelXp.innerText = nivel;
+
+if (xpAtual) {
+  xpAtual.innerText = `${xpNivelAtual} / 1000 XP`;
+}
+
+if (barraXp) {
+  barraXp.style.width = `${(xpNivelAtual / 1000) * 100}%`;
+}
+
+if (barraMetaHome) barraMetaHome.style.width = `${progressoMeta}%`;
+if (metaHomeValor) metaHomeValor.innerText = formatarMoeda(metaSemanal);
+if (metaHomePorcentagem) metaHomePorcentagem.innerText = `${progressoMeta}%`;
+
+if (totalUberEl) totalUberEl.innerText = formatarMoeda(totalUber);
 if (total99El) total99El.innerText = formatarMoeda(total99);
 if (totalParticularEl) totalParticularEl.innerText = formatarMoeda(totalParticular);
+let porcentagemUber = totalSemanaValor > 0
+  ? Math.round((totalUber / totalSemanaValor) * 100)
+  : 0;
+
+let porcentagem99 = totalSemanaValor > 0
+  ? Math.round((total99 / totalSemanaValor) * 100)
+  : 0;
+
+let porcentagemParticular = totalSemanaValor > 0
+  ? Math.round((totalParticular / totalSemanaValor) * 100)
+  : 0;
+
+if (porcentagemUberEl) {
+  porcentagemUberEl.innerText = `${porcentagemUber}% do total`;
+}
+
+if (porcentagem99El) {
+  porcentagem99El.innerText = `${porcentagem99}% do total`;
+}
+
+if (porcentagemParticularEl) {
+  porcentagemParticularEl.innerText = `${porcentagemParticular}% do total`;
+}
 }
 
 function obterRankingParaGrafico() {

@@ -35,63 +35,108 @@
       </div>
     </section>
 
-    <section id="home" class="tela">
-      <div class="topo-home">
-        <div>
-          <h1>🥇 MMS</h1>
-          <p id="usuarioLogado" class="bem-vindo"></p>
-        </div>
+    <section id="home" class="tela home-v2">
 
-        <button class="botao-sair" onclick="sair()">
-          Sair
-        </button>
-      </div>
+  <div class="topo-home">
+    <div>
+      <h1>🥇 MMS</h1>
+      <p class="subtitulo">O Melhor da Semana</p>
+      <p id="usuarioLogado" class="bem-vindo"></p>
+    </div>
 
-      <p class="subtitulo">
-        Painel de ganhos
-      </p>
+    <button class="botao-sair" onclick="sair()">
+      Sair
+    </button>
+  </div>
 
-      <div class="card destaque-home">
-        <small>Total da Semana</small>
+  <div class="card destaque-home card-principal-v2">
+    <small>🏆 Total da Semana</small>
 
-        <h2 id="homeTotal">
-          R$ 0
-        </h2>
+    <h2 id="homeTotal">R$ 0</h2>
 
-        <p class="subtitulo">
-          Seus ganhos da semana atual
-        </p>
-      </div>
+    <p>Seu desempenho da semana atual</p>
 
-      <div class="mini-card">
-        <small>Total Mês</small>
+    <div class="barra-meta-home">
+      <div id="barraMetaHome"></div>
+      <div class="trofeu-principal">
+  🏆
+</div>
+    </div>
 
-        <strong id="homeMensal">
-          R$ 0
-        </strong>
-      </div>
+    <div class="meta-home-info">
+      <span>Meta semanal: <strong id="metaHomeValor">R$ 0</strong></span>
+      <strong id="metaHomePorcentagem">0%</strong>
+    </div>
+  </div>
 
-      <div id="liderSemana"></div>
+  <div class="grid-home-v2">
+    <div class="mini-card">
+      <small>💰 Total Mês</small>
+      <strong id="homeMensal">R$ 0</strong>
+    </div>
 
-      <div class="card">
-        <h3>📊 Origem dos ganhos</h3>
+    <div class="mini-card">
+      <small>🚗 Corridas</small>
+      <strong id="totalCorridasHome">0</strong>
+    </div>
 
-        <div class="origem-item">
-          <span>🟢 Uber</span>
-          <strong id="totalUber">R$ 0,00</strong>
-        </div>
+    <div class="mini-card">
+      <small>🎯 Meta</small>
+      <strong id="statusMetaHome">0%</strong>
+    </div>
+  </div>
 
-        <div class="origem-item">
-          <span>🔵 99</span>
-          <strong id="total99">R$ 0,00</strong>
-        </div>
+  <div id="liderSemana"></div>
 
-        <div class="origem-item">
-          <span>🟣 Particular</span>
-          <strong id="totalParticular">R$ 0,00</strong>
-        </div>
-      </div>
-    </section>
+  <div class="banner-home-v2">
+
+  <div class="xp-topo">
+    <h2>🎮 Nível <span id="nivelXp">1</span></h2>
+    <strong id="xpAtual">0 / 1000 XP</strong>
+  </div>
+
+  <div class="barra-xp">
+    <div id="barraXp"></div>
+  </div>
+
+  <p class="texto-xp">
+    🚀 Continue rodando para subir de nível.
+  </p>
+
+  <div class="recompensa-xp">
+    🏅 Próxima recompensa:
+    <strong id="proximaRecompensa">
+      Motorista Consistente
+    </strong>
+  </div>
+
+</div>
+
+  <div class="card origem-card-v2">
+  <h3>📊 Origem dos ganhos</h3>
+
+  <div class="origem-grid-v2">
+    <div class="origem-box uber-box">
+      <span>🟢 Uber</span>
+      <strong id="totalUber">R$ 0,00</strong>
+      <small id="porcentagemUber">0% do total</small>
+    </div>
+
+    <div class="origem-box app99-box">
+      <span>🔵 99</span>
+      <strong id="total99">R$ 0,00</strong>
+      <small id="porcentagem99">0% do total</small>
+    </div>
+
+    <div class="origem-box particular-box">
+      <span>🟣 Particular</span>
+      <strong id="totalParticular">R$ 0,00</strong>
+      <small id="porcentagemParticular">0% do total</small>
+    </div>
+  </div>
+</div>
+
+</section>
 
     <section id="novaCorridaTela" class="tela">
       <h1>🚗 Nova Corrida</h1>
