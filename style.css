@@ -1096,22 +1096,46 @@ canvas {
 .card-mes-v2{
   padding:18px;
 }
+.card-mes-v2{
+  position:relative;
+  overflow:hidden;
+}
+.card-mes-v2::before{
+  content:"";
+
+  position:absolute;
+
+  top:0;
+  left:0;
+
+  width:4px;
+  height:100%;
+
+  background:#ff9f43;
+
+  border-radius:10px;
+}
 
 .mes-topo{
   margin-bottom:12px;
 }
 
 .mes-topo h3{
-  margin:0;
-  font-size:18px;
+  font-size:20px;
   color:#fff;
+}
+.mes-topo{
+  margin-bottom:12px;
+  padding-bottom:10px;
+  border-bottom:
+    1px solid rgba(255,184,0,.15);
 }
 
 .mes-total{
-  font-size:28px;
-  font-weight:bold;
+  font-size:32px;
+  font-weight:700;
   color:#ffb347;
-  margin-bottom:12px;
+  margin:12px 0;
 }
 
 .mes-info{

@@ -949,7 +949,6 @@ function abrirTela(id) {
 
 if (id === "historicoTela") {
   atualizarHistoricoMensalCards();
-  atualizarMelhorSemana();
 }
 
   if (id === "minhasTela") {
@@ -1661,12 +1660,14 @@ async function baixarBackup() {
 }
 function atualizarHistoricoMensalCards() {
   let container = document.getElementById("historicoMensalCards");
-  let melhorMesCard = document.getElementById("melhorMesCard");
 
-  if (!container || !melhorMesCard || !usuarioAtual) return;
+  let melhorSemanaResumo = document.getElementById("melhorSemanaResumo");
+  let melhorMesResumo = document.getElementById("melhorMesResumo");
+  let totalMesesResumo = document.getElementById("totalMesesResumo");
+
+  if (!container || !usuarioAtual) return;
 
   container.innerHTML = "";
-  melhorMesCard.innerHTML = "";
 
   let nomesMeses = [
     "Janeiro", "Fevereiro", "Março", "Abril",
@@ -1675,6 +1676,7 @@ function atualizarHistoricoMensalCards() {
   ];
 
   let meses = {};
+  let semanas = {};
 
   corridasFirebase.forEach(item => {
     if (
@@ -1686,18 +1688,31 @@ function atualizarHistoricoMensalCards() {
 
     let data = new Date(item.data + "T00:00:00");
 
-    let chave =
+    let chaveMes =
       `${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, "0")}`;
 
-    if (!meses[chave]) {
-      meses[chave] = {
+    if (!meses[chaveMes]) {
+      meses[chaveMes] = {
         total: 0,
         corridas: 0
       };
     }
 
-    meses[chave].total += Number(item.valor);
-    meses[chave].corridas += Number(item.corridas || 0);
+    meses[chaveMes].total += Number(item.valor || 0);
+    meses[chaveMes].corridas += Number(item.corridas || 0);
+
+    let inicioSemana = obterInicioSemana(data);
+    let chaveSemana = inicioSemana.toISOString().slice(0, 10);
+
+    if (!semanas[chaveSemana]) {
+      semanas[chaveSemana] = {
+        total: 0,
+        corridas: 0
+      };
+    }
+
+    semanas[chaveSemana].total += Number(item.valor || 0);
+    semanas[chaveSemana].corridas += Number(item.corridas || 0);
   });
 
   let lista = Object.entries(meses);
@@ -1710,28 +1725,38 @@ function atualizarHistoricoMensalCards() {
         Nenhum histórico encontrado.
       </div>
     `;
+
+    if (melhorSemanaResumo) melhorSemanaResumo.innerText = formatarMoeda(0);
+    if (melhorMesResumo) melhorMesResumo.innerText = formatarMoeda(0);
+    if (totalMesesResumo) totalMesesResumo.innerText = 0;
+
     return;
   }
 
-let melhor = lista.reduce((maior, atual) => {
-  return atual[1].total > maior[1].total ? atual : maior;
-}, lista[0]);
-  let [anoMelhor, mesMelhor] = melhor[0].split("-");
-  let nomeMelhor =
-    nomesMeses[parseInt(mesMelhor) - 1] + " " + anoMelhor;
+  let melhorMes = lista.reduce((maior, atual) => {
+    return atual[1].total > maior[1].total ? atual : maior;
+  }, lista[0]);
 
-  melhorMesCard.innerHTML = `
-    <div class="card destaque-home">
-      <small>🏆 Melhor mês</small>
+  let listaSemanas = Object.entries(semanas);
 
-      <h2>${formatarMoeda(melhor[1].total)}</h2>
+  let melhorSemana = listaSemanas.reduce((maior, atual) => {
+    return atual[1].total > maior[1].total ? atual : maior;
+  }, listaSemanas[0]);
 
-      <p>${nomeMelhor}</p>
-    </div>
-  `;
+  if (melhorMesResumo) {
+    melhorMesResumo.innerText = formatarMoeda(melhorMes[1].total);
+  }
 
-  lista.forEach(([mes, dados], index) => {
-   let icone = "📅";
+  if (melhorSemanaResumo) {
+    melhorSemanaResumo.innerText = formatarMoeda(melhorSemana[1].total);
+  }
+
+  if (totalMesesResumo) {
+    totalMesesResumo.innerText = lista.length;
+  }
+
+  lista.forEach(([mes, dados]) => {
+    let icone = "📅";
 
     let [ano, mesNumero] = mes.split("-");
     let nomeMes =
@@ -1743,26 +1768,26 @@ let melhor = lista.reduce((maior, atual) => {
         : 0;
 
     container.innerHTML += `
-  <div class="card card-mes-v2">
+      <div class="card card-mes-v2">
 
-    <div class="mes-topo">
-      <h3>${icone} ${nomeMes}</h3>
-    </div>
+        <div class="mes-topo">
+          <h3>${icone} ${nomeMes}</h3>
+        </div>
 
-    <div class="mes-total">
-      ${formatarMoeda(dados.total)}
-    </div>
+        <div class="mes-total">
+          ${formatarMoeda(dados.total)}
+        </div>
 
-    <div class="mes-info">
-      🚗 ${dados.corridas} corridas
-    </div>
+        <div class="mes-info">
+          🚗 ${dados.corridas} corridas
+        </div>
 
-    <div class="mes-info">
-      📈 Média ${formatarMoeda(media)}
-    </div>
+        <div class="mes-info">
+          📈 Média ${formatarMoeda(media)}
+        </div>
 
-  </div>
-`;
+      </div>
+    `;
   });
 }
 function obterInicioSemana(dataBase) {
@@ -1778,73 +1803,7 @@ function obterInicioSemana(dataBase) {
 }
 
 
-function atualizarMelhorSemana() {
-  let card = document.getElementById("melhorSemanaCard");
 
-  if (!card || !usuarioAtual) return;
-
-  let semanas = {};
-
-  corridasFirebase.forEach(item => {
-    if (
-      item.uid !== usuarioAtual.uid &&
-      item.email !== usuarioAtual.email
-    ) return;
-
-    if (!item.data) return;
-
-    let dataCorrida = new Date(item.data + "T00:00:00");
-    let inicioSemana = obterInicioSemana(dataCorrida);
-    let fimSemana = new Date(inicioSemana);
-
-    fimSemana.setDate(inicioSemana.getDate() + 6);
-
-    let chave = inicioSemana.toISOString().slice(0, 10);
-
-    if (!semanas[chave]) {
-      semanas[chave] = {
-        inicio: chave,
-        fim: fimSemana.toISOString().slice(0, 10),
-        total: 0,
-        corridas: 0
-      };
-    }
-
-    semanas[chave].total += Number(item.valor || 0);
-    semanas[chave].corridas += Number(item.corridas || 0);
-  });
-
-  let lista = Object.values(semanas);
-
-  if (lista.length === 0) {
-    card.innerHTML = `
-      <div class="card">
-        Nenhuma semana encontrada.
-      </div>
-    `;
-    return;
-  }
-
-  lista.sort((a, b) => b.total - a.total);
-
-  let melhor = lista[0];
-
-  card.innerHTML = `
-    <div class="card destaque-home">
-      <small>🏆 Melhor semana da história</small>
-
-      <h2>${formatarMoeda(melhor.total)}</h2>
-
-      <p>
-        ${formatarData(melhor.inicio)}
-        até
-        ${formatarData(melhor.fim)}
-      </p>
-
-      <p>🚗 ${melhor.corridas} corridas</p>
-    </div>
-  `;
-}
 
 function atualizarComparativoSemanal() {
   let card = document.getElementById("comparativoSemanalCard");
