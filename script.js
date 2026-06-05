@@ -941,8 +941,9 @@ function abrirTela(id) {
     atualizarAdmin();
   }
 
-  if (id === "graficoTela") {
+ if (id === "graficoTela") {
   atualizarHistoricoMensalCards();
+  atualizarInsightSemana();
   atualizarComparativoSemanal();
   atualizarGrafico();
   atualizarGraficoLinha();
@@ -1485,7 +1486,81 @@ function atualizarGrafico() {
     }
   });
 }
+function atualizarInsightSemana() {
+  if (!usuarioAtual) return;
 
+  let melhorDiaEl = document.getElementById("insightMelhorDia");
+  let valorEl = document.getElementById("insightValor");
+  let corridasEl = document.getElementById("insightCorridas");
+  let msgEl = document.querySelector(".insight-msg");
+
+  if (!melhorDiaEl || !valorEl || !corridasEl) return;
+
+  let minhasSemana = corridasFirebase.filter(item =>
+    (
+      item.uid === usuarioAtual.uid ||
+      item.email === usuarioAtual.email
+    ) &&
+    estaNaSemanaAtual(item.data)
+  );
+
+  let mapaDias = {};
+  let totalSemana = 0;
+
+  minhasSemana.forEach(item => {
+    if (!item.data) return;
+
+    if (!mapaDias[item.data]) {
+      mapaDias[item.data] = {
+        valor: 0,
+        corridas: 0
+      };
+    }
+
+    mapaDias[item.data].valor += Number(item.valor || 0);
+    mapaDias[item.data].corridas += Number(item.corridas || 0);
+
+    totalSemana += Number(item.valor || 0);
+  });
+
+  let melhorData = null;
+
+  Object.keys(mapaDias).forEach(data => {
+    if (
+      !melhorData ||
+      mapaDias[data].valor > mapaDias[melhorData].valor
+    ) {
+      melhorData = data;
+    }
+  });
+
+  if (!melhorData) {
+    melhorDiaEl.innerText = "--";
+    valorEl.innerText = formatarMoeda(0);
+    corridasEl.innerText = 0;
+
+    if (msgEl) {
+      msgEl.innerText = "🚀 Continue nesse ritmo!";
+    }
+
+    return;
+  }
+
+  let dadosMelhorDia = mapaDias[melhorData];
+
+  melhorDiaEl.innerText = formatarData(melhorData);
+  valorEl.innerText = formatarMoeda(dadosMelhorDia.valor);
+  corridasEl.innerText = dadosMelhorDia.corridas;
+
+  let percentual = totalSemana > 0
+    ? Math.round((dadosMelhorDia.valor / totalSemana) * 100)
+    : 0;
+
+  if (msgEl) {
+    msgEl.innerText =
+      `🚀 Seu melhor dia representou ${percentual}% da semana.`;
+  }
+}
 function atualizarGraficoLinha() {
   let canvas = document.getElementById("graficoLinha");
 
