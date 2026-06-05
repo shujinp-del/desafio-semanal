@@ -1659,6 +1659,8 @@ async function baixarBackup() {
   }
 }
 function atualizarHistoricoMensalCards() {
+  let totalAcumuladoResumo =
+  document.getElementById("totalAcumuladoResumo");
   let container = document.getElementById("historicoMensalCards");
 
   let melhorSemanaResumo = document.getElementById("melhorSemanaResumo");
@@ -1677,6 +1679,7 @@ function atualizarHistoricoMensalCards() {
 
   let meses = {};
   let semanas = {};
+  let totalAcumulado = 0;
 
   corridasFirebase.forEach(item => {
     if (
@@ -1700,6 +1703,7 @@ function atualizarHistoricoMensalCards() {
 
     meses[chaveMes].total += Number(item.valor || 0);
     meses[chaveMes].corridas += Number(item.corridas || 0);
+    totalAcumulado += Number(item.valor || 0);
 
     let inicioSemana = obterInicioSemana(data);
     let chaveSemana = inicioSemana.toISOString().slice(0, 10);
@@ -1754,6 +1758,10 @@ function atualizarHistoricoMensalCards() {
   if (totalMesesResumo) {
     totalMesesResumo.innerText = lista.length;
   }
+  if (totalAcumuladoResumo) {
+  totalAcumuladoResumo.innerText =
+    formatarMoeda(totalAcumulado);
+}
 
   lista.forEach(([mes, dados]) => {
     let icone = "📅";
