@@ -942,10 +942,11 @@ function abrirTela(id) {
   }
 
   if (id === "graficoTela") {
-    atualizarComparativoSemanal();
-    atualizarGrafico();
-    atualizarGraficoLinha();
-  }
+  atualizarHistoricoMensalCards();
+  atualizarComparativoSemanal();
+  atualizarGrafico();
+  atualizarGraficoLinha();
+}
 
 if (id === "historicoTela") {
   atualizarHistoricoMensalCards();
@@ -1666,6 +1667,9 @@ function atualizarHistoricoMensalCards() {
   let melhorSemanaResumo = document.getElementById("melhorSemanaResumo");
   let melhorMesResumo = document.getElementById("melhorMesResumo");
   let totalMesesResumo = document.getElementById("totalMesesResumo");
+  let graficoTotalAcumulado = document.getElementById("graficoTotalAcumulado");
+let graficoMelhorSemana = document.getElementById("graficoMelhorSemana");
+let graficoMelhorMes = document.getElementById("graficoMelhorMes");
 
   if (!container || !usuarioAtual) return;
 
@@ -1761,6 +1765,17 @@ function atualizarHistoricoMensalCards() {
   if (totalAcumuladoResumo) {
   totalAcumuladoResumo.innerText =
     formatarMoeda(totalAcumulado);
+}
+if (graficoTotalAcumulado) {
+  graficoTotalAcumulado.innerText = formatarMoeda(totalAcumulado);
+}
+
+if (graficoMelhorSemana) {
+  graficoMelhorSemana.innerText = formatarMoeda(melhorSemana[1].total);
+}
+
+if (graficoMelhorMes) {
+  graficoMelhorMes.innerText = formatarMoeda(melhorMes[1].total);
 }
 
   lista.forEach(([mes, dados]) => {

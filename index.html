@@ -485,13 +485,32 @@
       </div>
     </section>
 
-    <section id="graficoTela" class="tela grafico-v2">
+   <section id="graficoTela" class="tela grafico-v2">
 
   <h1>📊 Gráficos</h1>
 
   <p class="subtitulo">
     Acompanhe sua evolução semanal
   </p>
+
+  <div class="card resumo-grafico-v2">
+    <h2>📊 Resumo dos Gráficos</h2>
+
+    <div class="resumo-box">
+      <span>💰 Total Acumulado</span>
+      <strong id="graficoTotalAcumulado">R$ 0</strong>
+    </div>
+
+    <div class="resumo-box">
+      <span>🏆 Melhor Semana</span>
+      <strong id="graficoMelhorSemana">R$ 0</strong>
+    </div>
+
+    <div class="resumo-box">
+      <span>🔥 Melhor Mês</span>
+      <strong id="graficoMelhorMes">R$ 0</strong>
+    </div>
+  </div>
 
   <div id="comparativoSemanalCard"></div>
 
@@ -501,7 +520,7 @@
   </div>
 
   <div class="card grafico-card-v2">
-    <h3>📈 Evolução diária</h3>
+   <h3>📈 Evolução dos Ganhos</h3>
     <canvas id="graficoLinha"></canvas>
   </div>
 

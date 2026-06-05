@@ -337,6 +337,21 @@ canvas {
 #comparativoSemanalCard p {
   margin: 5px 0;
 }
+#comparativoSemanalCard .card {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,122,24,.12),
+      rgba(255,176,0,.04)
+    );
+
+  border: 1px solid rgba(255,122,24,.18);
+
+  box-shadow:
+    0 10px 24px rgba(0,0,0,.25);
+
+  color: #fff;
+}
 .home-v2 {
   padding-bottom: 90px;
 }
@@ -727,7 +742,17 @@ canvas {
 }
 
 .grafico-card-v2 canvas {
-  max-height: 280px;
+  height: 320px !important;
+  max-height: 320px;
+}
+.grafico-card-v2 {
+  padding: 18px;
+}
+
+.grafico-card-v2 h3 {
+  font-size: 18px;
+  margin-bottom: 16px;
+  color: #fff;
 }
 
 .grid-graficos-v2 {
@@ -1142,4 +1167,82 @@ canvas {
   color:#d1d5db;
   margin-top:6px;
   font-size:14px;
+}
+.resumo-grafico-v2 {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  border: 1px solid rgba(255, 184, 0, .18);
+
+  background:
+    radial-gradient(circle at top right, rgba(255,122,24,.12), transparent 35%),
+    linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+}
+
+.resumo-grafico-v2 .resumo-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 10px 12px;
+  border-radius: 12px;
+
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,184,0,.10);
+}
+
+.resumo-grafico-v2 small {
+  font-size: 12px;
+  opacity: .85;
+}
+
+.resumo-grafico-v2 strong {
+  color: #ffb84d;
+  font-size: 17px;
+}
+.resumo-grafico-v2 h2 {
+  margin-bottom: 12px;
+  font-size: 18px;
+}
+
+.resumo-grafico-v2 .resumo-box span {
+  font-size: 13px;
+  opacity: .9;
+}
+.grid-graficos-v2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.grid-graficos-v2 .mini-card {
+  padding: 14px;
+  border-radius: 16px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,.07),
+      rgba(255,255,255,.03)
+    );
+
+  border: 1px solid rgba(255, 184, 0, .18);
+  box-shadow: 0 10px 24px rgba(0,0,0,.25);
+}
+
+.grid-graficos-v2 .mini-card small {
+  display: block;
+  font-size: 11px;
+  opacity: .75;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.grid-graficos-v2 .mini-card strong {
+  display: block;
+  color: #ffb84d;
+  font-size: 18px;
+  font-weight: 800;
 }
