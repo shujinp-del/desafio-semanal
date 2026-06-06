@@ -647,7 +647,7 @@ function atualizarMelhorDia() {
         mapa[item.data] = { valor: 0 };
       }
 
-      mapa[item.data].valor += Number(item.valor);
+      mapa[item.data].valor += Number(item.valor || 0);
     });
 
   let melhorData = null;
