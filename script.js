@@ -41,6 +41,7 @@ let dadosUsuario = null;
 let ranking = [];
 let corridasFirebase = [];
 let rankingMetas = [];
+let metaRecomendadaAtual = 0;
 
 let grafico;
 let graficoLinha;
@@ -929,13 +930,14 @@ function abrirTela(id) {
     tela.classList.add("ativa");
   }
 
-  if (id === "metasTela") {
-    atualizarMetas();
-    atualizarRankingMetas();
-    atualizarMelhorDia();
-    atualizarPiorDia();
-    atualizarFechamentoMensal();
-  }
+ if (id === "metasTela") {
+  atualizarMetas();
+  atualizarRankingMetas();
+  atualizarMelhorDia();
+  atualizarPiorDia();
+  atualizarFechamentoMensal();
+  atualizarMetaInteligente();
+}
 
   if (id === "adminTela") {
     atualizarAdmin();
@@ -1004,13 +1006,15 @@ if (corridasHojeCorrida) {
   atualizarGrafico();
   atualizarGraficoLinha();
   atualizarHistoricoMensal();
-  atualizarMelhorSemana();
+  //atualizarMelhorSemana();
   atualizarMinhasCorridas();
   atualizarMetas();
   atualizarRankingMetas();
   atualizarMelhorDia();
   atualizarPiorDia();
   atualizarFechamentoMensal();
+  atualizarMetaInteligente();
+  atualizarMetaInteligente();
 }
 
 function atualizarRanking() {
@@ -2058,6 +2062,80 @@ function pesquisarSemanaHistorico() {
   });
 }
 
+function atualizarMetaInteligente() {
+
+  let valorEl =
+    document.getElementById("metaInteligenteValor");
+
+  let textoEl =
+    document.getElementById("metaInteligenteTexto");
+
+  if (!valorEl || !textoEl) return;
+
+  let hoje = new Date();
+  let limite = new Date();
+
+  limite.setDate(hoje.getDate() - 30);
+
+  let total30Dias = 0;
+  let quantidade = 0;
+
+  corridasFirebase.forEach(item => {
+
+    if (!item.data) return;
+
+    let dataCorrida =
+      new Date(item.data + "T00:00:00");
+
+    if (
+      dataCorrida >= limite &&
+      dataCorrida <= hoje
+    ) {
+      total30Dias += Number(item.valor || 0);
+      quantidade++;
+    }
+
+  });
+
+ let mediaDiaria = total30Dias / 30;
+
+let mediaSemanal =
+  mediaDiaria * 7;
+
+let metaSugerida =
+  mediaSemanal * 1.10;
+  metaRecomendadaAtual =
+  Math.round(metaSugerida);
+
+valorEl.innerText =
+  formatarMoeda(metaSugerida);
+
+textoEl.innerHTML = `
+  📊 Média semanal: <strong>${formatarMoeda(mediaSemanal)}</strong>
+  <br>
+  🔥 Meta com desafio de +10%
+`;
+
+}
+
+function usarMetaRecomendada() {
+
+  if (!metaRecomendadaAtual) {
+    alert("Nenhuma meta recomendada disponível.");
+    return;
+  }
+
+  let campoMeta =
+    document.getElementById("metaSemanal");
+
+  if (campoMeta) {
+    campoMeta.value =
+      metaRecomendadaAtual;
+  }
+
+  alert("🎯 Meta recomendada aplicada!");
+}
+
 window.entrar = entrar;
 window.cadastrar = cadastrar;
 window.sair = sair;
@@ -2074,3 +2152,4 @@ window.excluirConta = excluirConta;
 window.removerAdmin = removerAdmin;
 window.baixarBackup = baixarBackup;
 window.pesquisarSemanaHistorico = pesquisarSemanaHistorico;
+window.usarMetaRecomendada = usarMetaRecomendada;
