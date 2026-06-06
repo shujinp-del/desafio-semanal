@@ -42,6 +42,8 @@ let ranking = [];
 let corridasFirebase = [];
 let rankingMetas = [];
 let metaRecomendadaAtual = 0;
+let metaConservadoraAtual = 0;
+let metaDesafioAtual = 0;
 
 let grafico;
 let graficoLinha;
@@ -2102,18 +2104,38 @@ function atualizarMetaInteligente() {
 let mediaSemanal =
   mediaDiaria * 7;
 
-let metaSugerida =
+let metaConservadora =
+  mediaSemanal;
+
+let metaRecomendada =
   mediaSemanal * 1.10;
-  metaRecomendadaAtual =
-  Math.round(metaSugerida);
+
+let metaDesafio =
+  mediaSemanal * 1.20;
+
+metaConservadoraAtual =
+  Math.round(metaConservadora);
+
+metaRecomendadaAtual =
+  Math.round(metaRecomendada);
+
+metaDesafioAtual =
+  Math.round(metaDesafio);
 
 valorEl.innerText =
-  formatarMoeda(metaSugerida);
+  "Escolha sua meta:";
 
 textoEl.innerHTML = `
-  📊 Média semanal: <strong>${formatarMoeda(mediaSemanal)}</strong>
-  <br>
-  🔥 Meta com desafio de +10%
+  🟢 Conservadora:
+  <strong>${formatarMoeda(metaConservadora)}</strong>
+  <br><br>
+
+  🟡 Recomendada:
+  <strong>${formatarMoeda(metaRecomendada)}</strong>
+  <br><br>
+
+  🔴 Desafio:
+  <strong>${formatarMoeda(metaDesafio)}</strong>
 `;
 
 }
@@ -2135,6 +2157,40 @@ function usarMetaRecomendada() {
 
   alert("🎯 Meta recomendada aplicada!");
 }
+function usarMetaConservadora() {
+
+  if (!metaConservadoraAtual) {
+    alert("Nenhuma meta conservadora disponível.");
+    return;
+  }
+
+  let campoMeta =
+    document.getElementById("metaSemanal");
+
+  if (campoMeta) {
+    campoMeta.value =
+      metaConservadoraAtual;
+  }
+
+  alert("🟢 Meta conservadora aplicada!");
+}
+function usarMetaDesafio() {
+
+  if (!metaDesafioAtual) {
+    alert("Nenhuma meta desafio disponível.");
+    return;
+  }
+
+  let campoMeta =
+    document.getElementById("metaSemanal");
+
+  if (campoMeta) {
+    campoMeta.value =
+      metaDesafioAtual;
+  }
+
+  alert("🔴 Meta desafio aplicada!");
+}
 
 window.entrar = entrar;
 window.cadastrar = cadastrar;
@@ -2153,3 +2209,5 @@ window.removerAdmin = removerAdmin;
 window.baixarBackup = baixarBackup;
 window.pesquisarSemanaHistorico = pesquisarSemanaHistorico;
 window.usarMetaRecomendada = usarMetaRecomendada;
+window.usarMetaConservadora =usarMetaConservadora;
+window.usarMetaDesafio =usarMetaDesafio;
