@@ -445,6 +445,13 @@ function editarCorrida(id) {
   document.getElementById("data").value = corrida.data;
 
   editandoId = id;
+  let botaoSalvarCorrida =
+  document.getElementById("botaoSalvarCorrida");
+
+if (botaoSalvarCorrida) {
+  botaoSalvarCorrida.innerText =
+    "Salvar edição";
+}
 
   abrirTela("novaCorridaTela");
 }
@@ -977,7 +984,11 @@ let corridasHojeCorrida =
 let hoje = new Date().toISOString().split("T")[0];
 
 let corridasHoje = corridasFirebase.filter(item =>
-  item.data === hoje
+  item.data === hoje &&
+  (
+    item.uid === usuarioAtual?.uid ||
+    item.email === usuarioAtual?.email
+  )
 );
 
 let totalHoje = corridasHoje.reduce(
@@ -1016,7 +1027,7 @@ if (corridasHojeCorrida) {
   atualizarPiorDia();
   atualizarFechamentoMensal();
   atualizarMetaInteligente();
-  atualizarMetaInteligente();
+  
 }
 
 function atualizarRanking() {
@@ -1615,6 +1626,13 @@ function limparCampos() {
   document.getElementById("valor").value = "";
   document.getElementById("corridas").value = "";
   document.getElementById("data").value = "";
+  let botaoSalvarCorrida =
+  document.getElementById("botaoSalvarCorrida");
+
+if (botaoSalvarCorrida) {
+  botaoSalvarCorrida.innerText =
+    "Adicionar corrida";
+}
 }
 
 async function resetSemana() {
