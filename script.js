@@ -1019,6 +1019,7 @@ if (corridasHojeCorrida) {
   atualizarGrafico();
   atualizarGraficoLinha();
   atualizarHistoricoMensal();
+  atualizarComparativoMensal();
   //atualizarMelhorSemana();
   atualizarMinhasCorridas();
   atualizarMetas();
@@ -1165,7 +1166,125 @@ function atualizarHistoricoMensal() {
 
   totalEl.innerText = formatarMoeda(total);
 }
+function atualizarComparativoMensal() {
 
+  let atualEl =
+    document.getElementById("mesAtualAteHoje");
+
+  let projecaoEl =
+    document.getElementById("projecaoMensal");
+
+  let anteriorEl =
+    document.getElementById("mesAnteriorComparativo");
+
+  let tendenciaEl =
+    document.getElementById("tendenciaMensal");
+
+  if (
+    !atualEl ||
+    !projecaoEl ||
+    !anteriorEl ||
+    !tendenciaEl ||
+    !usuarioAtual
+  ) return;
+
+  let hoje = new Date();
+
+  let mesAtual = hoje.getMonth();
+  let anoAtual = hoje.getFullYear();
+
+  let mesAnterior =
+    mesAtual === 0 ? 11 : mesAtual - 1;
+
+  let anoAnterior =
+    mesAtual === 0
+      ? anoAtual - 1
+      : anoAtual;
+
+  let totalAtual = 0;
+  let totalAnterior = 0;
+
+  let diasTrabalhados = new Set();
+
+  corridasFirebase.forEach(item => {
+
+    if (
+      item.uid !== usuarioAtual.uid &&
+      item.email !== usuarioAtual.email
+    ) return;
+
+    if (!item.data) return;
+
+    let data =
+      new Date(item.data + "T00:00:00");
+
+    if (
+      data.getMonth() === mesAtual &&
+      data.getFullYear() === anoAtual
+    ) {
+      totalAtual += Number(item.valor || 0);
+
+      diasTrabalhados.add(item.data);
+    }
+
+    if (
+      data.getMonth() === mesAnterior &&
+      data.getFullYear() === anoAnterior
+    ) {
+      totalAnterior += Number(item.valor || 0);
+    }
+
+  });
+
+  let mediaDiaria = 0;
+
+  if (diasTrabalhados.size > 0) {
+    mediaDiaria =
+      totalAtual / diasTrabalhados.size;
+  }
+
+  let diasNoMes =
+    new Date(
+      anoAtual,
+      mesAtual + 1,
+      0
+    ).getDate();
+
+  let projecao =
+    mediaDiaria * diasNoMes;
+
+  let tendencia = 0;
+
+  if (totalAnterior > 0) {
+    tendencia =
+      (
+        (projecao - totalAnterior)
+        / totalAnterior
+      ) * 100;
+  }
+
+  atualEl.innerText =
+    formatarMoeda(totalAtual);
+
+  projecaoEl.innerText =
+    formatarMoeda(projecao);
+
+  anteriorEl.innerText =
+    formatarMoeda(totalAnterior);
+
+  let emoji =
+    tendencia >= 0
+      ? "🔥"
+      : "📉";
+
+  let sinal =
+    tendencia >= 0
+      ? "+"
+      : "";
+
+  tendenciaEl.innerText =
+    `${emoji} ${sinal}${tendencia.toFixed(1)}%`;
+}
 function atualizarLider() {
   let lider = document.getElementById("liderSemana");
 

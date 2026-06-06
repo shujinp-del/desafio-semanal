@@ -1313,3 +1313,27 @@ canvas {
   font-size: 10px;
   margin-top: 3px;
 }
+.comparativo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.comparativo-item {
+  background: rgba(255,255,255,0.05);
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+}
+
+.comparativo-item small {
+  display: block;
+  color: #aaa;
+  margin-bottom: 6px;
+}
+
+.comparativo-item strong {
+  font-size: 18px;
+  color: white;
+}
