@@ -1019,6 +1019,7 @@ if (corridasHojeCorrida) {
   atualizarGrafico();
   atualizarGraficoLinha();
   atualizarHistoricoMensal();
+  atualizarRecordes();
   atualizarComparativoMensal();
   //atualizarMelhorSemana();
   atualizarMinhasCorridas();
@@ -1284,6 +1285,70 @@ function atualizarComparativoMensal() {
 
   tendenciaEl.innerText =
     `${emoji} ${sinal}${tendencia.toFixed(1)}%`;
+}
+function atualizarRecordes() {
+  if (!usuarioAtual) return;
+
+  let melhorDiaEl = document.getElementById("recordeMelhorDia");
+  let melhorSemanaEl = document.getElementById("recordeMelhorSemana");
+  let melhorMesEl = document.getElementById("recordeMelhorMes");
+  let corridasEl = document.getElementById("recordeCorridas");
+
+  if (!melhorDiaEl || !melhorSemanaEl || !melhorMesEl || !corridasEl) return;
+
+  let dias = {};
+  let semanas = {};
+  let meses = {};
+
+  corridasFirebase.forEach(item => {
+    if (
+      item.uid !== usuarioAtual.uid &&
+      item.email !== usuarioAtual.email
+    ) return;
+
+    if (!item.data) return;
+
+    let valor = Number(item.valor || 0);
+    let qtdCorridas = Number(item.corridas || 0);
+    let dataObj = new Date(item.data + "T00:00:00");
+
+    let chaveDia = item.data;
+    let inicioSemana = obterInicioSemana(dataObj);
+    let chaveSemana = inicioSemana.toISOString().slice(0, 10);
+    let chaveMes = `${dataObj.getFullYear()}-${String(dataObj.getMonth() + 1).padStart(2, "0")}`;
+
+    if (!dias[chaveDia]) dias[chaveDia] = { total: 0, corridas: 0 };
+    if (!semanas[chaveSemana]) semanas[chaveSemana] = 0;
+    if (!meses[chaveMes]) meses[chaveMes] = 0;
+
+    dias[chaveDia].total += valor;
+    dias[chaveDia].corridas += qtdCorridas;
+    semanas[chaveSemana] += valor;
+    meses[chaveMes] += valor;
+  });
+
+  let melhorDia = 0;
+  let melhorSemana = 0;
+  let melhorMes = 0;
+  let maiorCorridas = 0;
+
+  Object.values(dias).forEach(dia => {
+    melhorDia = Math.max(melhorDia, dia.total);
+    maiorCorridas = Math.max(maiorCorridas, dia.corridas);
+  });
+
+  Object.values(semanas).forEach(total => {
+    melhorSemana = Math.max(melhorSemana, total);
+  });
+
+  Object.values(meses).forEach(total => {
+    melhorMes = Math.max(melhorMes, total);
+  });
+
+  melhorDiaEl.innerText = formatarMoeda(melhorDia);
+  melhorSemanaEl.innerText = formatarMoeda(melhorSemana);
+  melhorMesEl.innerText = formatarMoeda(melhorMes);
+  corridasEl.innerText = `${maiorCorridas} corridas`;
 }
 function atualizarLider() {
   let lider = document.getElementById("liderSemana");
