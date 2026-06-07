@@ -1585,24 +1585,85 @@ let conquistaCorridas =
 let conquistaMeta =
   document.getElementById("conquistaMeta");
 
+let corridasMes = minhasMes.reduce(
+  (soma, item) => soma + Number(item.corridas || 0),
+  0
+);
+
+let diasMes = new Set(
+  minhasMes.map(item => item.data)
+).size;
+
+// 🔥 Consistência
+let tituloConsistencia = "Em progresso";
+
+if (diasMes >= 30) {
+  tituloConsistencia = "Motorista Lendário";
+} else if (diasMes >= 21) {
+  tituloConsistencia = "Incansável";
+} else if (diasMes >= 14) {
+  tituloConsistencia = "Determinado";
+} else if (diasMes >= 7) {
+  tituloConsistencia = "Persistente";
+}
+
+// 🚗 Corridas
+let tituloCorridas = "Em progresso";
+
+if (corridasMes >= 600) {
+  tituloCorridas = "Rei da Estrada";
+} else if (corridasMes >= 500) {
+  tituloCorridas = "Mestre das Corridas";
+} else if (corridasMes >= 250) {
+  tituloCorridas = "Estradeiro";
+} else if (corridasMes >= 100) {
+  tituloCorridas = "Rodador";
+}
+
+// 💰 Faturamento
+let tituloFaturamento = "Em progresso";
+
+if (totalMesValor >= 10000) {
+  tituloFaturamento = "Mestre do Faturamento";
+} else if (totalMesValor >= 7500) {
+  tituloFaturamento = "Magnata";
+} else if (totalMesValor >= 5000) {
+  tituloFaturamento = "Empresário";
+} else if (totalMesValor >= 2500) {
+  tituloFaturamento = "Faturador";
+}
+
+// 🎯 Meta
+let tituloMeta = "Em progresso";
+
+if (progressoMeta >= 120) {
+  tituloMeta = "Além da Meta";
+} else if (progressoMeta >= 100) {
+  tituloMeta = "Meta Cumprida";
+} else if (progressoMeta >= 75) {
+  tituloMeta = "Disciplinado";
+} else if (progressoMeta >= 50) {
+  tituloMeta = "Focado";
+}
+
 if (conquistaSequencia) {
   conquistaSequencia.innerText =
-    `${Math.min(7, corridasSemana)} dias`;
+    `${tituloConsistencia} • ${diasMes} dias`;
 }
 
 if (conquistaFaturamento) {
   conquistaFaturamento.innerText =
-    formatarMoeda(totalSemanaValor);
+    `${tituloFaturamento} • ${formatarMoeda(totalMesValor)}`;
 }
 
 if (conquistaCorridas) {
   conquistaCorridas.innerText =
-    corridasSemana;
+    `${tituloCorridas} • ${corridasMes}`;
 }
 
 if (conquistaMeta) {
   conquistaMeta.innerText =
-    `${progressoMeta}%`;
+    `${tituloMeta} • ${progressoMeta}%`;
 }
 
 if (barraMetaHome) barraMetaHome.style.width = `${progressoMeta}%`;
