@@ -1646,26 +1646,149 @@ if (progressoMeta >= 120) {
   tituloMeta = "Focado";
 }
 
+// Próximo nível - Consistência
+let proximoConsistencia = "👑 Completo";
+
+if (diasMes < 7) {
+  proximoConsistencia = `7 dias`;
+} else if (diasMes < 14) {
+  proximoConsistencia = `14 dias`;
+} else if (diasMes < 21) {
+  proximoConsistencia = `21 dias`;
+} else if (diasMes < 30) {
+  proximoConsistencia = `30 dias`;
+}
+
+// Próximo nível - Corridas
+let proximoCorridas = "👑 Completo";
+
+if (corridasMes < 100) {
+  proximoCorridas = `100`;
+} else if (corridasMes < 250) {
+  proximoCorridas = `250`;
+} else if (corridasMes < 500) {
+  proximoCorridas = `500`;
+} else if (corridasMes < 600) {
+  proximoCorridas = `600`;
+}
+
+// Próximo nível - Faturamento
+let proximoFaturamento = "👑 Completo";
+
+if (totalMesValor < 2500) {
+  proximoFaturamento = formatarMoeda(2500);
+} else if (totalMesValor < 5000) {
+  proximoFaturamento = formatarMoeda(5000);
+} else if (totalMesValor < 7500) {
+  proximoFaturamento = formatarMoeda(7500);
+} else if (totalMesValor < 10000) {
+  proximoFaturamento = formatarMoeda(10000);
+}
+
+// Próximo nível - Meta
+let proximoMeta = "👑 Completo";
+
+if (progressoMeta < 50) {
+  proximoMeta = "50%";
+} else if (progressoMeta < 75) {
+  proximoMeta = "75%";
+} else if (progressoMeta < 100) {
+  proximoMeta = "100%";
+} else if (progressoMeta < 120) {
+  proximoMeta = "120%";
+}
+
 if (conquistaSequencia) {
   conquistaSequencia.innerText =
-    `${tituloConsistencia} • ${diasMes} dias`;
+    `${tituloConsistencia}\n${diasMes}/${proximoConsistencia}`;
 }
 
 if (conquistaFaturamento) {
   conquistaFaturamento.innerText =
-    `${tituloFaturamento} • ${formatarMoeda(totalMesValor)}`;
+    `${tituloFaturamento}\n${formatarMoeda(totalMesValor)}`;
 }
 
 if (conquistaCorridas) {
   conquistaCorridas.innerText =
-    `${tituloCorridas} • ${corridasMes}`;
+    `${tituloCorridas}\n${corridasMes}/${proximoCorridas}`;
 }
 
 if (conquistaMeta) {
   conquistaMeta.innerText =
-    `${tituloMeta} • ${progressoMeta}%`;
+    `${tituloMeta}\n${progressoMeta}%/${proximoMeta}`;
+}
+// LIMPA CORES ANTIGAS
+document.querySelectorAll(".conquista-box").forEach(card => {
+  card.classList.remove(
+    "raro-verde",
+    "raro-azul",
+    "raro-roxo",
+    "raro-dourado"
+  );
+});
+
+let cardsConquista =
+  document.querySelectorAll(".conquista-box");
+
+// 🔥 Consistência
+if (cardsConquista[0]) {
+
+  if (diasMes >= 30) {
+    cardsConquista[0].classList.add("raro-dourado");
+  } else if (diasMes >= 21) {
+    cardsConquista[0].classList.add("raro-roxo");
+  } else if (diasMes >= 14) {
+    cardsConquista[0].classList.add("raro-azul");
+  } else {
+    cardsConquista[0].classList.add("raro-verde");
+  }
+
 }
 
+// 💰 Faturamento
+if (cardsConquista[1]) {
+
+  if (totalMesValor >= 10000) {
+    cardsConquista[1].classList.add("raro-dourado");
+  } else if (totalMesValor >= 7500) {
+    cardsConquista[1].classList.add("raro-roxo");
+  } else if (totalMesValor >= 5000) {
+    cardsConquista[1].classList.add("raro-azul");
+  } else {
+    cardsConquista[1].classList.add("raro-verde");
+  }
+
+}
+
+// 🚗 Corridas
+if (cardsConquista[2]) {
+
+  if (corridasMes >= 600) {
+    cardsConquista[2].classList.add("raro-dourado");
+  } else if (corridasMes >= 500) {
+    cardsConquista[2].classList.add("raro-roxo");
+  } else if (corridasMes >= 250) {
+    cardsConquista[2].classList.add("raro-azul");
+  } else {
+    cardsConquista[2].classList.add("raro-verde");
+  }
+
+}
+
+// 🎯 Meta
+if (cardsConquista[3]) {
+
+  if (progressoMeta >= 120) {
+    cardsConquista[3].classList.add("raro-dourado");
+  } else if (progressoMeta >= 100) {
+    cardsConquista[3].classList.add("raro-roxo");
+  } else if (progressoMeta >= 75) {
+    cardsConquista[3].classList.add("raro-azul");
+  } else {
+    cardsConquista[3].classList.add("raro-verde");
+  }
+
+}
 if (barraMetaHome) barraMetaHome.style.width = `${progressoMeta}%`;
 if (metaHomeValor) metaHomeValor.innerText = formatarMoeda(metaSemanal);
 if (metaHomePorcentagem) metaHomePorcentagem.innerText = `${progressoMeta}%`;

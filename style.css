@@ -1337,3 +1337,24 @@ canvas {
   font-size: 18px;
   color: white;
 }
+.raro-verde {
+  border: 1px solid #22c55e !important;
+  box-shadow: 0 0 12px rgba(34,197,94,.35);
+}
+
+.raro-azul {
+  border: 1px solid #3b82f6 !important;
+  box-shadow: 0 0 14px rgba(59,130,246,.35);
+}
+
+.raro-roxo {
+  border: 1px solid #a855f7 !important;
+  box-shadow: 0 0 16px rgba(168,85,247,.40);
+}
+
+.raro-dourado {
+  border: 1px solid #ffb000 !important;
+  box-shadow:
+    0 0 12px rgba(255,176,0,.45),
+    0 0 22px rgba(255,176,0,.25);
+}
