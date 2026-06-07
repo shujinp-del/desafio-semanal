@@ -1339,22 +1339,36 @@ canvas {
 }
 .raro-verde {
   border: 1px solid #22c55e !important;
-  box-shadow: 0 0 12px rgba(34,197,94,.35);
+  box-shadow:
+    0 0 8px rgba(34,197,94,.8),
+    0 0 22px rgba(34,197,94,.45),
+    inset 0 0 18px rgba(34,197,94,.16);
+  animation: brilhoVerde 2.4s infinite ease-in-out;
 }
 
 .raro-azul {
   border: 1px solid #3b82f6 !important;
-  box-shadow: 0 0 14px rgba(59,130,246,.35);
+  box-shadow:
+    0 0 8px rgba(59,130,246,.85),
+    0 0 24px rgba(59,130,246,.50),
+    inset 0 0 18px rgba(59,130,246,.16);
+  animation: brilhoAzul 2.4s infinite ease-in-out;
 }
 
 .raro-roxo {
   border: 1px solid #a855f7 !important;
-  box-shadow: 0 0 16px rgba(168,85,247,.40);
+  box-shadow:
+    0 0 10px rgba(168,85,247,.95),
+    0 0 28px rgba(168,85,247,.65),
+    inset 0 0 20px rgba(168,85,247,.20);
+  animation: brilhoRoxo 2.2s infinite ease-in-out;
 }
 
 .raro-dourado {
   border: 1px solid #ffb000 !important;
   box-shadow:
-    0 0 12px rgba(255,176,0,.45),
-    0 0 22px rgba(255,176,0,.25);
+    0 0 12px rgba(255,176,0,1),
+    0 0 34px rgba(255,176,0,.75),
+    inset 0 0 24px rgba(255,176,0,.25);
+  animation: brilhoDourado 2s infinite ease-in-out;
 }
