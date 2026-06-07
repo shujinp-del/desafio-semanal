@@ -2053,8 +2053,8 @@ function atualizarComparativoSemanal() {
 
   let hoje = new Date();
 
-  let inicioSemanaAtual = new Date(hoje);
-  inicioSemanaAtual.setDate(hoje.getDate() - hoje.getDay());
+  let inicioSemanaAtual =
+  obterInicioSemana(hoje);
 
   let inicioSemanaPassada = new Date(inicioSemanaAtual);
   inicioSemanaPassada.setDate(inicioSemanaAtual.getDate() - 7);
@@ -2105,6 +2105,7 @@ function atualizarComparativoSemanal() {
     </div>
   `;
 }
+
 function pesquisarSemanaHistorico() {
   let input = document.getElementById("dataPesquisaSemana");
   let resultado = document.getElementById("resultadoSemanaHistorico");
