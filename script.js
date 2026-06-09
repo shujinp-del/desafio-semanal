@@ -1845,14 +1845,33 @@ function obterRankingParaGrafico() {
   return ranking;
 }
 
-  
-
-function atualizarGrafico() {
+  function atualizarGrafico() {
   let canvas = document.getElementById("grafico");
 
   if (!canvas) return;
 
   let dadosGrafico = obterRankingParaGrafico();
+
+  let total = dadosGrafico.reduce(
+    (soma, item) => soma + item.valor,
+    0
+  );
+
+  let dadosPizza;
+
+  if (usuarioEhAdmin()) {
+
+    dadosPizza = dadosGrafico.map(
+      m => m.valor
+    );
+
+  } else {
+
+    dadosPizza = dadosGrafico.map(
+      m => Math.round((m.valor / total) * 100)
+    );
+
+  }
 
   if (grafico) {
     grafico.destroy();
@@ -1863,7 +1882,7 @@ function atualizarGrafico() {
     data: {
       labels: dadosGrafico.map(m => m.nome),
       datasets: [{
-        data: dadosGrafico.map(m => m.valor),
+        data: dadosPizza,
         backgroundColor: [
           "#2563eb",
           "#dc2626",
