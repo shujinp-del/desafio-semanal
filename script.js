@@ -1039,36 +1039,56 @@ function atualizarRanking() {
 
   lista.innerHTML = "";
 
+  let totalGeral = ranking.reduce(
+    (soma, item) => soma + item.valor,
+    0
+  );
+
   ranking.forEach((m, index) => {
+
     let medalha = `${index + 1}º`;
 
     if (index === 0) medalha = "🥇";
     if (index === 1) medalha = "🥈";
     if (index === 2) medalha = "🥉";
 
+    let porcentagem = totalGeral > 0
+      ? Math.round((m.valor / totalGeral) * 100)
+      : 0;
+
     lista.innerHTML += `
-  <li class="ranking-card">
+      <li class="ranking-card">
 
-    <div class="ranking-topo">
-      <span class="ranking-medalha">
-        ${medalha}
-      </span>
+        <div class="ranking-topo">
+          <span class="ranking-medalha">
+            ${medalha}
+          </span>
 
-      <span class="ranking-nome">
-        ${m.nome}
-      </span>
-    </div>
+          <span class="ranking-nome">
+            ${m.nome}
+          </span>
+        </div>
 
-    <div class="ranking-valor">
-      💰 ${formatarMoeda(m.valor)}
-    </div>
+        ${
+          usuarioEhAdmin()
+            ? `
+              <div class="ranking-valor">
+                💰 ${formatarMoeda(m.valor)}
+              </div>
+            `
+            : `
+              <div class="ranking-valor">
+                📊 ${porcentagem}% do total
+              </div>
+            `
+        }
 
-    <div class="ranking-corridas">
-      🚗 ${m.corridas} corridas
-    </div>
+        <div class="ranking-corridas">
+          🚗 ${m.corridas} corridas
+        </div>
 
-  </li>
-`;
+      </li>
+    `;
   });
 }
 
