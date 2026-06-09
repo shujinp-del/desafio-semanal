@@ -1842,21 +1842,10 @@ if (porcentagemParticularEl) {
 }
 
 function obterRankingParaGrafico() {
-  if (usuarioEhAdmin()) {
-    return ranking;
-  }
-
-  let minhasSemana = corridasFirebase.filter(
-    item =>
-      (
-        item.uid === usuarioAtual?.uid ||
-        item.email === usuarioAtual?.email
-      ) &&
-      estaNaSemanaAtual(item.data)
-  );
-
-  return montarRanking(minhasSemana);
+  return ranking;
 }
+
+  
 
 function atualizarGrafico() {
   let canvas = document.getElementById("grafico");
