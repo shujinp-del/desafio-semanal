@@ -1387,3 +1387,25 @@ canvas {
 
   animation: brilhoDourado 1.6s infinite ease-in-out;
 }
+.slogan-mms {
+  text-align: center;
+  margin: 24px 0 10px;
+  font-style: italic;
+  opacity: .75;
+  color: #ffb000;
+}
+.slogan-mms {
+  text-align: center;
+  margin: 24px 0 8px;
+  padding: 0 12px;
+
+  color: #ffb000;
+  font-size: 13px;
+  font-weight: 700;
+  font-style: italic;
+
+  opacity: 0.85;
+  text-shadow:
+    0 0 8px rgba(255,176,0,.45),
+    0 0 18px rgba(255,122,24,.25);
+}
