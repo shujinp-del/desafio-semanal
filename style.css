@@ -28,6 +28,19 @@ body {
 
 .tela.ativa {
   display: block;
+  animation: entradaTela .25s ease;
+}
+
+@keyframes entradaTela {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 h1 {
