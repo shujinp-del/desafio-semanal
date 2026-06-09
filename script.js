@@ -1877,28 +1877,48 @@ function obterRankingParaGrafico() {
     grafico.destroy();
   }
 
-  grafico = new Chart(canvas.getContext("2d"), {
-    type: "doughnut",
-    data: {
-      labels: dadosGrafico.map(m => m.nome),
-      datasets: [{
-        data: dadosPizza,
-        backgroundColor: [
-          "#2563eb",
-          "#dc2626",
-          "#16a34a",
-          "#facc15",
-          "#9333ea",
-          "#f97316",
-          "#06b6d4",
-          "#ec4899",
-          "#111827",
-          "#84cc16"
-        ]
-      }]
+ grafico = new Chart(canvas.getContext("2d"), {
+  type: "doughnut",
+
+  data: {
+    labels: dadosGrafico.map(m => m.nome),
+
+    datasets: [{
+      data: dadosPizza,
+      backgroundColor: [
+        "#2563eb",
+        "#dc2626",
+        "#16a34a",
+        "#facc15",
+        "#9333ea",
+        "#f97316",
+        "#06b6d4",
+        "#ec4899",
+        "#111827",
+        "#84cc16"
+      ]
+    }]
+  },
+
+  options: {
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+
+            if (usuarioEhAdmin()) {
+              return `${context.label}: ${formatarMoeda(context.raw)}`;
+            }
+
+            return `${context.label}: ${context.raw}%`;
+          }
+        }
+      }
     }
-  });
+  }
+});
 }
+
 function atualizarInsightSemana() {
   if (!usuarioAtual) return;
 
