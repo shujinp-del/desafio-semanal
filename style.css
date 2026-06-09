@@ -1409,3 +1409,18 @@ canvas {
     0 0 8px rgba(255,176,0,.45),
     0 0 18px rgba(255,122,24,.25);
 }
+.grupo-menu h2 {
+  margin-bottom: 14px;
+  color: #ffb347;
+}
+
+.grupo-menu button {
+  margin-top: 8px;
+  text-align: left;
+  padding: 14px 16px;
+  border-radius: 16px;
+}
+
+.grupo-menu button.secundario {
+  opacity: 0.75;
+}

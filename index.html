@@ -239,44 +239,80 @@
     </section>
 
     <section id="maisTela" class="tela">
-      <h1>☰ Mais</h1>
+  <h1>☰ Mais</h1>
 
-      <p class="subtitulo">
-        Acesse outras áreas do app
-      </p>
+  <p class="subtitulo">
+    Funcionalidades extras do MMS
+  </p>
 
-      <div class="card">
-        <h2>👤 Minhas Corridas</h2>
-        <p class="subtitulo">Veja seu histórico pessoal de ganhos.</p>
-        <button onclick="abrirTela('minhasTela')">
-          Abrir minhas corridas
-        </button>
-      </div>
+  <div class="card grupo-menu">
+    <h2>🏆 Competição</h2>
 
-      <div class="card">
-        <h2>🏆 Ranking</h2>
-        <p class="subtitulo">Compare o desempenho dos motoristas.</p>
-        <button onclick="abrirTela('rankingTela')">
-          Abrir ranking
-        </button>
-      </div>
+    <button onclick="abrirTela('rankingTela')">
+      🏆 Ranking
+    </button>
 
-      <div class="card">
-        <h2>🌎 Geral</h2>
-        <p class="subtitulo">Painel completo de corridas do mês.</p>
-        <button onclick="abrirTela('historicoTela')">
-          Abrir painel geral
-        </button>
-      </div>
+    <button class="secundario">
+      🏅 Conquistas
+    </button>
 
-      <div class="card" id="botaoAdminMais" style="display:none;">
-        <h2>👑 Admin</h2>
-        <p class="subtitulo">Controle usuários, backup e segurança.</p>
-        <button onclick="abrirTela('adminTela')">
-          Abrir admin
-        </button>
-      </div>
-    </section>
+    <button class="secundario">
+      🎯 Desafios
+    </button>
+  </div>
+
+  <div class="card grupo-menu">
+    <h2>📊 Desempenho</h2>
+
+    <button onclick="abrirTela('historicoTela')">
+      📅 Histórico
+    </button>
+
+    <button onclick="abrirTela('graficoTela')">
+      📊 Gráficos
+    </button>
+
+    <button onclick="abrirTela('metasTela')">
+      🎯 Metas
+    </button>
+  </div>
+
+  <div class="card grupo-menu">
+    <h2>👥 Comunidade</h2>
+
+    <button class="secundario">
+      👥 Grupo
+    </button>
+
+    <button class="secundario">
+      ➕ Convidar amigos
+    </button>
+  </div>
+
+  <div class="card grupo-menu">
+    <h2>⚙️ Configurações</h2>
+
+    <button onclick="abrirTela('minhasTela')">
+      👤 Minhas Corridas
+    </button>
+
+    <button class="secundario">
+      ⚙️ Configurações do app
+    </button>
+
+    <button class="secundario">
+      ℹ️ Sobre o MMS
+    </button>
+  </div>
+
+  <div class="card grupo-menu" id="botaoAdminMais" style="display:none;">
+    <h2>👑 Admin</h2>
+
+    <button onclick="abrirTela('adminTela')">
+      Abrir painel admin
+    </button>
+  </div>
+</section>
 
     <section id="metasTela" class="tela">
       <h1>🎯 Metas</h1>
