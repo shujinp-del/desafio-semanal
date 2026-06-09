@@ -280,9 +280,9 @@
   <div class="card grupo-menu">
     <h2>👥 Comunidade</h2>
 
-    <button class="secundario">
-      👥 Grupo
-    </button>
+    <button onclick="abrirTela('grupoTela')">
+  👥 Grupo
+</button>
 
     <button class="secundario">
       ➕ Convidar amigos
@@ -314,6 +314,44 @@
   </div>
 </section>
 
+<section id="grupoTela" class="tela">
+
+  <h1>👥 Grupo</h1>
+
+  <p class="subtitulo">
+    Comunidade e desafios do MMS
+  </p>
+
+  <div class="card">
+    <h2>🏆 Meu Grupo</h2>
+
+    <strong id="nomeGrupo">
+      Sem grupo
+    </strong>
+
+    <p>
+      Você ainda não participa de um grupo.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>👥 Membros</h2>
+
+    <ul id="listaGrupo">
+      <li>Nenhum membro</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>🚀 Em breve</h2>
+
+    <p>🎯 Desafios do grupo</p>
+    <p>🏆 Campeonato semanal</p>
+    <p>🎁 Premiações</p>
+    <p>➕ Convites</p>
+  </div>
+
+</section>
     <section id="metasTela" class="tela">
       <h1>🎯 Metas</h1>
 
