@@ -971,6 +971,9 @@ if (id === "historicoTela") {
   if (id === "rankingTela") {
     atualizarRankingMetas();
   }
+  if (id === "grupoTela") {
+  carregarGrupo();
+}
 }
 
 function atualizarTudo() {
@@ -1016,6 +1019,7 @@ if (corridasHojeCorrida) {
   atualizarRanking();
   atualizarLider();
   atualizarMetricas();
+  carregarGrupo();
   atualizarGrafico();
   atualizarGraficoLinha();
   atualizarHistoricoMensal();
@@ -2627,6 +2631,50 @@ function usarMetaDesafio() {
   alert("🔴 Meta desafio aplicada!");
 }
 
+function criarGrupo() {
+
+  let nome = document
+    .getElementById("novoGrupo")
+    .value
+    .trim();
+
+  if (!nome) {
+    alert("Digite o nome do grupo");
+    return;
+  }
+
+  localStorage.setItem(
+    "grupoMMS",
+    nome
+  );
+
+  carregarGrupo();
+
+  alert("Grupo criado!");
+}
+
+function carregarGrupo() {
+
+  let grupo = localStorage.getItem(
+    "grupoMMS"
+  );
+
+  let nomeGrupo =
+    document.getElementById("nomeGrupo");
+
+  if (!nomeGrupo) return;
+
+  if (grupo) {
+
+    nomeGrupo.innerText = grupo;
+
+  } else {
+
+    nomeGrupo.innerText =
+      "Sem grupo";
+  }
+}
+
 window.entrar = entrar;
 window.cadastrar = cadastrar;
 window.sair = sair;
@@ -2639,6 +2687,7 @@ window.aprovarUsuario = aprovarUsuario;
 window.bloquearUsuario = bloquearUsuario;
 window.tornarAdmin = tornarAdmin;
 window.salvarMeta = salvarMeta;
+window.criarGrupo = criarGrupo;
 window.excluirConta = excluirConta;
 window.removerAdmin = removerAdmin;
 window.baixarBackup = baixarBackup;
