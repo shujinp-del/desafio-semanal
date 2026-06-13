@@ -939,30 +939,30 @@ function abrirTela(id) {
     tela.classList.add("ativa");
   }
 
- if (id === "metasTela") {
-  atualizarMetas();
-  atualizarRankingMetas();
-  atualizarMelhorDia();
-  atualizarPiorDia();
-  atualizarFechamentoMensal();
-  atualizarMetaInteligente();
-}
+  if (id === "metasTela") {
+    atualizarMetas();
+    atualizarRankingMetas();
+    atualizarMelhorDia();
+    atualizarPiorDia();
+    atualizarFechamentoMensal();
+    atualizarMetaInteligente();
+  }
 
   if (id === "adminTela") {
     atualizarAdmin();
   }
 
- if (id === "graficoTela") {
-  atualizarHistoricoMensalCards();
-  atualizarInsightSemana();
-  atualizarComparativoSemanal();
-  atualizarGrafico();
-  atualizarGraficoLinha();
-}
+  if (id === "graficoTela") {
+    atualizarHistoricoMensalCards();
+    atualizarInsightSemana();
+    atualizarComparativoSemanal();
+    atualizarGrafico();
+    atualizarGraficoLinha();
+  }
 
-if (id === "historicoTela") {
-  atualizarHistoricoMensalCards();
-}
+  if (id === "historicoTela") {
+    atualizarHistoricoMensalCards();
+  }
 
   if (id === "minhasTela") {
     atualizarMinhasCorridas();
@@ -971,11 +971,15 @@ if (id === "historicoTela") {
   if (id === "rankingTela") {
     atualizarRankingMetas();
   }
-  if (id === "grupoTela") {
-  carregarGrupo();
-}
-}
 
+  if (id === "grupoTela") {
+    carregarGrupo();
+  }
+
+  if (id === "desafiosTela") {
+    atualizarMetricas();
+  }
+}
 function atualizarTudo() {
   aplicarPrivacidadeMenus();
   let totalHojeCorrida =
@@ -1035,7 +1039,6 @@ if (corridasHojeCorrida) {
   atualizarMetaInteligente();
   
 }
-
 function atualizarRanking() {
   let lista = document.getElementById("ranking");
 
@@ -1496,6 +1499,85 @@ function atualizarMetricas() {
     (soma, item) => soma + Number(item.valor),
     0
   );
+  let metaDesafioCorridas = 50;
+let metaDesafioGanhos = 2000;
+let metaDesafioDias = 5;
+
+let diasTrabalhadosSemana = new Set(
+  minhasSemana.map(item => item.data)
+).size;
+
+let progressoCorridasDesafio = Math.min(
+  100,
+  Math.round((corridasSemana / metaDesafioCorridas) * 100)
+);
+
+let progressoGanhosDesafio = Math.min(
+  100,
+  Math.round((totalSemanaValor / metaDesafioGanhos) * 100)
+);
+
+let progressoDiasDesafio = Math.min(
+  100,
+  Math.round((diasTrabalhadosSemana / metaDesafioDias) * 100)
+);
+
+let desafioCorridasTexto = document.getElementById("desafioCorridasTexto");
+let barraDesafioCorridas = document.getElementById("barraDesafioCorridas");
+let porcentagemDesafioCorridas = document.getElementById("porcentagemDesafioCorridas");
+
+let desafioGanhosTexto = document.getElementById("desafioGanhosTexto");
+let barraDesafioGanhos = document.getElementById("barraDesafioGanhos");
+let porcentagemDesafioGanhos = document.getElementById("porcentagemDesafioGanhos");
+
+let desafioDiasTexto = document.getElementById("desafioDiasTexto");
+let barraDesafioDias = document.getElementById("barraDesafioDias");
+let porcentagemDesafioDias = document.getElementById("porcentagemDesafioDias");
+
+if (desafioCorridasTexto) {
+  desafioCorridasTexto.innerText =
+    `${corridasSemana} / ${metaDesafioCorridas} corridas`;
+}
+
+if (barraDesafioCorridas) {
+  barraDesafioCorridas.style.width =
+    `${progressoCorridasDesafio}%`;
+}
+
+if (porcentagemDesafioCorridas) {
+  porcentagemDesafioCorridas.innerText =
+    `${progressoCorridasDesafio}%`;
+}
+
+if (desafioGanhosTexto) {
+  desafioGanhosTexto.innerText =
+    `${formatarMoeda(totalSemanaValor)} / ${formatarMoeda(metaDesafioGanhos)}`;
+}
+
+if (barraDesafioGanhos) {
+  barraDesafioGanhos.style.width =
+    `${progressoGanhosDesafio}%`;
+}
+
+if (porcentagemDesafioGanhos) {
+  porcentagemDesafioGanhos.innerText =
+    `${progressoGanhosDesafio}%`;
+}
+
+if (desafioDiasTexto) {
+  desafioDiasTexto.innerText =
+    `${diasTrabalhadosSemana} / ${metaDesafioDias} dias`;
+}
+
+if (barraDesafioDias) {
+  barraDesafioDias.style.width =
+    `${progressoDiasDesafio}%`;
+}
+
+if (porcentagemDesafioDias) {
+  porcentagemDesafioDias.innerText =
+    `${progressoDiasDesafio}%`;
+}
   let totalUber = minhasSemana
   .filter(item => item.origem === "Uber")
   .reduce((soma, item) => soma + Number(item.valor), 0);
