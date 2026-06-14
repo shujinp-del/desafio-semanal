@@ -51,6 +51,7 @@ let graficoLinha;
 let editandoId = null;
 let pararSincronia = null;
 let editandoGastoId = null;
+let periodoGastosAtual = "mes";
 
 function formatarMoeda(valor) {
   return Number(valor || 0).toLocaleString("pt-BR", {
@@ -3002,6 +3003,12 @@ function carregarGrupo() {
     }
   }
 }
+function mudarPeriodoGastos(periodo) {
+
+  periodoGastosAtual = periodo;
+
+  atualizarGastos();
+}
 function abrirFormularioGasto() {
   let formulario = document.getElementById("formularioGasto");
 
@@ -3098,6 +3105,33 @@ function excluirGasto(index) {
 function atualizarGastos() {
   let gastos = JSON.parse(localStorage.getItem("gastosMMS")) || [];
 
+  let periodo =periodoGastosAtual || "mes";
+
+  let hoje = new Date();
+  let mesAtual = hoje.getMonth();
+  let anoAtual = hoje.getFullYear();
+
+  let gastosFiltrados = gastos.filter(gasto => {
+    if (periodo === "todos") return true;
+
+    if (!gasto.data) return false;
+
+    let dataGasto = new Date(gasto.data + "T00:00:00");
+
+    if (periodo === "semana") {
+      return estaNaSemanaAtual(gasto.data);
+    }
+
+    if (periodo === "mes") {
+      return (
+        dataGasto.getMonth() === mesAtual &&
+        dataGasto.getFullYear() === anoAtual
+      );
+    }
+
+    return true;
+  });
+
   let totais = {
     combustivel: 0,
     manutencao: 0,
@@ -3106,7 +3140,7 @@ function atualizarGastos() {
     outros: 0
   };
 
-  gastos.forEach(gasto => {
+  gastosFiltrados.forEach(gasto => {
     if (totais[gasto.categoria] !== undefined) {
       totais[gasto.categoria] += Number(gasto.valor || 0);
     }
@@ -3118,38 +3152,33 @@ function atualizarGastos() {
     totais.alimentacao +
     totais.lavagem +
     totais.outros;
-    let maiorValor = 0;
-let maiorCategoria = "Nenhum";
 
-Object.entries(totais).forEach(([categoria, valor]) => {
+  let maiorValor = 0;
+  let maiorCategoria = "Nenhum";
 
-  if (valor > maiorValor) {
-    maiorValor = valor;
+  Object.entries(totais).forEach(([categoria, valor]) => {
+    if (valor > maiorValor) {
+      maiorValor = valor;
 
-    switch (categoria) {
-      case "combustivel":
-        maiorCategoria = "⛽ Combustível";
-        break;
-
-      case "manutencao":
-        maiorCategoria = "🔧 Manutenção";
-        break;
-
-      case "alimentacao":
-        maiorCategoria = "🍔 Alimentação";
-        break;
-
-      case "lavagem":
-        maiorCategoria = "🧽 Lavagem";
-        break;
-
-      case "outros":
-        maiorCategoria = "📦 Outros";
-        break;
+      switch (categoria) {
+        case "combustivel":
+          maiorCategoria = "⛽ Combustível";
+          break;
+        case "manutencao":
+          maiorCategoria = "🔧 Manutenção";
+          break;
+        case "alimentacao":
+          maiorCategoria = "🍔 Alimentação";
+          break;
+        case "lavagem":
+          maiorCategoria = "🧽 Lavagem";
+          break;
+        case "outros":
+          maiorCategoria = "📦 Outros";
+          break;
+      }
     }
-  }
-
-});
+  });
 
   let gastoCombustivel = document.getElementById("gastoCombustivel");
   let gastoManutencao = document.getElementById("gastoManutencao");
@@ -3157,11 +3186,11 @@ Object.entries(totais).forEach(([categoria, valor]) => {
   let gastoLavagem = document.getElementById("gastoLavagem");
   let gastoOutros = document.getElementById("gastoOutros");
   let gastoTotal = document.getElementById("gastoTotal");
-let gastoFaturamento = document.getElementById("gastoFaturamento");
-let gastoLucro = document.getElementById("gastoLucro");
-let gastoPercentualTexto = document.getElementById("gastoPercentualTexto");
-let listaGastos = document.getElementById("listaGastos");
-let insightGastos =document.getElementById("insightGastos");
+  let gastoFaturamento = document.getElementById("gastoFaturamento");
+  let gastoLucro = document.getElementById("gastoLucro");
+  let gastoPercentualTexto = document.getElementById("gastoPercentualTexto");
+  let listaGastos = document.getElementById("listaGastos");
+  let insightGastos = document.getElementById("insightGastos");
 
   if (gastoCombustivel) gastoCombustivel.innerText = formatarMoeda(totais.combustivel);
   if (gastoManutencao) gastoManutencao.innerText = formatarMoeda(totais.manutencao);
@@ -3169,69 +3198,92 @@ let insightGastos =document.getElementById("insightGastos");
   if (gastoLavagem) gastoLavagem.innerText = formatarMoeda(totais.lavagem);
   if (gastoOutros) gastoOutros.innerText = formatarMoeda(totais.outros);
   if (gastoTotal) gastoTotal.innerText = formatarMoeda(totalGastos);
-  let faturamentoSemana = 0;
 
-if (usuarioAtual) {
-  let minhasSemana = corridasFirebase.filter(item =>
-    (
-      item.uid === usuarioAtual.uid ||
-      item.email === usuarioAtual.email
-    ) &&
-    estaNaSemanaAtual(item.data)
-  );
+  let corridasFiltradas = corridasFirebase.filter(item => {
+    if (
+      !usuarioAtual ||
+      (
+        item.uid !== usuarioAtual.uid &&
+        item.email !== usuarioAtual.email
+      )
+    ) {
+      return false;
+    }
 
-  faturamentoSemana = minhasSemana.reduce(
+    if (periodo === "todos") return true;
+
+    if (!item.data) return false;
+
+    let dataCorrida = new Date(item.data + "T00:00:00");
+
+    if (periodo === "semana") {
+      return estaNaSemanaAtual(item.data);
+    }
+
+    if (periodo === "mes") {
+      return (
+        dataCorrida.getMonth() === mesAtual &&
+        dataCorrida.getFullYear() === anoAtual
+      );
+    }
+
+    return true;
+  });
+
+  let faturamentoPeriodo = corridasFiltradas.reduce(
     (soma, item) => soma + Number(item.valor || 0),
     0
   );
-}
 
-let lucroLiquido = faturamentoSemana - totalGastos;
+  let lucroLiquido = faturamentoPeriodo - totalGastos;
 
-let percentualGastos = 0;
+  let percentualGastos = 0;
 
-if (faturamentoSemana > 0) {
-  percentualGastos = Math.round(
-    (totalGastos / faturamentoSemana) * 100
-  );
-}
-if (insightGastos) {
-  insightGastos.innerHTML = `
-    📊 Gastos representam
-    <strong>${percentualGastos}%</strong>
-    do faturamento.
+  if (faturamentoPeriodo > 0) {
+    percentualGastos = Math.round(
+      (totalGastos / faturamentoPeriodo) * 100
+    );
+  }
 
-    <br><br>
+  if (insightGastos) {
+    insightGastos.innerHTML = `
+      📊 Gastos representam
+      <strong>${percentualGastos}%</strong>
+      do faturamento.
 
-    🔥 Maior gasto:
-    <strong>${maiorCategoria}</strong>
+      <br><br>
 
-    <br><br>
+      🔥 Maior gasto:
+      <strong>${maiorCategoria}</strong>
 
-    💰 Total gasto:
-    <strong>${formatarMoeda(totalGastos)}</strong>
-  `;
-}
+      <br><br>
 
-if (gastoFaturamento) {
-  gastoFaturamento.innerText =
-    formatarMoeda(faturamentoSemana);
-}
+      💰 Total gasto:
+      <strong>${formatarMoeda(totalGastos)}</strong>
+    `;
+  }
 
-if (gastoLucro) {
-  gastoLucro.innerText =
-    formatarMoeda(lucroLiquido);
-}
+  if (gastoFaturamento) {
+    gastoFaturamento.innerText =
+      formatarMoeda(faturamentoPeriodo);
+  }
 
-if (gastoPercentualTexto) {
-  gastoPercentualTexto.innerText =
-    `Seus gastos representam ${percentualGastos}% do faturamento`;
-}
+  if (gastoLucro) {
+    gastoLucro.innerText =
+      formatarMoeda(lucroLiquido);
+  }
+
+  if (gastoPercentualTexto) {
+    gastoPercentualTexto.innerText =
+      `Seus gastos representam ${percentualGastos}% do faturamento`;
+  }
 
   if (listaGastos) {
     listaGastos.innerHTML = "";
 
-    gastos.forEach((gasto, index) => {
+    gastosFiltrados.forEach((gasto, index) => {
+      let indexReal = gastos.indexOf(gasto);
+
       listaGastos.innerHTML += `
         <li>
           <strong>${gasto.categoria}</strong>
@@ -3243,11 +3295,11 @@ if (gastoPercentualTexto) {
           📝 ${gasto.descricao || "sem descrição"}
           <br><br>
 
-          <button onclick="editarGasto(${index})">
+          <button onclick="editarGasto(${indexReal})">
             ✏️ Editar
           </button>
 
-          <button onclick="excluirGasto(${index})">
+          <button onclick="excluirGasto(${indexReal})">
             🗑️ Excluir
           </button>
         </li>
@@ -3283,3 +3335,4 @@ window.editarGasto = editarGasto;
 window.excluirGasto = excluirGasto;
 window.solicitarEntradaGrupo = solicitarEntradaGrupo;
 window.buscarGrupo = buscarGrupo;
+window.mudarPeriodoGastos = mudarPeriodoGastos;
