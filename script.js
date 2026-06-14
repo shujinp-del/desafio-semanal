@@ -2876,6 +2876,38 @@ function atualizarGastos() {
     totais.alimentacao +
     totais.lavagem +
     totais.outros;
+    let maiorValor = 0;
+let maiorCategoria = "Nenhum";
+
+Object.entries(totais).forEach(([categoria, valor]) => {
+
+  if (valor > maiorValor) {
+    maiorValor = valor;
+
+    switch (categoria) {
+      case "combustivel":
+        maiorCategoria = "⛽ Combustível";
+        break;
+
+      case "manutencao":
+        maiorCategoria = "🔧 Manutenção";
+        break;
+
+      case "alimentacao":
+        maiorCategoria = "🍔 Alimentação";
+        break;
+
+      case "lavagem":
+        maiorCategoria = "🧽 Lavagem";
+        break;
+
+      case "outros":
+        maiorCategoria = "📦 Outros";
+        break;
+    }
+  }
+
+});
 
   let gastoCombustivel = document.getElementById("gastoCombustivel");
   let gastoManutencao = document.getElementById("gastoManutencao");
@@ -2887,6 +2919,7 @@ let gastoFaturamento = document.getElementById("gastoFaturamento");
 let gastoLucro = document.getElementById("gastoLucro");
 let gastoPercentualTexto = document.getElementById("gastoPercentualTexto");
 let listaGastos = document.getElementById("listaGastos");
+let insightGastos =document.getElementById("insightGastos");
 
   if (gastoCombustivel) gastoCombustivel.innerText = formatarMoeda(totais.combustivel);
   if (gastoManutencao) gastoManutencao.innerText = formatarMoeda(totais.manutencao);
@@ -2919,6 +2952,23 @@ if (faturamentoSemana > 0) {
   percentualGastos = Math.round(
     (totalGastos / faturamentoSemana) * 100
   );
+}
+if (insightGastos) {
+  insightGastos.innerHTML = `
+    📊 Gastos representam
+    <strong>${percentualGastos}%</strong>
+    do faturamento.
+
+    <br><br>
+
+    🔥 Maior gasto:
+    <strong>${maiorCategoria}</strong>
+
+    <br><br>
+
+    💰 Total gasto:
+    <strong>${formatarMoeda(totalGastos)}</strong>
+  `;
 }
 
 if (gastoFaturamento) {
@@ -2963,6 +3013,7 @@ if (gastoPercentualTexto) {
     });
   }
 }
+
 
 window.entrar = entrar;
 window.cadastrar = cadastrar;
