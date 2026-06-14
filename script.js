@@ -3007,6 +3007,46 @@ function mudarPeriodoGastos(periodo) {
 
   periodoGastosAtual = periodo;
 
+  document
+    .querySelectorAll(
+      ".periodo-gastos button"
+    )
+    .forEach(botao => {
+      botao.classList.remove(
+        "ativo-periodo"
+      );
+    });
+
+  if (periodo === "mes") {
+    document
+      .getElementById(
+        "btnPeriodoMes"
+      )
+      ?.classList.add(
+        "ativo-periodo"
+      );
+  }
+
+  if (periodo === "semana") {
+    document
+      .getElementById(
+        "btnPeriodoSemana"
+      )
+      ?.classList.add(
+        "ativo-periodo"
+      );
+  }
+
+  if (periodo === "todos") {
+    document
+      .getElementById(
+        "btnPeriodoTodos"
+      )
+      ?.classList.add(
+        "ativo-periodo"
+      );
+  }
+
   atualizarGastos();
 }
 function abrirFormularioGasto() {
@@ -3277,7 +3317,66 @@ function atualizarGastos() {
     gastoPercentualTexto.innerText =
       `Seus gastos representam ${percentualGastos}% do faturamento`;
   }
+let fechamentoGastoFaturamento =
+  document.getElementById(
+    "fechamentoGastoFaturamento"
+  );
 
+let fechamentoGastoTotal =
+  document.getElementById(
+    "fechamentoGastoTotal"
+  );
+
+let fechamentoGastoLucro =
+  document.getElementById(
+    "fechamentoGastoLucro"
+  );
+
+let fechamentoGastoMargem =
+  document.getElementById(
+    "fechamentoGastoMargem"
+  );
+
+let lucroMesFinanceiro =
+  faturamentoPeriodo - totalGastos;
+
+let margemMesFinanceiro = 0;
+
+if (faturamentoPeriodo > 0) {
+
+  margemMesFinanceiro =
+    Math.round(
+      (lucroMesFinanceiro /
+      faturamentoPeriodo) * 100
+    );
+
+}
+
+if (fechamentoGastoFaturamento) {
+  fechamentoGastoFaturamento.innerText =
+    formatarMoeda(
+      faturamentoPeriodo
+    );
+}
+
+if (fechamentoGastoTotal) {
+  fechamentoGastoTotal.innerText =
+    formatarMoeda(
+      totalGastos
+    );
+}
+
+if (fechamentoGastoLucro) {
+  fechamentoGastoLucro.innerText =
+    formatarMoeda(
+      lucroMesFinanceiro
+    );
+}
+
+if (fechamentoGastoMargem) {
+  fechamentoGastoMargem.innerText =
+    margemMesFinanceiro + "%";
+}
   if (listaGastos) {
     listaGastos.innerHTML = "";
 

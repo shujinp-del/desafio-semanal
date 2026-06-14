@@ -393,15 +393,21 @@
   </p>
  <div class="periodo-gastos">
 
-  <button onclick="mudarPeriodoGastos('mes')">
+  <button
+    id="btnPeriodoMes"
+    onclick="mudarPeriodoGastos('mes')">
     📅 Este mês
   </button>
 
-  <button onclick="mudarPeriodoGastos('semana')">
+  <button
+    id="btnPeriodoSemana"
+    onclick="mudarPeriodoGastos('semana')">
     📆 Esta semana
   </button>
 
-  <button onclick="mudarPeriodoGastos('todos')">
+  <button
+    id="btnPeriodoTodos"
+    onclick="mudarPeriodoGastos('todos')">
     📚 Todos
   </button>
 
@@ -500,7 +506,41 @@
   <ul id="listaGastos"></ul>
 </div>
 </section>
+<div class="card">
 
+  <h2>
+    📅 Fechamento do Mês
+  </h2>
+
+  <p>
+    💰 Faturamento:
+    <strong id="fechamentoGastoFaturamento">
+      R$ 0,00
+    </strong>
+  </p>
+
+  <p>
+    ➖ Gastos:
+    <strong id="fechamentoGastoTotal">
+      R$ 0,00
+    </strong>
+  </p>
+
+  <p>
+    🟢 Lucro:
+    <strong id="fechamentoGastoLucro">
+      R$ 0,00
+    </strong>
+  </p>
+
+  <p>
+    📊 Margem:
+    <strong id="fechamentoGastoMargem">
+      0%
+    </strong>
+  </p>
+
+</div>
   <section id="desafiosTela" class="tela">
 
   <h1>🎯 Desafios</h1>

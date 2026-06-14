@@ -1495,3 +1495,19 @@ canvas {
   color:#ffd166;
   font-size:18px;
 }
+.periodo-gastos button {
+  opacity: 0.65;
+}
+.periodo-gastos {
+  margin-bottom: 20px;
+}
+
+.periodo-gastos button {
+  opacity: 0.65;
+}
+
+.periodo-gastos button.ativo-periodo {
+  opacity: 1;
+  border: 1px solid #ffd166;
+  box-shadow: 0 0 14px rgba(255,177,0,0.35);
+}
