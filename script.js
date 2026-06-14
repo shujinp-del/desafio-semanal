@@ -50,6 +50,7 @@ let graficoLinha;
 
 let editandoId = null;
 let pararSincronia = null;
+let editandoGastoId = null;
 
 function formatarMoeda(valor) {
   return Number(valor || 0).toLocaleString("pt-BR", {
@@ -979,6 +980,9 @@ function abrirTela(id) {
   if (id === "desafiosTela") {
     atualizarMetricas();
   }
+  if (id === "gastosTela") {
+  atualizarGastos();
+}
 }
 function atualizarTudo() {
   aplicarPrivacidadeMenus();
@@ -2756,6 +2760,165 @@ function carregarGrupo() {
       "Sem grupo";
   }
 }
+function abrirFormularioGasto() {
+  let formulario = document.getElementById("formularioGasto");
+
+  if (!formulario) return;
+
+  formulario.style.display =
+    formulario.style.display === "none" ? "block" : "none";
+}
+
+function salvarGasto() {
+  let categoria = document.getElementById("categoriaGasto").value;
+  let valor = Number(document.getElementById("valorGasto").value);
+  let data = document.getElementById("dataGasto").value;
+  let descricao = document.getElementById("descricaoGasto").value;
+
+  if (!valor || valor <= 0) {
+    alert("Digite um valor válido");
+    return;
+  }
+
+  let gastos = JSON.parse(localStorage.getItem("gastosMMS")) || [];
+
+  if (editandoGastoId !== null) {
+    gastos[editandoGastoId] = {
+      categoria,
+      valor,
+      data,
+      descricao
+    };
+
+    editandoGastoId = null;
+    alert("✏️ Gasto editado!");
+  } else {
+    gastos.push({
+      categoria,
+      valor,
+      data,
+      descricao
+    });
+
+    alert("💰 Gasto salvo!");
+  }
+
+  localStorage.setItem("gastosMMS", JSON.stringify(gastos));
+
+  limparFormularioGasto();
+  atualizarGastos();
+}
+
+function limparFormularioGasto() {
+  document.getElementById("valorGasto").value = "";
+  document.getElementById("dataGasto").value = "";
+  document.getElementById("descricaoGasto").value = "";
+
+  let formulario = document.getElementById("formularioGasto");
+
+  if (formulario) {
+    formulario.style.display = "none";
+  }
+}
+
+function editarGasto(index) {
+  let gastos = JSON.parse(localStorage.getItem("gastosMMS")) || [];
+  let gasto = gastos[index];
+
+  if (!gasto) return;
+
+  document.getElementById("categoriaGasto").value = gasto.categoria;
+  document.getElementById("valorGasto").value = gasto.valor;
+  document.getElementById("dataGasto").value = gasto.data || "";
+  document.getElementById("descricaoGasto").value = gasto.descricao || "";
+
+  editandoGastoId = index;
+
+  let formulario = document.getElementById("formularioGasto");
+
+  if (formulario) {
+    formulario.style.display = "block";
+  }
+}
+
+function excluirGasto(index) {
+  if (!confirm("Deseja excluir este gasto?")) return;
+
+  let gastos = JSON.parse(localStorage.getItem("gastosMMS")) || [];
+
+  gastos.splice(index, 1);
+
+  localStorage.setItem("gastosMMS", JSON.stringify(gastos));
+
+  atualizarGastos();
+}
+
+function atualizarGastos() {
+  let gastos = JSON.parse(localStorage.getItem("gastosMMS")) || [];
+
+  let totais = {
+    combustivel: 0,
+    manutencao: 0,
+    alimentacao: 0,
+    lavagem: 0,
+    outros: 0
+  };
+
+  gastos.forEach(gasto => {
+    if (totais[gasto.categoria] !== undefined) {
+      totais[gasto.categoria] += Number(gasto.valor || 0);
+    }
+  });
+
+  let totalGastos =
+    totais.combustivel +
+    totais.manutencao +
+    totais.alimentacao +
+    totais.lavagem +
+    totais.outros;
+
+  let gastoCombustivel = document.getElementById("gastoCombustivel");
+  let gastoManutencao = document.getElementById("gastoManutencao");
+  let gastoAlimentacao = document.getElementById("gastoAlimentacao");
+  let gastoLavagem = document.getElementById("gastoLavagem");
+  let gastoOutros = document.getElementById("gastoOutros");
+  let gastoTotal = document.getElementById("gastoTotal");
+  let listaGastos = document.getElementById("listaGastos");
+
+  if (gastoCombustivel) gastoCombustivel.innerText = formatarMoeda(totais.combustivel);
+  if (gastoManutencao) gastoManutencao.innerText = formatarMoeda(totais.manutencao);
+  if (gastoAlimentacao) gastoAlimentacao.innerText = formatarMoeda(totais.alimentacao);
+  if (gastoLavagem) gastoLavagem.innerText = formatarMoeda(totais.lavagem);
+  if (gastoOutros) gastoOutros.innerText = formatarMoeda(totais.outros);
+  if (gastoTotal) gastoTotal.innerText = formatarMoeda(totalGastos);
+
+  if (listaGastos) {
+    listaGastos.innerHTML = "";
+
+    gastos.forEach((gasto, index) => {
+      listaGastos.innerHTML += `
+        <li>
+          <strong>${gasto.categoria}</strong>
+          <br>
+          💰 ${formatarMoeda(gasto.valor)}
+          <br>
+          📅 ${gasto.data || "sem data"}
+          <br>
+          📝 ${gasto.descricao || "sem descrição"}
+          <br><br>
+
+          <button onclick="editarGasto(${index})">
+            ✏️ Editar
+          </button>
+
+          <button onclick="excluirGasto(${index})">
+            🗑️ Excluir
+          </button>
+        </li>
+      `;
+    });
+  }
+}
 
 window.entrar = entrar;
 window.cadastrar = cadastrar;
@@ -2777,3 +2940,7 @@ window.pesquisarSemanaHistorico = pesquisarSemanaHistorico;
 window.usarMetaRecomendada = usarMetaRecomendada;
 window.usarMetaConservadora =usarMetaConservadora;
 window.usarMetaDesafio =usarMetaDesafio;
+window.abrirFormularioGasto =abrirFormularioGasto;
+window.salvarGasto =salvarGasto;
+window.editarGasto = editarGasto;
+window.excluirGasto = excluirGasto;

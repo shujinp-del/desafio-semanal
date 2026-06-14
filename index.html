@@ -374,27 +374,101 @@
   <h1>💰 Gastos</h1>
 
   <p class="subtitulo">
-    Controle financeiro do motorista
+    Controle seus gastos e veja seu lucro líquido
   </p>
 
-  <div class="card">
-    <h2>🚧 Em desenvolvimento</h2>
+  <div class="card gasto-resumo-card">
+    <h2>📈 Resumo Financeiro</h2>
 
-    <p>⛽ Combustível</p>
-    <p>🔧 Manutenção</p>
-    <p>🍔 Alimentação</p>
-    <p>🧽 Lavagem</p>
-    <p>📦 Outros custos</p>
-  </div>
+    <div class="gasto-resumo-grid">
+      <div>
+        <small>Faturamento</small>
+        <strong id="gastoFaturamento">R$ 0,00</strong>
+      </div>
 
-  <div class="card">
-    <h2>🎯 Objetivo</h2>
+      <div>
+        <small>Gastos</small>
+        <strong id="gastoTotal">R$ 0,00</strong>
+      </div>
 
-    <p>
-      Calcular o lucro real após os gastos.
+      <div>
+        <small>Lucro Líquido</small>
+        <strong id="gastoLucro">R$ 0,00</strong>
+      </div>
+    </div>
+
+    <p id="gastoPercentualTexto">
+      Seus gastos representam 0% do faturamento
     </p>
   </div>
 
+  <div class="card">
+    <h2>📋 Gastos por Categoria</h2>
+
+    <div class="gasto-item">
+      <span>⛽ Combustível</span>
+      <strong id="gastoCombustivel">R$ 0,00</strong>
+    </div>
+
+    <div class="gasto-item">
+      <span>🔧 Manutenção</span>
+      <strong id="gastoManutencao">R$ 0,00</strong>
+    </div>
+
+    <div class="gasto-item">
+      <span>🍔 Alimentação</span>
+      <strong id="gastoAlimentacao">R$ 0,00</strong>
+    </div>
+
+    <div class="gasto-item">
+      <span>🧽 Lavagem</span>
+      <strong id="gastoLavagem">R$ 0,00</strong>
+    </div>
+
+    <div class="gasto-item">
+      <span>📦 Outros</span>
+      <strong id="gastoOutros">R$ 0,00</strong>
+    </div>
+
+    <button onclick="abrirFormularioGasto()">
+      ➕ Adicionar gasto
+    </button>
+  </div>
+
+  <div class="card" id="formularioGasto" style="display:none;">
+    <h2>➕ Novo Gasto</h2>
+
+    <select id="categoriaGasto">
+      <option value="combustivel">⛽ Combustível</option>
+      <option value="manutencao">🔧 Manutenção</option>
+      <option value="alimentacao">🍔 Alimentação</option>
+      <option value="lavagem">🧽 Lavagem</option>
+      <option value="outros">📦 Outros</option>
+    </select>
+
+    <input id="valorGasto" type="number" placeholder="Valor R$">
+
+    <input id="dataGasto" type="date">
+
+    <input id="descricaoGasto" placeholder="Descrição opcional">
+
+    <button onclick="salvarGasto()">
+      Salvar Gasto
+    </button>
+  </div>
+
+  <div class="card">
+    <h2>📊 Insights do Período</h2>
+
+    <p id="insightGastos">
+      Cadastre seus gastos para ver seus insights.
+    </p>
+  </div>
+<div class="card">
+  <h2>📜 Histórico de Gastos</h2>
+
+  <ul id="listaGastos"></ul>
+</div>
 </section>
 
   <section id="desafiosTela" class="tela">
