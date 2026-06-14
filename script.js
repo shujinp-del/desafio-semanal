@@ -2717,7 +2717,11 @@ function usarMetaDesafio() {
   alert("🔴 Meta desafio aplicada!");
 }
 
-function criarGrupo() {
+async function criarGrupo() {
+  if (!usuarioAtual) {
+    alert("Faça login primeiro");
+    return;
+  }
 
   let nome = document
     .getElementById("novoGrupo")
@@ -2729,35 +2733,273 @@ function criarGrupo() {
     return;
   }
 
-  localStorage.setItem(
-    "grupoMMS",
-    nome
-  );
+  try {
+    let grupoRef = await addDoc(
+      collection(db, "grupos"),
+      {
+        nome,
+        donoUid: usuarioAtual.uid,
+        donoEmail: usuarioAtual.email,
+        criadoEm: serverTimestamp(),
+        membros: [
+          {
+            uid: usuarioAtual.uid,
+            email: usuarioAtual.email,
+            papel: "dono"
+          }
+        ]
+      }
+    );
 
-  carregarGrupo();
+    await updateDoc(
+      doc(db, "usuarios", usuarioAtual.uid),
+      {
+        grupoId: grupoRef.id,
+        grupoNome: nome,
+        papelGrupo: "dono"
+      }
+    );
 
-  alert("Grupo criado!");
+    dadosUsuario.grupoId = grupoRef.id;
+    dadosUsuario.grupoNome = nome;
+    dadosUsuario.papelGrupo = "dono";
+
+    carregarGrupo();
+
+    alert("👥 Grupo criado com sucesso!");
+  } catch (erro) {
+    console.error(erro);
+    alert("Erro ao criar grupo");
+  }
+}
+async function buscarGrupo() {
+
+  let nome = document
+    .getElementById("buscarGrupoNome")
+    .value
+    .trim();
+
+  if (!nome) {
+    alert("Digite o nome do grupo");
+    return;
+  }
+
+  let resultado =
+    document.getElementById(
+      "resultadoBuscaGrupo"
+    );
+
+  try {
+
+    let snapshot =
+      await getDocs(
+        collection(db, "grupos")
+      );
+
+    let grupoEncontrado = null;
+    let grupoId = null;
+
+    snapshot.forEach(docSnap => {
+
+      let grupo = docSnap.data();
+
+      if (
+        grupo.nome &&
+        grupo.nome.toLowerCase() ===
+        nome.toLowerCase()
+      ) {
+        grupoEncontrado = grupo;
+        grupoId = docSnap.id;
+      }
+
+    });
+
+    if (!grupoEncontrado) {
+
+      resultado.innerHTML = `
+        <p>❌ Grupo não encontrado</p>
+      `;
+
+      return;
+    }
+
+    let jaParticipa =
+  dadosUsuario &&
+  dadosUsuario.grupoId === grupoId;
+
+resultado.innerHTML = `
+  <div class="card">
+    <h3>👥 ${grupoEncontrado.nome}</h3>
+
+    <p>
+      Dono:
+      ${grupoEncontrado.donoEmail}
+    </p>
+
+    ${
+      jaParticipa
+        ? `
+          <p>
+            ✅ Você já participa deste grupo.
+          </p>
+        `
+        : `
+          <button
+            onclick="solicitarEntradaGrupo('${grupoId}')"
+          >
+            📨 Solicitar Entrada
+          </button>
+        `
+    }
+  </div>
+`;
+
+  } catch (erro) {
+
+    console.error(erro);
+
+    resultado.innerHTML = `
+      <p>Erro ao buscar grupo</p>
+    `;
+  }
+}
+async function solicitarEntradaGrupo(
+  grupoId
+) {
+
+  if (!usuarioAtual) {
+    alert("Faça login primeiro");
+    return;
+  }
+
+  try {
+
+    let grupoRef =
+      doc(db, "grupos", grupoId);
+
+    let grupoSnap =
+      await getDoc(grupoRef);
+
+    let grupo =
+      grupoSnap.data();
+
+    let solicitacoes =
+      grupo.solicitacoes || [];
+
+    let existe =
+      solicitacoes.some(
+        item =>
+          item.uid === usuarioAtual.uid
+      );
+
+    if (existe) {
+      alert(
+        "Você já solicitou entrada."
+      );
+      return;
+    }
+
+    solicitacoes.push({
+      uid: usuarioAtual.uid,
+      email: usuarioAtual.email,
+      status: "pendente"
+    });
+
+    await updateDoc(
+      grupoRef,
+      {
+        solicitacoes
+      }
+    );
+
+    alert(
+      "📨 Solicitação enviada!"
+    );
+
+  } catch (erro) {
+
+    console.error(erro);
+
+    alert(
+      "Erro ao enviar solicitação"
+    );
+  }
 }
 
 function carregarGrupo() {
-
-  let grupo = localStorage.getItem(
-    "grupoMMS"
-  );
-
   let nomeGrupo =
     document.getElementById("nomeGrupo");
 
+  let statusGrupo =
+    document.getElementById("statusGrupo");
+
+  let listaGrupo =
+    document.getElementById("listaGrupo");
+
+  let campoNovoGrupo =
+    document.getElementById("novoGrupo");
+
   if (!nomeGrupo) return;
 
-  if (grupo) {
+  if (
+    dadosUsuario &&
+    dadosUsuario.grupoNome
+  ) {
+    nomeGrupo.innerText =
+      dadosUsuario.grupoNome;
 
-    nomeGrupo.innerText = grupo;
+    if (statusGrupo) {
+      statusGrupo.innerText =
+        dadosUsuario.papelGrupo === "dono"
+          ? "👑 Você é o dono deste grupo."
+          : "👥 Você participa deste grupo.";
+    }
+
+    if (campoNovoGrupo) {
+      campoNovoGrupo.style.display = "none";
+    }
+
+    let botaoCriar =
+      document.querySelector("button[onclick='criarGrupo()']");
+
+    if (botaoCriar) {
+      botaoCriar.style.display = "none";
+    }
+
+    if (listaGrupo) {
+      listaGrupo.innerHTML = `
+        <li>
+          👑 ${usuarioAtual.email}
+          <br>
+          <small>Dono do grupo</small>
+        </li>
+      `;
+    }
 
   } else {
-
     nomeGrupo.innerText =
       "Sem grupo";
+
+    if (statusGrupo) {
+      statusGrupo.innerText =
+        "Você ainda não participa de um grupo.";
+    }
+
+    if (campoNovoGrupo) {
+      campoNovoGrupo.style.display = "block";
+    }
+
+    let botaoCriar =
+      document.querySelector("button[onclick='criarGrupo()']");
+
+    if (botaoCriar) {
+      botaoCriar.style.display = "block";
+    }
+
+    if (listaGrupo) {
+      listaGrupo.innerHTML =
+        "<li>Nenhum membro</li>";
+    }
   }
 }
 function abrirFormularioGasto() {
@@ -3039,3 +3281,5 @@ window.abrirFormularioGasto =abrirFormularioGasto;
 window.salvarGasto =salvarGasto;
 window.editarGasto = editarGasto;
 window.excluirGasto = excluirGasto;
+window.solicitarEntradaGrupo = solicitarEntradaGrupo;
+window.buscarGrupo = buscarGrupo;

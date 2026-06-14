@@ -335,9 +335,9 @@
     Sem grupo
   </strong>
 
-  <p>
-    Você ainda não participa de um grupo.
-  </p>
+  <p id="statusGrupo">
+  Você ainda não participa de um grupo.
+</p>
 
   <input
     id="novoGrupo"
@@ -348,6 +348,21 @@
     ➕ Criar Grupo
   </button>
 </div>
+<hr>
+
+<h3>🔍 Encontrar Grupo</h3>
+
+<input
+  id="buscarGrupoNome"
+  placeholder="Nome do grupo"
+>
+
+<button onclick="buscarGrupo()">
+  Buscar Grupo
+</button>
+
+<div id="resultadoBuscaGrupo"></div>
+
 
   <div class="card">
     <h2>👥 Membros</h2>
