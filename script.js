@@ -3377,6 +3377,113 @@ if (fechamentoGastoMargem) {
   fechamentoGastoMargem.innerText =
     margemMesFinanceiro + "%";
 }
+let comparacaoGastoAtual =
+  document.getElementById(
+    "comparacaoGastoAtual"
+  );
+
+let comparacaoGastoAnterior =
+  document.getElementById(
+    "comparacaoGastoAnterior"
+  );
+
+let comparacaoGastoDiferenca =
+  document.getElementById(
+    "comparacaoGastoDiferenca"
+  );
+
+let comparacaoGastoVariacao =
+  document.getElementById(
+    "comparacaoGastoVariacao"
+  );
+
+let mesAnterior =
+  mesAtual === 0 ? 11 : mesAtual - 1;
+
+let anoAnterior =
+  mesAtual === 0 ? anoAtual - 1 : anoAtual;
+
+let gastosMesAtual = gastos.filter(gasto => {
+  if (!gasto.data) return false;
+
+  let dataGasto =
+    new Date(gasto.data + "T00:00:00");
+
+  return (
+    dataGasto.getMonth() === mesAtual &&
+    dataGasto.getFullYear() === anoAtual
+  );
+});
+
+let gastosMesAnterior = gastos.filter(gasto => {
+  if (!gasto.data) return false;
+
+  let dataGasto =
+    new Date(gasto.data + "T00:00:00");
+
+  return (
+    dataGasto.getMonth() === mesAnterior &&
+    dataGasto.getFullYear() === anoAnterior
+  );
+});
+
+let totalGastosMesAtual =
+  gastosMesAtual.reduce(
+    (soma, gasto) =>
+      soma + Number(gasto.valor || 0),
+    0
+  );
+
+let totalGastosMesAnterior =
+  gastosMesAnterior.reduce(
+    (soma, gasto) =>
+      soma + Number(gasto.valor || 0),
+    0
+  );
+
+let diferencaGastos =
+  totalGastosMesAtual - totalGastosMesAnterior;
+
+let variacaoGastos = 0;
+
+if (totalGastosMesAnterior > 0) {
+  variacaoGastos =
+    Math.round(
+      (diferencaGastos /
+        totalGastosMesAnterior) *
+        100
+    );
+}
+
+let emojiComparacao =
+  diferencaGastos <= 0 ? "🟢" : "🔴";
+
+let textoDiferenca =
+  diferencaGastos <= 0
+    ? `Economia de ${formatarMoeda(Math.abs(diferencaGastos))}`
+    : `Aumento de ${formatarMoeda(diferencaGastos)}`;
+
+if (comparacaoGastoAtual) {
+  comparacaoGastoAtual.innerText =
+    formatarMoeda(totalGastosMesAtual);
+}
+
+if (comparacaoGastoAnterior) {
+  comparacaoGastoAnterior.innerText =
+    formatarMoeda(totalGastosMesAnterior);
+}
+
+if (comparacaoGastoDiferenca) {
+  comparacaoGastoDiferenca.innerText =
+    `${emojiComparacao} ${textoDiferenca}`;
+}
+
+if (comparacaoGastoVariacao) {
+  comparacaoGastoVariacao.innerText =
+    totalGastosMesAnterior > 0
+      ? `${variacaoGastos}%`
+      : "Sem mês anterior";
+}
   if (listaGastos) {
     listaGastos.innerHTML = "";
 
