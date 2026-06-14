@@ -2883,7 +2883,10 @@ function atualizarGastos() {
   let gastoLavagem = document.getElementById("gastoLavagem");
   let gastoOutros = document.getElementById("gastoOutros");
   let gastoTotal = document.getElementById("gastoTotal");
-  let listaGastos = document.getElementById("listaGastos");
+let gastoFaturamento = document.getElementById("gastoFaturamento");
+let gastoLucro = document.getElementById("gastoLucro");
+let gastoPercentualTexto = document.getElementById("gastoPercentualTexto");
+let listaGastos = document.getElementById("listaGastos");
 
   if (gastoCombustivel) gastoCombustivel.innerText = formatarMoeda(totais.combustivel);
   if (gastoManutencao) gastoManutencao.innerText = formatarMoeda(totais.manutencao);
@@ -2891,6 +2894,47 @@ function atualizarGastos() {
   if (gastoLavagem) gastoLavagem.innerText = formatarMoeda(totais.lavagem);
   if (gastoOutros) gastoOutros.innerText = formatarMoeda(totais.outros);
   if (gastoTotal) gastoTotal.innerText = formatarMoeda(totalGastos);
+  let faturamentoSemana = 0;
+
+if (usuarioAtual) {
+  let minhasSemana = corridasFirebase.filter(item =>
+    (
+      item.uid === usuarioAtual.uid ||
+      item.email === usuarioAtual.email
+    ) &&
+    estaNaSemanaAtual(item.data)
+  );
+
+  faturamentoSemana = minhasSemana.reduce(
+    (soma, item) => soma + Number(item.valor || 0),
+    0
+  );
+}
+
+let lucroLiquido = faturamentoSemana - totalGastos;
+
+let percentualGastos = 0;
+
+if (faturamentoSemana > 0) {
+  percentualGastos = Math.round(
+    (totalGastos / faturamentoSemana) * 100
+  );
+}
+
+if (gastoFaturamento) {
+  gastoFaturamento.innerText =
+    formatarMoeda(faturamentoSemana);
+}
+
+if (gastoLucro) {
+  gastoLucro.innerText =
+    formatarMoeda(lucroLiquido);
+}
+
+if (gastoPercentualTexto) {
+  gastoPercentualTexto.innerText =
+    `Seus gastos representam ${percentualGastos}% do faturamento`;
+}
 
   if (listaGastos) {
     listaGastos.innerHTML = "";
