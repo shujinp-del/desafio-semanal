@@ -391,27 +391,20 @@
   <p class="subtitulo">
     Controle seus gastos e veja seu lucro líquido
   </p>
- <div class="periodo-gastos">
 
-  <button
-    id="btnPeriodoMes"
-    onclick="mudarPeriodoGastos('mes')">
-    📅 Este mês
-  </button>
+  <div class="periodo-gastos">
+    <button id="btnPeriodoMes" onclick="mudarPeriodoGastos('mes')">
+      📅 Este mês
+    </button>
 
-  <button
-    id="btnPeriodoSemana"
-    onclick="mudarPeriodoGastos('semana')">
-    📆 Esta semana
-  </button>
+    <button id="btnPeriodoSemana" onclick="mudarPeriodoGastos('semana')">
+      📆 Esta semana
+    </button>
 
-  <button
-    id="btnPeriodoTodos"
-    onclick="mudarPeriodoGastos('todos')">
-    📚 Todos
-  </button>
-
-</div>
+    <button id="btnPeriodoTodos" onclick="mudarPeriodoGastos('todos')">
+      📚 Todos
+    </button>
+  </div>
 
   <div class="card gasto-resumo-card">
     <h2>📈 Resumo Financeiro</h2>
@@ -483,9 +476,7 @@
     </select>
 
     <input id="valorGasto" type="number" placeholder="Valor R$">
-
     <input id="dataGasto" type="date">
-
     <input id="descricaoGasto" placeholder="Descrição opcional">
 
     <button onclick="salvarGasto()">
@@ -500,82 +491,32 @@
       Cadastre seus gastos para ver seus insights.
     </p>
   </div>
-<div class="card">
-  <h2>📜 Histórico de Gastos</h2>
 
-  <ul id="listaGastos"></ul>
-</div>
+  <div class="card">
+    <h2>📜 Histórico de Gastos</h2>
+    <ul id="listaGastos"></ul>
+  </div>
+
+  <div class="card">
+    <h2>📅 Fechamento do Mês</h2>
+
+    <p>💰 Faturamento: <strong id="fechamentoGastoFaturamento">R$ 0,00</strong></p>
+    <p>➖ Gastos: <strong id="fechamentoGastoTotal">R$ 0,00</strong></p>
+    <p>🟢 Lucro: <strong id="fechamentoGastoLucro">R$ 0,00</strong></p>
+    <p>📊 Margem: <strong id="fechamentoGastoMargem">0%</strong></p>
+  </div>
+
+  <div class="card">
+    <h2>📊 Comparação de Gastos</h2>
+
+    <p>📅 Mês atual: <strong id="comparacaoGastoAtual">R$ 0,00</strong></p>
+    <p>📆 Mês passado: <strong id="comparacaoGastoAnterior">R$ 0,00</strong></p>
+    <p>🔁 Diferença: <strong id="comparacaoGastoDiferenca">R$ 0,00</strong></p>
+    <p>📈 Variação: <strong id="comparacaoGastoVariacao">0%</strong></p>
+  </div>
+
 </section>
-<div class="card">
 
-  <h2>
-    📅 Fechamento do Mês
-  </h2>
-
-  <p>
-    💰 Faturamento:
-    <strong id="fechamentoGastoFaturamento">
-      R$ 0,00
-    </strong>
-  </p>
-
-  <p>
-    ➖ Gastos:
-    <strong id="fechamentoGastoTotal">
-      R$ 0,00
-    </strong>
-  </p>
-
-  <p>
-    🟢 Lucro:
-    <strong id="fechamentoGastoLucro">
-      R$ 0,00
-    </strong>
-  </p>
-
-  <p>
-    📊 Margem:
-    <strong id="fechamentoGastoMargem">
-      0%
-    </strong>
-  </p>
-
-</div>
-<div class="card">
-
-  <h2>
-    📊 Comparação de Gastos
-  </h2>
-
-  <p>
-    📅 Mês atual:
-    <strong id="comparacaoGastoAtual">
-      R$ 0,00
-    </strong>
-  </p>
-
-  <p>
-    📆 Mês passado:
-    <strong id="comparacaoGastoAnterior">
-      R$ 0,00
-    </strong>
-  </p>
-
-  <p>
-    🔁 Diferença:
-    <strong id="comparacaoGastoDiferenca">
-      R$ 0,00
-    </strong>
-  </p>
-
-  <p>
-    📈 Variação:
-    <strong id="comparacaoGastoVariacao">
-      0%
-    </strong>
-  </p>
-
-</div>
   <section id="desafiosTela" class="tela">
 
   <h1>🎯 Desafios</h1>
@@ -777,40 +718,7 @@
         <p>📆 Média diária: <strong id="insightMediaDiaria">R$ 0</strong></p>
       </div>
 
-      <div class="card">
-        <h2>🏆 Fechamento do Mês</h2>
-
-        <p>📅 Total do mês: <strong id="fechamentoTotalMes">R$ 0</strong></p>
-        <p>🚗 Corridas no mês: <strong id="fechamentoCorridasMes">0</strong></p>
-        <p>💰 Média diária do mês: <strong id="fechamentoMediaDiariaMes">R$ 0</strong></p>
-        <p>🔥 Melhor dia do mês: <strong id="fechamentoMelhorDiaMes">-</strong></p>
-      </div>
-
-     <div class="card badge-card-v2">
-  <h2>🏅 Badge Atual</h2>
-
-  <div id="badgeMeta" class="badge-texto">
-    🥉 BRONZE
-  </div>
-
-  <div class="badge-proximo">
-    Continue rodando para alcançar PRATA
-  </div>
-
-
-  <div class="badge-proximo">
-    Próximo nível disponível
-  </div>
-</div>
-
-  <div class="card notificacao-card-v2">
-  <h2>🔔 Notificação</h2>
-
-  <div id="notificacaoMeta" class="texto-notificacao">
-    🚀 Defina uma meta para começar
-  </div>
-</div>
-    </section>
+     </section>
 
     <section id="minhasTela" class="tela">
       <h1>👤 Minhas Corridas</h1>
