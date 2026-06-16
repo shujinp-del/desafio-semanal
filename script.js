@@ -3145,26 +3145,32 @@ function limparFormularioGasto() {
   }
 }
 
-function editarGasto(index) {
-  let gastos = gastosFirebase || [];
-  let gasto = gastos[index];
+function editarGasto(id) {
+  let gasto = gastosFirebase.find(item => item.id === id);
 
   if (!gasto) return;
 
-  document.getElementById("categoriaGasto").value = gasto.categoria;
-  document.getElementById("valorGasto").value = gasto.valor;
-  document.getElementById("dataGasto").value = gasto.data || "";
-  document.getElementById("descricaoGasto").value = gasto.descricao || "";
+  document.getElementById("categoriaGasto").value =
+    gasto.categoria;
 
-  editandoGastoId = index;
+  document.getElementById("valorGasto").value =
+    gasto.valor;
 
-  let formulario = document.getElementById("formularioGasto");
+  document.getElementById("dataGasto").value =
+    gasto.data || "";
+
+  document.getElementById("descricaoGasto").value =
+    gasto.descricao || "";
+
+  editandoGastoId = id;
+
+  let formulario =
+    document.getElementById("formularioGasto");
 
   if (formulario) {
     formulario.style.display = "block";
   }
 }
-
 async function excluirGasto(id) {
   if (!confirm("Deseja excluir este gasto?")) return;
 
@@ -3580,7 +3586,7 @@ if (comparacaoGastoVariacao) {
           📝 ${gasto.descricao || "sem descrição"}
           <br><br>
 
-          <button onclick="editarGasto(${indexReal})">
+          <button onclick="editarGasto('${gasto.id}')">
             ✏️ Editar
           </button>
 
