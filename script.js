@@ -40,6 +40,7 @@ let dadosUsuario = null;
 
 let ranking = [];
 let corridasFirebase = [];
+let gastosFirebase = [];
 let rankingMetas = [];
 let metaRecomendadaAtual = 0;
 let metaConservadoraAtual = 0;
@@ -977,13 +978,14 @@ function abrirTela(id) {
   if (id === "grupoTela") {
     carregarGrupo();
   }
+  if (id === "gastosTela") {
+  carregarGastosFirebase();
+}
 
   if (id === "desafiosTela") {
     atualizarMetricas();
   }
-  if (id === "gastosTela") {
-  atualizarGastos();
-}
+ 
 }
 function atualizarTudo() {
   aplicarPrivacidadeMenus();
@@ -3058,46 +3060,79 @@ function abrirFormularioGasto() {
     formulario.style.display === "none" ? "block" : "none";
 }
 
-function salvarGasto() {
-  let categoria = document.getElementById("categoriaGasto").value;
-  let valor = Number(document.getElementById("valorGasto").value);
-  let data = document.getElementById("dataGasto").value;
-  let descricao = document.getElementById("descricaoGasto").value;
+async function salvarGasto() {
+
+  if (!usuarioAtual) {
+    alert("Faça login primeiro.");
+    return;
+  }
+
+  let categoria =
+    document.getElementById("categoriaGasto").value;
+
+  let valor =
+    Number(document.getElementById("valorGasto").value);
+
+  let data =
+    document.getElementById("dataGasto").value;
+
+  let descricao =
+    document.getElementById("descricaoGasto").value;
 
   if (!valor || valor <= 0) {
     alert("Digite um valor válido");
     return;
   }
 
-  let gastos = JSON.parse(localStorage.getItem("gastosMMS")) || [];
+  try {
 
-  if (editandoGastoId !== null) {
-    gastos[editandoGastoId] = {
-      categoria,
-      valor,
-      data,
-      descricao
-    };
+    if (editandoGastoId) {
 
-    editandoGastoId = null;
-    alert("✏️ Gasto editado!");
-  } else {
-    gastos.push({
-      categoria,
-      valor,
-      data,
-      descricao
-    });
+      await updateDoc(
+        doc(db, "gastos", editandoGastoId),
+        {
+          categoria,
+          valor,
+          data,
+          descricao,
+          atualizadoEm: serverTimestamp()
+        }
+      );
 
-    alert("💰 Gasto salvo!");
+      editandoGastoId = null;
+
+      alert("✏️ Gasto editado!");
+
+    } else {
+
+      await addDoc(
+        collection(db, "gastos"),
+        {
+          categoria,
+          valor,
+          data,
+          descricao,
+          uid: usuarioAtual.uid,
+          email: usuarioAtual.email,
+          criadoEm: serverTimestamp()
+        }
+      );
+
+      alert("💰 Gasto salvo!");
+
+    }
+
+    limparFormularioGasto();
+
+    await carregarGastosFirebase();
+
+  } catch (erro) {
+
+    console.error("Erro ao salvar gasto:", erro);
+
+    alert("Erro ao salvar gasto.");
   }
-
-  localStorage.setItem("gastosMMS", JSON.stringify(gastos));
-
-  limparFormularioGasto();
-  atualizarGastos();
 }
-
 function limparFormularioGasto() {
   document.getElementById("valorGasto").value = "";
   document.getElementById("dataGasto").value = "";
@@ -3111,7 +3146,7 @@ function limparFormularioGasto() {
 }
 
 function editarGasto(index) {
-  let gastos = JSON.parse(localStorage.getItem("gastosMMS")) || [];
+  let gastos = gastosFirebase || [];
   let gasto = gastos[index];
 
   if (!gasto) return;
@@ -3133,7 +3168,7 @@ function editarGasto(index) {
 function excluirGasto(index) {
   if (!confirm("Deseja excluir este gasto?")) return;
 
-  let gastos = JSON.parse(localStorage.getItem("gastosMMS")) || [];
+  let gastos = gastosFirebase || [];
 
   gastos.splice(index, 1);
 
@@ -3141,9 +3176,48 @@ function excluirGasto(index) {
 
   atualizarGastos();
 }
+async function carregarGastosFirebase() {
+  if (!usuarioAtual) return;
 
+  try {
+
+    let snapshot = await getDocs(
+      collection(db, "gastos")
+    );
+
+    gastosFirebase = [];
+
+    snapshot.forEach(docSnap => {
+
+      let gasto = docSnap.data();
+
+      if (
+        gasto.uid === usuarioAtual.uid ||
+        gasto.email === usuarioAtual.email
+      ) {
+
+      gastosFirebase.push({
+  id: docSnap.id,
+  ...gasto
+});
+
+      }
+
+    });
+
+    atualizarGastos();
+
+  } catch (erro) {
+
+    console.error(
+      "Erro ao carregar gastos:",
+      erro
+    );
+
+  }
+}
 function atualizarGastos() {
-  let gastos = JSON.parse(localStorage.getItem("gastosMMS")) || [];
+  let gastos = gastosFirebase || [];
 
   let periodo =periodoGastosAtual || "mes";
 
@@ -3542,3 +3616,4 @@ window.excluirGasto = excluirGasto;
 window.solicitarEntradaGrupo = solicitarEntradaGrupo;
 window.buscarGrupo = buscarGrupo;
 window.mudarPeriodoGastos = mudarPeriodoGastos;
+window.carregarGastosFirebase =carregarGastosFirebase;
