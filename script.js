@@ -1029,6 +1029,7 @@ if (corridasHojeCorrida) {
 
   atualizarRanking();
   atualizarLider();
+  atualizarAssistenteMMS();
   atualizarMetricas();
   carregarGrupo();
   atualizarGrafico();
@@ -1383,6 +1384,172 @@ function atualizarRecordes() {
   melhorSemanaEl.innerText = formatarMoeda(melhorSemana);
   melhorMesEl.innerText = formatarMoeda(melhorMes);
   corridasEl.innerText = `${maiorCorridas} corridas`;
+}
+function atualizarAssistenteMMS() {
+  if (!usuarioAtual) return;
+
+  let tituloEl = document.getElementById("assistenteTitulo");
+  let linha1El = document.getElementById("assistenteLinha1");
+  let linha2El = document.getElementById("assistenteLinha2");
+  let faltamMetaHome = document.getElementById("faltamMetaHome");
+
+  if (!tituloEl || !linha1El || !linha2El) return;
+
+  let minhasSemana = corridasFirebase.filter(item =>
+    (
+      item.uid === usuarioAtual.uid ||
+      item.email === usuarioAtual.email
+    ) &&
+    estaNaSemanaAtual(item.data)
+  );
+
+  let totalSemana = minhasSemana.reduce(
+    (soma, item) => soma + Number(item.valor || 0),
+    0
+  );
+
+  let corridasSemana = minhasSemana.reduce(
+    (soma, item) => soma + Number(item.corridas || 0),
+    0
+  );
+ // Mesmo período da semana passada
+let hoje = new Date();
+
+let inicioSemanaAtual = obterInicioSemana(hoje);
+
+let inicioSemanaPassada = new Date(inicioSemanaAtual);
+inicioSemanaPassada.setDate(
+  inicioSemanaPassada.getDate() - 7
+);
+
+let diasDecorridos = Math.floor(
+  (hoje - inicioSemanaAtual) /
+  (1000 * 60 * 60 * 24)
+);
+
+let fimComparacaoPassada = new Date(inicioSemanaPassada);
+fimComparacaoPassada.setDate(
+  fimComparacaoPassada.getDate() + diasDecorridos + 1
+);
+
+let totalSemanaPassada = corridasFirebase
+  .filter(item => {
+
+    if (
+      item.uid !== usuarioAtual.uid &&
+      item.email !== usuarioAtual.email
+    ) {
+      return false;
+    }
+
+    if (!item.data) return false;
+
+    let dataItem = new Date(item.data + "T12:00:00");
+
+    return (
+      dataItem >= inicioSemanaPassada &&
+      dataItem < fimComparacaoPassada
+    );
+  })
+  .reduce(
+    (soma, item) => soma + Number(item.valor || 0),
+    0
+  );
+
+let variacaoSemanal = 0;
+
+if (totalSemanaPassada > 0) {
+  variacaoSemanal =
+    (
+      (
+        totalSemana -
+        totalSemanaPassada
+      ) /
+      totalSemanaPassada
+    ) * 100;
+}
+
+  let meta = Number((dadosUsuario && dadosUsuario.metaSemanal) || 0);
+
+  let progressoMeta = meta > 0
+    ? Math.round((totalSemana / meta) * 100)
+    : 0;
+
+  let faltaMeta = Math.max(0, meta - totalSemana);
+
+  if (faltamMetaHome) {
+    faltamMetaHome.innerText = formatarMoeda(faltaMeta);
+  }
+
+  if (minhasSemana.length === 0) {
+    tituloEl.innerText = "Comece sua semana registrando corridas.";
+    linha1El.innerText = "O MMS vai analisar seu desempenho automaticamente.";
+    linha2El.innerText = "Assim que houver dados, os insights aparecem aqui.";
+    return;
+  }
+
+  if (meta > 0 && progressoMeta >= 100) {
+    tituloEl.innerText = "Meta semanal batida! 🏆";
+    linha1El.innerText = `Você já atingiu ${progressoMeta}% da sua meta.`;
+    linha2El.innerText = "Excelente desempenho nesta semana.";
+    return;
+  }
+
+  if (meta > 0 && progressoMeta >= 75) {
+    tituloEl.innerText = "Você está muito perto da meta! 🔥";
+    linha1El.innerText = `Faltam apenas ${formatarMoeda(faltaMeta)} para atingir sua meta.`;
+    linha2El.innerText = `Você já completou ${progressoMeta}% do objetivo semanal.`;
+    return;
+  }
+  if (
+  totalSemanaPassada > 0 &&
+  variacaoSemanal >= 10
+) {
+  tituloEl.innerText =
+    "Você está evoluindo! 📈";
+
+  linha1El.innerText =
+    `Seu faturamento cresceu ${variacaoSemanal.toFixed(0)}% em relação à semana passada.`;
+
+  linha2El.innerText =
+    "Excelente evolução. Continue assim.";
+
+  return;
+}
+
+if (
+  totalSemanaPassada > 0 &&
+  variacaoSemanal <= -10
+) {
+  tituloEl.innerText =
+    "Ainda dá para recuperar. 💪";
+
+  linha1El.innerText =
+    `Seu faturamento caiu ${Math.abs(variacaoSemanal).toFixed(0)}% em relação à semana passada.`;
+
+  linha2El.innerText =
+    "A semana ainda não acabou.";
+
+  return;
+}
+
+  if (corridasSemana >= 30) {
+    tituloEl.innerText = "Seu ritmo de corridas está forte. 🚗";
+    linha1El.innerText = `Você já fez ${corridasSemana} corridas nesta semana.`;
+    linha2El.innerText = `Total acumulado: ${formatarMoeda(totalSemana)}.`;
+    return;
+  }
+
+  if (totalSemana > 0 && meta > 0) {
+    tituloEl.innerText = "Semana em andamento. 📊";
+    linha1El.innerText = `Você está em ${progressoMeta}% da meta semanal.`;
+    linha2El.innerText = `Faltam ${formatarMoeda(faltaMeta)} para completar o objetivo.`;
+    return;
+  }
+
+  tituloEl.innerText = "O MMS está acompanhando sua evolução.";
+  linha1El.innerText = `Você já faturou ${formatarMoeda(totalSemana)} esta semana.`;
+  linha2El.innerText = `Corridas registradas: ${corridasSemana}.`;
 }
 function atualizarLider() {
   let lider = document.getElementById("liderSemana");
