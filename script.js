@@ -3165,16 +3165,21 @@ function editarGasto(index) {
   }
 }
 
-function excluirGasto(index) {
+async function excluirGasto(id) {
   if (!confirm("Deseja excluir este gasto?")) return;
 
-  let gastos = gastosFirebase || [];
+  try {
+    await deleteDoc(
+      doc(db, "gastos", id)
+    );
 
-  gastos.splice(index, 1);
+    await carregarGastosFirebase();
 
-  localStorage.setItem("gastosMMS", JSON.stringify(gastos));
-
-  atualizarGastos();
+    alert("🗑️ Gasto excluído!");
+  } catch (erro) {
+    console.error("Erro ao excluir gasto:", erro);
+    alert("Erro ao excluir gasto.");
+  }
 }
 async function carregarGastosFirebase() {
   if (!usuarioAtual) return;
@@ -3579,7 +3584,7 @@ if (comparacaoGastoVariacao) {
             ✏️ Editar
           </button>
 
-          <button onclick="excluirGasto(${indexReal})">
+          <button onclick="excluirGasto('${gasto.id}')">
             🗑️ Excluir
           </button>
         </li>
