@@ -1412,6 +1412,19 @@ function atualizarAssistenteMMS() {
     (soma, item) => soma + Number(item.corridas || 0),
     0
   );
+  let diasProjecaoAssistente = new Set(
+  minhasSemana.map(item => item.data)
+).size;
+
+let mediaProjecaoAssistente = 0;
+
+if (diasProjecaoAssistente > 0) {
+  mediaProjecaoAssistente =
+    totalSemana / diasProjecaoAssistente;
+}
+
+let valorProjecaoAssistente =
+  mediaProjecaoAssistente * 7;
  // Mesmo período da semana passada
 let hoje = new Date();
 
@@ -1518,9 +1531,9 @@ if (totalSemanaPassada > 0) {
 }
 
 if (
-  totalSemanaPassada > 0 &&
-  variacaoSemanal <= -10
-) {
+  false
+)
+ {
   tituloEl.innerText =
     "Ainda dá para recuperar. 💪";
 
@@ -1529,6 +1542,19 @@ if (
 
   linha2El.innerText =
     "A semana ainda não acabou.";
+
+  return;
+}
+if (diasProjecaoAssistente >= 2) {
+
+  tituloEl.innerText =
+    "Projeção da Semana 📈";
+
+  linha1El.innerText =
+    `Mantendo o ritmo atual, você fechará a semana com ${formatarMoeda(valorProjecaoAssistente)}.`;
+
+  linha2El.innerText =
+    "Continue registrando suas corridas para melhorar a previsão.";
 
   return;
 }
@@ -1649,6 +1675,7 @@ function atualizarMetricas() {
     (soma, item) => soma + Number(item.corridas || 0),
     0
   );
+  
 
   let hoje = new Date();
   let mesAtual = hoje.getMonth();
