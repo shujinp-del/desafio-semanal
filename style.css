@@ -2006,3 +2006,49 @@ canvas {
   font-size: 0.7rem;
   margin-top: 4px;
 }
+/* Histórico Completo Compacto */
+
+#listaGastosCompleto li{
+  padding:10px;
+  border-radius:14px;
+  margin-bottom:8px;
+}
+
+#listaGastosCompleto strong{
+  font-size:0.85rem;
+}
+
+#listaGastosCompleto{
+  font-size:0.8rem;
+}
+
+#listaGastosCompleto button{
+  padding:4px;
+  font-size:0.7rem;
+  margin-top:4px;
+}
+/* Botões lado a lado no histórico de gastos */
+.acoes-gasto {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.acoes-gasto button {
+  flex: 1;
+  padding: 5px;
+  font-size: 0.7rem;
+  margin-top: 0;
+}
+.acoes-gasto{
+  display:flex;
+  gap:6px;
+  margin-top:8px;
+}
+
+.acoes-gasto button{
+  flex:1;
+  padding:6px;
+  font-size:0.75rem;
+  margin:0;
+}

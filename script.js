@@ -3792,21 +3792,26 @@ if (listaHistoricoCompleto) {
           <br>
           📅 ${gasto.data || "sem data"}
           <br>
-          📝 ${gasto.descricao || "sem descrição"}
-          <br><br>
+          ${gasto.descricao ? `
+📝 ${gasto.descricao}
+<br>
+` : ""}
 
-          <button onclick="editarGasto('${gasto.id}')">
-            ✏️ Editar
-          </button>
+          <div class="acoes-gasto">
+  <button onclick="editarGasto('${gasto.id}')">
+    ✏️ Editar
+  </button>
 
-          <button onclick="excluirGasto('${gasto.id}')">
-            🗑️ Excluir
-          </button>
+  <button onclick="excluirGasto('${gasto.id}')">
+    🗑️ Excluir
+  </button>
+</div>
         </li>
       `;
     });
 }
-  if (listaGastos) {
+
+if (listaGastos) {
     listaGastos.innerHTML = "";
 
     gastosFiltrados
