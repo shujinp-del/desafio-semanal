@@ -1986,3 +1986,23 @@ canvas {
 .meta-desafio-card span {
   color: #ff4b4b;
 }
+/* Histórico de gastos compacto */
+
+#listaGastos li {
+  padding: 8px;
+  margin-bottom: 8px;
+}
+
+#listaGastos strong {
+  font-size: 0.85rem;
+}
+
+#listaGastos {
+  font-size: 0.8rem;
+}
+
+#listaGastos button {
+  padding: 4px;
+  font-size: 0.7rem;
+  margin-top: 4px;
+}

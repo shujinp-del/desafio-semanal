@@ -498,6 +498,9 @@
     <h2>📜 Histórico de Gastos</h2>
     <ul id="listaGastos"></ul>
   </div>
+  <button onclick="abrirTela('historicoCompletoGastos')">
+  📜 Ver histórico completo
+</button>
 
   <div class="card">
     <h2>📅 Fechamento do Mês</h2>
@@ -515,6 +518,25 @@
     <p>📆 Mês passado: <strong id="comparacaoGastoAnterior">R$ 0,00</strong></p>
     <p>🔁 Diferença: <strong id="comparacaoGastoDiferenca">R$ 0,00</strong></p>
     <p>📈 Variação: <strong id="comparacaoGastoVariacao">0%</strong></p>
+  </div>
+
+</section>
+<section id="historicoCompletoGastos" class="tela">
+
+  <h1>📜 Histórico Completo</h1>
+
+  <p class="subtitulo">
+    Todos os gastos cadastrados
+  </p>
+
+  <div class="card">
+    <ul id="listaHistoricoCompleto"></ul>
+
+    <button
+      class="secundario"
+      onclick="abrirTela('gastosTela')">
+      ← Voltar
+    </button>
   </div>
 
 </section>

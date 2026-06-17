@@ -3774,10 +3774,46 @@ if (comparacaoGastoVariacao) {
       ? `${variacaoGastos}%`
       : "Sem mês anterior";
 }
+let listaHistoricoCompleto =
+  document.getElementById("listaHistoricoCompleto");
+
+if (listaHistoricoCompleto) {
+  listaHistoricoCompleto.innerHTML = "";
+
+  gastosFiltrados
+    .slice()
+    .sort((a, b) => new Date(b.data) - new Date(a.data))
+    .forEach(gasto => {
+      listaHistoricoCompleto.innerHTML += `
+        <li>
+          <strong>${gasto.categoria}</strong>
+          <br>
+          💰 ${formatarMoeda(gasto.valor)}
+          <br>
+          📅 ${gasto.data || "sem data"}
+          <br>
+          📝 ${gasto.descricao || "sem descrição"}
+          <br><br>
+
+          <button onclick="editarGasto('${gasto.id}')">
+            ✏️ Editar
+          </button>
+
+          <button onclick="excluirGasto('${gasto.id}')">
+            🗑️ Excluir
+          </button>
+        </li>
+      `;
+    });
+}
   if (listaGastos) {
     listaGastos.innerHTML = "";
 
-    gastosFiltrados.forEach((gasto, index) => {
+    gastosFiltrados
+  .slice()
+  .sort((a, b) => new Date(b.data) - new Date(a.data))
+  .slice(0, 3)
+  .forEach((gasto, index) => {
       let indexReal = gastos.indexOf(gasto);
 
       listaGastos.innerHTML += `
