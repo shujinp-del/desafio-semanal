@@ -892,30 +892,46 @@ canvas {
   font-weight: 800;
 }
 .progresso-meta-v2 {
-  border: 1px solid rgba(255,122,24,0.25);
+  border: 1px solid rgba(255,170,0,.35);
   background:
-    radial-gradient(circle at top right, rgba(255,122,24,0.18), transparent 35%),
-    linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+    radial-gradient(circle at top left,
+    rgba(255,145,0,.12),
+    transparent 35%),
+    linear-gradient(145deg,#171717,#0b0b0b);
+
+  border-radius: 22px;
+  padding: 18px;
 }
 
-.valor-progresso-meta {
-  display: block;
-  margin-top: 16px;
-  font-size: 2rem;
-  color: #7ed957;
+.valor-progresso-meta{
+  display:block;
+  font-size:2rem;
+  font-weight:900;
+  color:#6ee56e;
+  margin-top:8px;
 }
 
-.meta-total-v2 {
-  margin: 6px 0 16px;
-  opacity: 0.85;
+.meta-total-v2{
+  font-size:0.95rem;
 }
 
-.barra-meta-v2 {
-  width: 100%;
-  height: 12px;
-  background: rgba(255,255,255,0.12);
-  border-radius: 999px;
-  overflow: hidden;
+.barra-meta-v2{
+  width:100%;
+  height:12px;
+  background:#252525;
+  border-radius:999px;
+  overflow:hidden;
+  margin:12px 0;
+}
+
+#barraMetaTela{
+  height:100%;
+  border-radius:999px;
+  background:linear-gradient(
+    90deg,
+    #ff8c00,
+    #ffb300
+  );
 }
 
 .barra-meta-v2 div {
@@ -926,20 +942,23 @@ canvas {
   transition: width 0.4s ease;
 }
 
-.linha-meta-v2 {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 12px;
-  font-weight: 700;
+.linha-meta-v2{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  margin-top:10px;
+  font-size:.95rem;
 }
 
-.falta-meta-v2 {
-  margin-top: 14px;
-  padding: 12px;
-  border-radius: 14px;
-  background: rgba(0,0,0,0.22);
-  text-align: center;
-  opacity: 0.9;
+.linha-meta-v2 strong{
+  color:#ffb300;
+}
+
+.falta-meta-v2{
+  margin-top:10px;
+  color:#d6d6d6;
+  font-size:.85rem;
 }
 .badge-card-v2{
     border:1px solid rgba(255,184,0,.25);
@@ -1875,4 +1894,95 @@ canvas {
 .home-v2 .origem-box {
   width: 100%;
   min-width: 0;
+}
+/* Metas Premium - Meta Inteligente */
+.meta-inteligente-premium {
+  border: 1px solid rgba(255, 170, 0, 0.35);
+  background:
+    radial-gradient(circle at top left, rgba(255, 145, 0, 0.15), transparent 35%),
+    linear-gradient(145deg, #171717, #0b0b0b);
+}
+
+.meta-inteligente-titulo {
+  display: block;
+  margin-bottom: 8px;
+  color: #f5f5f5;
+}
+
+.meta-inteligente-texto {
+  display: none;
+}
+
+.grid-metas-inteligentes {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 9px;
+  margin-top: 10px;
+}
+
+.meta-opcao-card {
+  border-radius: 15px;
+  padding: 10px;
+  text-align: center;
+  background: rgba(255,255,255,0.035);
+}
+
+.meta-opcao-icone {
+  font-size: 1.55rem;
+  margin-bottom: 3px;
+}
+
+.meta-opcao-card strong,
+.meta-opcao-card span,
+.meta-opcao-card small {
+  display: block;
+}
+
+.meta-opcao-card strong {
+  font-size: 0.9rem;
+}
+
+.meta-opcao-card span {
+  font-size: 0.95rem;
+  font-weight: 800;
+  margin: 4px 0;
+}
+
+.meta-opcao-card small {
+  color: #bbb;
+  font-size: 0.7rem;
+  line-height: 1.2;
+}
+
+.meta-opcao-card button {
+  width: 100%;
+  margin-top: 8px;
+  border-radius: 999px;
+  border: none;
+  padding: 8px;
+  font-weight: 800;
+}
+
+.meta-conservadora-card {
+  border: 1px solid rgba(0, 220, 90, 0.55);
+}
+
+.meta-conservadora-card span {
+  color: #22c55e;
+}
+
+.meta-recomendada-card {
+  border: 1px solid rgba(255, 180, 0, 0.65);
+}
+
+.meta-recomendada-card span {
+  color: #ffb300;
+}
+
+.meta-desafio-card {
+  border: 1px solid rgba(255, 70, 70, 0.65);
+}
+
+.meta-desafio-card span {
+  color: #ff4b4b;
 }

@@ -653,31 +653,52 @@
       <div class="card">
         <h2>Meta semanal</h2>
         <input id="metaSemanal" type="number" placeholder="Ex: 3000">
-        <div class="card meta-inteligente">
+        <div class="card meta-inteligente meta-inteligente-premium">
   <h2>🧠 Meta Inteligente</h2>
 
-  <strong id="metaInteligenteValor">
-    R$ 0,00
+  <strong id="metaInteligenteValor" class="meta-inteligente-titulo">
+    Escolha sua meta:
   </strong>
 
-  <p id="metaInteligenteTexto">
+  <p id="metaInteligenteTexto" class="meta-inteligente-texto">
     Baseado nos últimos 30 dias
   </p>
-  <div class="botoes-metas-sugeridas">
-  <button onclick="usarMetaConservadora()">
-    🟢 Usar conservadora
-  </button>
 
-  <button onclick="usarMetaRecomendada()">
-    🟡 Usar recomendada
-  </button>
+  <div class="grid-metas-inteligentes">
+    <div class="meta-opcao-card meta-conservadora-card">
+      <div class="meta-opcao-icone">🛡️</div>
+      <strong>Conservadora</strong>
+      <span id="metaConservadoraCard">R$ 0,00</span>
+      <small>Mais segura para sua semana</small>
 
-  <button onclick="usarMetaDesafio()">
-    🔴 Usar desafio
-  </button>
+      <button onclick="usarMetaConservadora()">
+        Usar
+      </button>
+    </div>
+
+    <div class="meta-opcao-card meta-recomendada-card">
+      <div class="meta-opcao-icone">⭐</div>
+      <strong>Recomendada</strong>
+      <span id="metaRecomendadaCard">R$ 0,00</span>
+      <small>Baseada no seu histórico</small>
+
+      <button onclick="usarMetaRecomendada()">
+        Usar
+      </button>
+    </div>
+
+    <div class="meta-opcao-card meta-desafio-card">
+      <div class="meta-opcao-icone">🚀</div>
+      <strong>Desafio</strong>
+      <span id="metaDesafioCard">R$ 0,00</span>
+      <small>Para ir além do normal</small>
+
+      <button onclick="usarMetaDesafio()">
+        Usar
+      </button>
+    </div>
+  </div>
 </div>
-</div>
-
         <button onclick="salvarMeta()">
           Salvar meta
         </button>

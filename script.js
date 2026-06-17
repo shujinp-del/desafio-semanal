@@ -2802,11 +2802,15 @@ function atualizarMetaInteligente() {
   limite.setDate(hoje.getDate() - 30);
 
   let total30Dias = 0;
-  let quantidade = 0;
 
   corridasFirebase.forEach(item => {
 
     if (!item.data) return;
+
+    if (
+      item.uid !== usuarioAtual?.uid &&
+      item.email !== usuarioAtual?.email
+    ) return;
 
     let dataCorrida =
       new Date(item.data + "T00:00:00");
@@ -2816,50 +2820,61 @@ function atualizarMetaInteligente() {
       dataCorrida <= hoje
     ) {
       total30Dias += Number(item.valor || 0);
-      quantidade++;
     }
 
   });
 
- let mediaDiaria = total30Dias / 30;
+  let mediaDiaria = total30Dias / 30;
 
-let mediaSemanal =
-  mediaDiaria * 7;
+  let mediaSemanal =
+    mediaDiaria * 7;
 
-let metaConservadora =
-  mediaSemanal;
+  let metaConservadora =
+    mediaSemanal;
 
-let metaRecomendada =
-  mediaSemanal * 1.10;
+  let metaRecomendada =
+    mediaSemanal * 1.10;
 
-let metaDesafio =
-  mediaSemanal * 1.20;
+  let metaDesafio =
+    mediaSemanal * 1.20;
 
-metaConservadoraAtual =
-  Math.round(metaConservadora);
+  metaConservadoraAtual =
+    Math.round(metaConservadora);
 
-metaRecomendadaAtual =
-  Math.round(metaRecomendada);
+  metaRecomendadaAtual =
+    Math.round(metaRecomendada);
 
-metaDesafioAtual =
-  Math.round(metaDesafio);
+  metaDesafioAtual =
+    Math.round(metaDesafio);
 
-valorEl.innerText =
-  "Escolha sua meta:";
+  valorEl.innerText =
+    "Escolha sua meta:";
 
-textoEl.innerHTML = `
-  🟢 Conservadora:
-  <strong>${formatarMoeda(metaConservadora)}</strong>
-  <br><br>
+  textoEl.innerHTML = "";
 
-  🟡 Recomendada:
-  <strong>${formatarMoeda(metaRecomendada)}</strong>
-  <br><br>
+  let metaConservadoraCard =
+    document.getElementById("metaConservadoraCard");
 
-  🔴 Desafio:
-  <strong>${formatarMoeda(metaDesafio)}</strong>
-`;
+  let metaRecomendadaCard =
+    document.getElementById("metaRecomendadaCard");
 
+  let metaDesafioCard =
+    document.getElementById("metaDesafioCard");
+
+  if (metaConservadoraCard) {
+    metaConservadoraCard.innerText =
+      formatarMoeda(metaConservadora);
+  }
+
+  if (metaRecomendadaCard) {
+    metaRecomendadaCard.innerText =
+      formatarMoeda(metaRecomendada);
+  }
+
+  if (metaDesafioCard) {
+    metaDesafioCard.innerText =
+      formatarMoeda(metaDesafio);
+  }
 }
 
 function usarMetaRecomendada() {
