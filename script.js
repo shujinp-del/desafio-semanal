@@ -920,11 +920,7 @@ function formatarData(data) {
 }
 
 function abrirTela(id) {
-  if (id === "historicoTela" && !usuarioEhAdmin()) {
-    alert("Acesso restrito ao admin.");
-    abrirTela("home");
-    return;
-  }
+  
 
   if (id === "adminTela" && !usuarioEhAdmin()) {
     alert("Acesso restrito ao admin.");
