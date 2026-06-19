@@ -274,11 +274,11 @@ function montarRanking(corridas) {
   let mapa = {};
 
   corridas.forEach(item => {
-    let chave = item.nome.toLowerCase();
+    let chave = item.uid || item.email || item.nome.toLowerCase();
 
     if (!mapa[chave]) {
       mapa[chave] = {
-        nome: item.nome,
+        nome: item.nome || item.email || "Motorista",
         valor: 0,
         corridas: 0,
         historico: []
@@ -391,14 +391,26 @@ async function adicionar() {
     return;
   }
 
-  let nome = document.getElementById("nome").value.trim();
-  let valor = Number(document.getElementById("valor").value);
-  let corridas = Number(document.getElementById("corridas").value);
-  let origem = document.getElementById("origem").value;
-  let data = document.getElementById("data").value;
+  let nome =
+    dadosUsuario.nomeExibicao ||
+    usuarioAtual.displayName ||
+    usuarioAtual.email ||
+    "Motorista";
 
-  if (!nome || valor <= 0 || !data) {
-    alert("Preencha nome, valor e data");
+  let valor =
+    Number(document.getElementById("valor").value);
+
+  let corridas =
+    Number(document.getElementById("corridas").value);
+
+  let origem =
+    document.getElementById("origem").value;
+
+  let data =
+    document.getElementById("data").value;
+
+  if (valor <= 0 || !data) {
+    alert("Preencha valor e data");
     return;
   }
 
@@ -1021,6 +1033,16 @@ if (totalHojeCorrida) {
 if (corridasHojeCorrida) {
   corridasHojeCorrida.innerText =
     qtdHoje;
+}
+let nomeMotoristaAtual =
+  document.getElementById("nomeMotoristaAtual");
+
+if (nomeMotoristaAtual && usuarioAtual) {
+  nomeMotoristaAtual.innerText =
+    dadosUsuario?.nomeExibicao ||
+    usuarioAtual.displayName ||
+    usuarioAtual.email ||
+    "Motorista";
 }
 
   atualizarRanking();
