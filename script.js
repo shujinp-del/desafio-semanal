@@ -1037,13 +1037,16 @@ if (corridasHojeCorrida) {
 let nomeMotoristaAtual =
   document.getElementById("nomeMotoristaAtual");
 
-if (nomeMotoristaAtual && usuarioAtual) {
-  nomeMotoristaAtual.innerText =
-    dadosUsuario?.nomeExibicao ||
-    usuarioAtual.displayName ||
-    usuarioAtual.email ||
-    "Motorista";
+let nomeVisual =
+  dadosUsuario?.nomeExibicao ||
+  usuarioAtual.displayName ||
+  usuarioAtual.email?.split("@")[0] ||
+  "Motorista";
+
+if (nomeMotoristaAtual) {
+  nomeMotoristaAtual.innerText = nomeVisual;
 }
+
 
   atualizarRanking();
   atualizarLider();
