@@ -1409,6 +1409,7 @@ function atualizarComparativoMensal() {
     }
 
   });
+  
 
   let mediaDiaria = 0;
 
@@ -2995,6 +2996,9 @@ function atualizarMetaInteligente() {
 
   let mediaSemanalGastos =
     mediaDiariaGastos * 7;
+    console.log("Ganhos 30 dias:", totalGanhos30Dias);
+console.log("Gastos 30 dias:", totalGastos30Dias);
+console.log("Gastos semanais médios:", mediaSemanalGastos);
 
   let metaConservadora =
     mediaSemanalGanhos + mediaSemanalGastos;
@@ -3018,7 +3022,15 @@ function atualizarMetaInteligente() {
     "Escolha sua meta real:";
 
   textoEl.innerHTML =
-  `💸 Gastos considerados: ${formatarMoeda(mediaSemanalGastos)}`;
+  "Escolha uma meta ajustada com seus gastos.";
+
+let gastosInfo =
+  document.getElementById("metaGastosConsiderados");
+
+if (gastosInfo) {
+  gastosInfo.innerText =
+    `💸 Gastos considerados: ${formatarMoeda(mediaSemanalGastos)}`;
+}
 
   let metaConservadoraCard =
     document.getElementById("metaConservadoraCard");
