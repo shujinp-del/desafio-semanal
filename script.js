@@ -670,6 +670,99 @@ function atualizarMetas() {
     mediaDiariaEl.innerText = formatarMoeda(mediaDiaria);
   }
 }
+function atualizarMetaReal() {
+
+  if (!usuarioAtual) return;
+
+  let meta =
+    Number(
+      (dadosUsuario?.metaSemanal || 0)
+    );
+
+  let minhasSemana =
+    corridasFirebase.filter(item =>
+      (
+        item.uid === usuarioAtual.uid ||
+        item.email === usuarioAtual.email
+      ) &&
+      estaNaSemanaAtual(item.data)
+    );
+
+  let faturamento =
+    minhasSemana.reduce(
+      (soma, item) =>
+        soma + Number(item.valor || 0),
+      0
+    );
+
+  let gastosSemana =
+    gastosFirebase.reduce(
+      (soma, item) =>
+        soma + Number(item.valor || 0),
+      0
+    );
+
+  let metaNecessaria =
+    meta + gastosSemana;
+
+  let faltam =
+    Math.max(
+      0,
+      metaNecessaria - faturamento
+    );
+
+  let hoje = new Date();
+
+  let diaSemana = hoje.getDay();
+
+  let diasRestantes =
+    diaSemana === 0
+      ? 1
+      : 7 - diaSemana;
+
+  let porDia =
+    faltam /
+    Math.max(1, diasRestantes);
+
+  document.getElementById(
+    "metaRealDesejada"
+  ).innerText =
+    formatarMoeda(meta);
+
+  document.getElementById(
+    "metaRealGastos"
+  ).innerText =
+    formatarMoeda(gastosSemana);
+
+  document.getElementById(
+    "metaRealNecessaria"
+  ).innerText =
+    formatarMoeda(metaNecessaria);
+
+  document.getElementById(
+    "metaRealFaltam"
+  ).innerText =
+    formatarMoeda(faltam);
+
+  document.getElementById(
+    "metaRealPorDia"
+  ).innerText =
+    formatarMoeda(porDia);
+
+  let status =
+    document.getElementById(
+      "metaRealStatus"
+    );
+
+  if (faltam <= 0) {
+    status.innerText =
+      "🏆 Meta real alcançada!";
+  } else {
+    status.innerText =
+      `🚖 Restam ${diasRestantes} dia(s) para concluir a meta.`;
+  }
+
+}
 
 function atualizarMelhorDia() {
   let nomeEl = document.getElementById("melhorDiaNome");
@@ -974,6 +1067,7 @@ function abrirTela(id) {
   if (id === "metasTela") {
     atualizarMetas();
     atualizarRankingMetas();
+    atualizarMetaReal();
     atualizarMelhorDia();
     atualizarPiorDia();
     atualizarFechamentoMensal();
@@ -1082,6 +1176,7 @@ if (nomeMotoristaAtual) {
   //atualizarMelhorSemana();
   atualizarMinhasCorridas();
   atualizarMetas();
+  atualizarMetaReal();
   atualizarRankingMetas();
   atualizarMelhorDia();
   atualizarPiorDia();
