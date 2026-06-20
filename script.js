@@ -2988,8 +2988,36 @@ function atualizarMetaInteligente() {
   let mediaDiariaGanhos =
     totalGanhos30Dias / 30;
 
-  let mediaDiariaGastos =
-    totalGastos30Dias / 30;
+  let diasComGastos = new Set();
+
+gastosFirebase.forEach(item => {
+
+  if (!item.data) return;
+
+  if (
+    item.uid !== usuarioAtual.uid &&
+    item.email !== usuarioAtual.email
+  ) return;
+
+  let dataGasto =
+    new Date(item.data + "T00:00:00");
+
+  if (
+    dataGasto >= limite &&
+    dataGasto <= hoje
+  ) {
+    diasComGastos.add(item.data);
+  }
+
+});
+
+let divisorGastos =
+  diasComGastos.size > 0
+    ? Math.min(diasComGastos.size, 30)
+    : 30;
+
+let mediaDiariaGastos =
+  totalGastos30Dias / divisorGastos;
 
   let mediaSemanalGanhos =
     mediaDiariaGanhos * 7;
@@ -3022,7 +3050,7 @@ console.log("Gastos semanais médios:", mediaSemanalGastos);
     "Escolha sua meta real:";
 
   textoEl.innerHTML =
-  "Escolha uma meta ajustada com seus gastos.";
+  `Baseada em ${divisorGastos} dia(s) com gastos registrados.`;
 
 let gastosInfo =
   document.getElementById("metaGastosConsiderados");
