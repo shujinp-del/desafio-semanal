@@ -4,6 +4,7 @@ import {
   getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  sendPasswordResetEmail,
   signOut,
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -21,7 +22,6 @@ import {
   getDoc,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
 const firebaseConfig = {
   apiKey: "AIzaSyBrfxwL7BCUQSInVnP7Mx4jnmhNFazABfE",
   authDomain: "desafio-semanal.firebaseapp.com",
@@ -31,7 +31,10 @@ const firebaseConfig = {
   appId: "1:948247090731:web:fb36df17768ce636f07c6e"
 };
 
-const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+const app = getApps().length
+  ? getApp()
+  : initializeApp(firebaseConfig);
+
 const db = getFirestore(app);
 const auth = getAuth(app);
 
@@ -145,6 +148,25 @@ function entrar() {
 
   signInWithEmailAndPassword(auth, email, senha)
     .catch(erro => alert(erro.message));
+}
+async function recuperarSenha() {
+  let email = document.getElementById("emailLogin").value.trim();
+
+  if (!email) {
+    alert("Digite seu email para recuperar a senha.");
+    return;
+  }
+
+  try {
+    await sendPasswordResetEmail(auth, email);
+
+    alert(
+      "📧 Enviamos um email para redefinir sua senha. Verifique sua caixa de entrada."
+    );
+  } catch (erro) {
+    console.error(erro);
+    alert("Erro ao enviar recuperação de senha.");
+  }
 }
 
 function sair() {
@@ -3898,3 +3920,4 @@ window.solicitarEntradaGrupo = solicitarEntradaGrupo;
 window.buscarGrupo = buscarGrupo;
 window.mudarPeriodoGastos = mudarPeriodoGastos;
 window.carregarGastosFirebase =carregarGastosFirebase;
+window.recuperarSenha = recuperarSenha;
