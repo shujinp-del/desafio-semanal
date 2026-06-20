@@ -1065,14 +1065,15 @@ function abrirTela(id) {
   }
 
   if (id === "metasTela") {
-    atualizarMetas();
-    atualizarRankingMetas();
-    atualizarMetaReal();
-    atualizarMelhorDia();
-    atualizarPiorDia();
-    atualizarFechamentoMensal();
-    atualizarMetaInteligente();
-  }
+  carregarGastosFirebase();
+  atualizarMetas();
+  atualizarMetaReal();
+  atualizarRankingMetas();
+  atualizarMelhorDia();
+  atualizarPiorDia();
+  atualizarFechamentoMensal();
+  atualizarMetaInteligente();
+}
 
   if (id === "adminTela") {
     atualizarAdmin();
@@ -3017,7 +3018,7 @@ function atualizarMetaInteligente() {
     "Escolha sua meta real:";
 
   textoEl.innerHTML =
-    `Inclui média semanal de gastos: ${formatarMoeda(mediaSemanalGastos)}`;
+  `💸 Gastos considerados: ${formatarMoeda(mediaSemanalGastos)}`;
 
   let metaConservadoraCard =
     document.getElementById("metaConservadoraCard");
@@ -3593,6 +3594,8 @@ async function carregarGastosFirebase() {
     });
 
     atualizarGastos();
+    atualizarMetaReal();
+atualizarMetaInteligente();
 
   } catch (erro) {
 
