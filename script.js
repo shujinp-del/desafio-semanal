@@ -2931,22 +2931,23 @@ function atualizarMetaInteligente() {
   let textoEl =
     document.getElementById("metaInteligenteTexto");
 
-  if (!valorEl || !textoEl) return;
+  if (!valorEl || !textoEl || !usuarioAtual) return;
 
   let hoje = new Date();
   let limite = new Date();
 
   limite.setDate(hoje.getDate() - 30);
 
-  let total30Dias = 0;
+  let totalGanhos30Dias = 0;
+  let totalGastos30Dias = 0;
 
   corridasFirebase.forEach(item => {
 
     if (!item.data) return;
 
     if (
-      item.uid !== usuarioAtual?.uid &&
-      item.email !== usuarioAtual?.email
+      item.uid !== usuarioAtual.uid &&
+      item.email !== usuarioAtual.email
     ) return;
 
     let dataCorrida =
@@ -2956,24 +2957,52 @@ function atualizarMetaInteligente() {
       dataCorrida >= limite &&
       dataCorrida <= hoje
     ) {
-      total30Dias += Number(item.valor || 0);
+      totalGanhos30Dias += Number(item.valor || 0);
     }
 
   });
 
-  let mediaDiaria = total30Dias / 30;
+  gastosFirebase.forEach(item => {
 
-  let mediaSemanal =
-    mediaDiaria * 7;
+    if (!item.data) return;
+
+    if (
+      item.uid !== usuarioAtual.uid &&
+      item.email !== usuarioAtual.email
+    ) return;
+
+    let dataGasto =
+      new Date(item.data + "T00:00:00");
+
+    if (
+      dataGasto >= limite &&
+      dataGasto <= hoje
+    ) {
+      totalGastos30Dias += Number(item.valor || 0);
+    }
+
+  });
+
+  let mediaDiariaGanhos =
+    totalGanhos30Dias / 30;
+
+  let mediaDiariaGastos =
+    totalGastos30Dias / 30;
+
+  let mediaSemanalGanhos =
+    mediaDiariaGanhos * 7;
+
+  let mediaSemanalGastos =
+    mediaDiariaGastos * 7;
 
   let metaConservadora =
-    mediaSemanal;
+    mediaSemanalGanhos + mediaSemanalGastos;
 
   let metaRecomendada =
-    mediaSemanal * 1.10;
+    (mediaSemanalGanhos * 1.10) + mediaSemanalGastos;
 
   let metaDesafio =
-    mediaSemanal * 1.20;
+    (mediaSemanalGanhos * 1.20) + mediaSemanalGastos;
 
   metaConservadoraAtual =
     Math.round(metaConservadora);
@@ -2985,9 +3014,10 @@ function atualizarMetaInteligente() {
     Math.round(metaDesafio);
 
   valorEl.innerText =
-    "Escolha sua meta:";
+    "Escolha sua meta real:";
 
-  textoEl.innerHTML = "";
+  textoEl.innerHTML =
+    `Inclui média semanal de gastos: ${formatarMoeda(mediaSemanalGastos)}`;
 
   let metaConservadoraCard =
     document.getElementById("metaConservadoraCard");
