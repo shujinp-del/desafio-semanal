@@ -453,7 +453,6 @@ function editarCorrida(id) {
 
   if (!corrida) return;
 
-  document.getElementById("nome").value = corrida.nome;
   document.getElementById("valor").value = corrida.valor;
   document.getElementById("corridas").value = corrida.corridas || 0;
   document.getElementById("origem").value = corrida.origem || "Uber";
@@ -2346,17 +2345,17 @@ function atualizarGraficoLinha() {
 }
 
 function limparCampos() {
-  document.getElementById("nome").value = "";
   document.getElementById("valor").value = "";
   document.getElementById("corridas").value = "";
   document.getElementById("data").value = "";
-  let botaoSalvarCorrida =
-  document.getElementById("botaoSalvarCorrida");
 
-if (botaoSalvarCorrida) {
-  botaoSalvarCorrida.innerText =
-    "Adicionar corrida";
-}
+  let botaoSalvarCorrida =
+    document.getElementById("botaoSalvarCorrida");
+
+  if (botaoSalvarCorrida) {
+    botaoSalvarCorrida.innerText =
+      "Adicionar corrida";
+  }
 }
 
 async function resetSemana() {
