@@ -1527,194 +1527,172 @@ function atualizarRecordes() {
 function atualizarAssistenteMMS() {
   if (!usuarioAtual) return;
 
-  let tituloEl = document.getElementById("assistenteTitulo");
-  let linha1El = document.getElementById("assistenteLinha1");
-  let linha2El = document.getElementById("assistenteLinha2");
-  let faltamMetaHome = document.getElementById("faltamMetaHome");
+  let cardAssistente =
+    document.querySelector(".assistente-mms-card");
+
+  let tituloEl =
+    document.getElementById("assistenteTitulo");
+
+  let linha1El =
+    document.getElementById("assistenteLinha1");
+
+  let linha2El =
+    document.getElementById("assistenteLinha2");
 
   if (!tituloEl || !linha1El || !linha2El) return;
 
-  let minhasSemana = corridasFirebase.filter(item =>
-    (
-      item.uid === usuarioAtual.uid ||
-      item.email === usuarioAtual.email
-    ) &&
-    estaNaSemanaAtual(item.data)
-  );
-
-  let totalSemana = minhasSemana.reduce(
-    (soma, item) => soma + Number(item.valor || 0),
-    0
-  );
-
-  let corridasSemana = minhasSemana.reduce(
-    (soma, item) => soma + Number(item.corridas || 0),
-    0
-  );
-  let diasProjecaoAssistente = new Set(
-  minhasSemana.map(item => item.data)
-).size;
-
-let mediaProjecaoAssistente = 0;
-
-if (diasProjecaoAssistente > 0) {
-  mediaProjecaoAssistente =
-    totalSemana / diasProjecaoAssistente;
-}
-
-let valorProjecaoAssistente =
-  mediaProjecaoAssistente * 7;
- // Mesmo período da semana passada
-let hoje = new Date();
-
-let inicioSemanaAtual = obterInicioSemana(hoje);
-
-let inicioSemanaPassada = new Date(inicioSemanaAtual);
-inicioSemanaPassada.setDate(
-  inicioSemanaPassada.getDate() - 7
-);
-
-let diasDecorridos = Math.floor(
-  (hoje - inicioSemanaAtual) /
-  (1000 * 60 * 60 * 24)
-);
-
-let fimComparacaoPassada = new Date(inicioSemanaPassada);
-fimComparacaoPassada.setDate(
-  fimComparacaoPassada.getDate() + diasDecorridos + 1
-);
-
-let totalSemanaPassada = corridasFirebase
-  .filter(item => {
-
-    if (
-      item.uid !== usuarioAtual.uid &&
-      item.email !== usuarioAtual.email
-    ) {
-      return false;
-    }
-
-    if (!item.data) return false;
-
-    let dataItem = new Date(item.data + "T12:00:00");
-
-    return (
-      dataItem >= inicioSemanaPassada &&
-      dataItem < fimComparacaoPassada
+  if (cardAssistente) {
+    cardAssistente.classList.remove(
+      "assistente-verde",
+      "assistente-amarelo",
+      "assistente-vermelho",
+      "assistente-neutro"
     );
-  })
-  .reduce(
-    (soma, item) => soma + Number(item.valor || 0),
-    0
-  );
-
-let variacaoSemanal = 0;
-
-if (totalSemanaPassada > 0) {
-  variacaoSemanal =
-    (
-      (
-        totalSemana -
-        totalSemanaPassada
-      ) /
-      totalSemanaPassada
-    ) * 100;
-}
-
-  let meta = Number((dadosUsuario && dadosUsuario.metaSemanal) || 0);
-
-  let progressoMeta = meta > 0
-    ? Math.round((totalSemana / meta) * 100)
-    : 0;
-
-  let faltaMeta = Math.max(0, meta - totalSemana);
-
-  if (faltamMetaHome) {
-    faltamMetaHome.innerText = formatarMoeda(faltaMeta);
   }
+
+  let meta =
+    Number((dadosUsuario && dadosUsuario.metaSemanal) || 0);
+
+  let minhasSemana =
+    corridasFirebase.filter(item =>
+      (
+        item.uid === usuarioAtual.uid ||
+        item.email === usuarioAtual.email
+      ) &&
+      estaNaSemanaAtual(item.data)
+    );
+
+  let totalSemana =
+    minhasSemana.reduce(
+      (soma, item) => soma + Number(item.valor || 0),
+      0
+    );
+
+  let gastosSemana =
+    gastosFirebase
+      .filter(item =>
+        (
+          item.uid === usuarioAtual.uid ||
+          item.email === usuarioAtual.email
+        ) &&
+        estaNaSemanaAtual(item.data)
+      )
+      .reduce(
+        (soma, item) => soma + Number(item.valor || 0),
+        0
+      );
+
+  let metaReal =
+    meta + gastosSemana;
+
+  let diasTrabalhados =
+    new Set(minhasSemana.map(item => item.data)).size;
+
+  let mediaDiaria =
+    diasTrabalhados > 0
+      ? totalSemana / diasTrabalhados
+      : 0;
+
+  let hoje = new Date();
+  let diaSemana = hoje.getDay();
+
+  let diasRestantes =
+    diaSemana === 0
+      ? 1
+      : 7 - diaSemana;
+
+  let projecaoFinal =
+  mediaDiaria * 7;
+
+  let diferenca =
+    projecaoFinal - metaReal;
+
+  let falta =
+    Math.abs(diferenca);
+
+  let lucroAtual =
+    totalSemana - gastosSemana;
 
   if (minhasSemana.length === 0) {
-    tituloEl.innerText = "Comece sua semana registrando corridas.";
-    linha1El.innerText = "O MMS vai analisar seu desempenho automaticamente.";
-    linha2El.innerText = "Assim que houver dados, os insights aparecem aqui.";
+    tituloEl.innerText =
+      "⚪ Comece sua semana";
+
+    linha1El.innerText =
+      "Registre suas corridas para o MMS calcular sua projeção.";
+
+    linha2El.innerText =
+      "O assistente vai acompanhar meta, gastos e lucro.";
+
+    if (cardAssistente) {
+      cardAssistente.classList.add("assistente-neutro");
+    }
+
     return;
   }
 
-  if (meta > 0 && progressoMeta >= 100) {
-    tituloEl.innerText = "Meta semanal batida! 🏆";
-    linha1El.innerText = `Você já atingiu ${progressoMeta}% da sua meta.`;
-    linha2El.innerText = "Excelente desempenho nesta semana.";
+  if (meta <= 0) {
+    tituloEl.innerText =
+      "⚪ Defina uma meta";
+
+    linha1El.innerText =
+      `Você já faturou ${formatarMoeda(totalSemana)} nesta semana.`;
+
+    linha2El.innerText =
+      "Cadastre uma meta semanal para liberar o Farol MMS.";
+
+    if (cardAssistente) {
+      cardAssistente.classList.add("assistente-neutro");
+    }
+
     return;
   }
 
-  if (meta > 0 && progressoMeta >= 75) {
-    tituloEl.innerText = "Você está muito perto da meta! 🔥";
-    linha1El.innerText = `Faltam apenas ${formatarMoeda(faltaMeta)} para atingir sua meta.`;
-    linha2El.innerText = `Você já completou ${progressoMeta}% do objetivo semanal.`;
+  if (diferenca >= 0) {
+    tituloEl.innerText =
+      "🟢 Farol Verde";
+
+    linha1El.innerText =
+      `Projeção: ${formatarMoeda(projecaoFinal)}.`;
+
+    linha2El.innerText =
+      `Você deve ultrapassar a meta real em ${formatarMoeda(diferenca)}.`;
+
+    if (cardAssistente) {
+      cardAssistente.classList.add("assistente-verde");
+    }
+
     return;
   }
-  if (
-  totalSemanaPassada > 0 &&
-  variacaoSemanal >= 10
-) {
+
+  if (falta <= metaReal * 0.10) {
+    tituloEl.innerText =
+      "🟡 Farol Amarelo";
+
+    linha1El.innerText =
+      `Projeção: ${formatarMoeda(projecaoFinal)}.`;
+
+    linha2El.innerText =
+      `Faltariam apenas ${formatarMoeda(falta)} para atingir a meta real.`;
+
+    if (cardAssistente) {
+      cardAssistente.classList.add("assistente-amarelo");
+    }
+
+    return;
+  }
+
   tituloEl.innerText =
-    "Você está evoluindo! 📈";
+    "🔴 Farol Vermelho";
 
   linha1El.innerText =
-    `Seu faturamento cresceu ${variacaoSemanal.toFixed(0)}% em relação à semana passada.`;
+    `Projeção: ${formatarMoeda(projecaoFinal)}.`;
 
   linha2El.innerText =
-    "Excelente evolução. Continue assim.";
+    `Ritmo abaixo. Faltariam ${formatarMoeda(falta)} para a meta real.`;
 
-  return;
-}
-
-if (
-  false
-)
- {
-  tituloEl.innerText =
-    "Ainda dá para recuperar. 💪";
-
-  linha1El.innerText =
-    `Seu faturamento caiu ${Math.abs(variacaoSemanal).toFixed(0)}% em relação à semana passada.`;
-
-  linha2El.innerText =
-    "A semana ainda não acabou.";
-
-  return;
-}
-if (diasProjecaoAssistente >= 2) {
-
-  tituloEl.innerText =
-    "Projeção da Semana 📈";
-
-  linha1El.innerText =
-    `Mantendo o ritmo atual, você fechará a semana com ${formatarMoeda(valorProjecaoAssistente)}.`;
-
-  linha2El.innerText =
-    "Continue registrando suas corridas para melhorar a previsão.";
-
-  return;
-}
-
-  if (corridasSemana >= 30) {
-    tituloEl.innerText = "Seu ritmo de corridas está forte. 🚗";
-    linha1El.innerText = `Você já fez ${corridasSemana} corridas nesta semana.`;
-    linha2El.innerText = `Total acumulado: ${formatarMoeda(totalSemana)}.`;
-    return;
+  if (cardAssistente) {
+    cardAssistente.classList.add("assistente-vermelho");
   }
-
-  if (totalSemana > 0 && meta > 0) {
-    tituloEl.innerText = "Semana em andamento. 📊";
-    linha1El.innerText = `Você está em ${progressoMeta}% da meta semanal.`;
-    linha2El.innerText = `Faltam ${formatarMoeda(faltaMeta)} para completar o objetivo.`;
-    return;
-  }
-
-  tituloEl.innerText = "O MMS está acompanhando sua evolução.";
-  linha1El.innerText = `Você já faturou ${formatarMoeda(totalSemana)} esta semana.`;
-  linha2El.innerText = `Corridas registradas: ${corridasSemana}.`;
 }
 function atualizarLider() {
   let lider = document.getElementById("liderSemana");
@@ -1846,7 +1824,72 @@ let metaDesafioDias = 5;
 let diasTrabalhadosSemana = new Set(
   minhasSemana.map(item => item.data)
 ).size;
+let mediaDiariaSemana = 0;
 
+if (diasTrabalhadosSemana > 0) {
+  mediaDiariaSemana =
+    totalSemanaValor / diasTrabalhadosSemana;
+}
+
+let mediaDiariaHome =
+  document.getElementById("mediaDiariaHome");
+
+if (mediaDiariaHome) {
+  mediaDiariaHome.innerText =
+    formatarMoeda(mediaDiariaSemana);
+}
+let projecaoMedia =
+  document.getElementById("projecaoMedia");
+
+let projecaoSemana =
+  document.getElementById("projecaoSemana");
+
+let projecaoStatus =
+  document.getElementById("projecaoStatus");
+
+let diasRestantes =
+  Math.max(0, 7 - diasTrabalhadosSemana);
+
+let projecaoFinal =
+  totalSemanaValor +
+  (mediaDiariaSemana * diasRestantes);
+
+if (projecaoMedia) {
+  projecaoMedia.innerText =
+    `Média diária: ${formatarMoeda(mediaDiariaSemana)}`;
+}
+
+if (projecaoSemana) {
+  projecaoSemana.innerText =
+    `Projeção final: ${formatarMoeda(projecaoFinal)}`;
+}
+
+if (projecaoStatus) {
+
+  let metaAtual =
+    Number((dadosUsuario?.metaSemanal) || 0);
+
+  let diferenca =
+    projecaoFinal - metaAtual;
+
+  if (metaAtual <= 0) {
+
+    projecaoStatus.innerText =
+      "Defina uma meta semanal.";
+
+  } else if (diferenca >= 0) {
+
+    projecaoStatus.innerText =
+      `🎯 Você deve ultrapassar a meta em ${formatarMoeda(diferenca)}`;
+
+  } else {
+
+    projecaoStatus.innerText =
+      `⚠️ Faltariam ${formatarMoeda(Math.abs(diferenca))} para atingir a meta`;
+
+  }
+
+}
 let progressoCorridasDesafio = Math.min(
   100,
   Math.round((corridasSemana / metaDesafioCorridas) * 100)
