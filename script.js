@@ -3718,6 +3718,7 @@ function atualizarGastos() {
 
     return true;
   });
+  console.log("Período atual:", periodo);
 
   let totais = {
     combustivel: 0,
@@ -3739,6 +3740,29 @@ function atualizarGastos() {
     totais.alimentacao +
     totais.lavagem +
     totais.outros;
+
+    let rankingCategorias = Object.entries(totais)
+  .map(([categoria, valor]) => {
+    let nome = categoria;
+
+    if (categoria === "combustivel") nome = "⛽ Combustível";
+    if (categoria === "manutencao") nome = "🔧 Manutenção";
+    if (categoria === "alimentacao") nome = "🍔 Alimentação";
+    if (categoria === "lavagem") nome = "🧽 Lavagem";
+    if (categoria === "outros") nome = "📦 Outros";
+
+    let percentual =
+      totalGastos > 0
+        ? Math.round((valor / totalGastos) * 100)
+        : 0;
+
+    return {
+      nome,
+      valor,
+      percentual
+    };
+  })
+  .sort((a, b) => b.valor - a.valor);
 
   let maiorValor = 0;
   let maiorCategoria = "Nenhum";
@@ -3768,6 +3792,7 @@ function atualizarGastos() {
   });
 
   let gastoCombustivel = document.getElementById("gastoCombustivel");
+  let rankingCategoriasGastos =document.getElementById("rankingCategoriasGastos");
   let gastoManutencao = document.getElementById("gastoManutencao");
   let gastoAlimentacao = document.getElementById("gastoAlimentacao");
   let gastoLavagem = document.getElementById("gastoLavagem");
@@ -3778,6 +3803,7 @@ function atualizarGastos() {
   let gastoPercentualTexto = document.getElementById("gastoPercentualTexto");
   let listaGastos = document.getElementById("listaGastos");
   let insightGastos = document.getElementById("insightGastos");
+  let insightEconomia =document.getElementById("insightEconomia");
 
   if (gastoCombustivel) gastoCombustivel.innerText = formatarMoeda(totais.combustivel);
   if (gastoManutencao) gastoManutencao.innerText = formatarMoeda(totais.manutencao);
@@ -3785,6 +3811,32 @@ function atualizarGastos() {
   if (gastoLavagem) gastoLavagem.innerText = formatarMoeda(totais.lavagem);
   if (gastoOutros) gastoOutros.innerText = formatarMoeda(totais.outros);
   if (gastoTotal) gastoTotal.innerText = formatarMoeda(totalGastos);
+  if (rankingCategoriasGastos) {
+  rankingCategoriasGastos.innerHTML = "";
+
+  rankingCategorias.forEach((item, index) => {
+    let medalha = "🏅";
+
+    if (index === 0) medalha = "🥇";
+    if (index === 1) medalha = "🥈";
+    if (index === 2) medalha = "🥉";
+
+    rankingCategoriasGastos.innerHTML += `
+      <li class="ranking-categoria-item">
+        <div class="ranking-categoria-topo">
+          <strong>${medalha} ${item.nome}</strong>
+          <span>${formatarMoeda(item.valor)}</span>
+        </div>
+
+        <div class="barra-ranking-categoria">
+          <div style="width:${item.percentual}%"></div>
+        </div>
+
+        <small>${item.percentual}% dos gastos</small>
+      </li>
+    `;
+  });
+}
 
   let corridasFiltradas = corridasFirebase.filter(item => {
     if (
@@ -3831,6 +3883,25 @@ function atualizarGastos() {
       (totalGastos / faturamentoPeriodo) * 100
     );
   }
+  if (insightEconomia) {
+  if (totalGastos <= 0 || maiorValor <= 0) {
+    insightEconomia.innerText =
+      "Cadastre seus gastos para receber sugestões de economia.";
+  } else {
+    let economia10 =
+      maiorValor * 0.10;
+
+    insightEconomia.innerHTML =
+      `
+      Seu maior gasto é <strong>${maiorCategoria}</strong>.
+      <br><br>
+      Ele representa <strong>${Math.round((maiorValor / totalGastos) * 100)}%</strong> dos seus gastos.
+      <br><br>
+      Se você reduzir 10% nessa categoria, pode economizar cerca de
+      <strong>${formatarMoeda(economia10)}</strong>.
+      `;
+  }
+}
 
   if (insightGastos) {
     insightGastos.innerHTML = `
