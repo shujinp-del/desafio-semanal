@@ -2405,25 +2405,96 @@ function atualizarGrafico() {
   if (!canvas) return;
 
   let dadosGrafico = obterRankingParaGrafico();
+  let cores = [
+  "#2563eb",
+  "#dc2626",
+  "#16a34a",
+  "#facc15",
+  "#9333ea",
+  "#f97316",
+  "#06b6d4",
+  "#ec4899"
+];
 
   let total = dadosGrafico.reduce(
     (soma, item) => soma + item.valor,
     0
   );
 
-  let dadosPizza;
-
-  if (usuarioEhAdmin()) {
-    dadosPizza = dadosGrafico.map(m => m.valor);
-  } else {
-    dadosPizza = dadosGrafico.map(m =>
-      total > 0 ? Math.round((m.valor / total) * 100) : 0
-    );
-  }
+  let dadosPizza = usuarioEhAdmin()
+    ? dadosGrafico.map(m => m.valor)
+    : dadosGrafico.map(m =>
+        total > 0 ? Math.round((m.valor / total) * 100) : 0
+      );
 
   if (grafico) {
     grafico.destroy();
   }
+
+  let pluginPizzaPremium = {
+    id: "pizzaPremium",
+
+    beforeDatasetDraw(chart) {
+      let ctx = chart.ctx;
+
+      ctx.save();
+      ctx.shadowColor = "rgba(0, 0, 0, 0.85)";
+      ctx.shadowBlur = 28;
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 18;
+    },
+
+    afterDatasetDraw(chart) {
+      let ctx = chart.ctx;
+
+      ctx.restore();
+
+      let meta = chart.getDatasetMeta(0);
+      let dataset = chart.data.datasets[0];
+
+      ctx.save();
+
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "bold 20px Arial";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.shadowColor = "rgba(0,0,0,0.9)";
+      ctx.shadowBlur = 8;
+
+      meta.data.forEach((slice, index) => {
+        let valor = dataset.data[index];
+
+        if (valor <= 0) return;
+
+        let props = slice.getProps(
+          ["x", "y", "startAngle", "endAngle", "outerRadius", "innerRadius"],
+          true
+        );
+
+        let angulo =
+          (props.startAngle + props.endAngle) / 2;
+
+        let raio =
+          props.outerRadius * 0.58;
+
+        let x =
+          props.x + Math.cos(angulo) * raio;
+
+        let y =
+          props.y + Math.sin(angulo) * raio;
+
+        if (!usuarioEhAdmin()) {
+          ctx.fillText(
+            valor + "%",
+            x,
+            y
+          );
+        }
+      });
+
+      ctx.restore();
+    }
+  };
 
   grafico = new Chart(canvas.getContext("2d"), {
     type: "pie",
@@ -2445,15 +2516,26 @@ function atualizarGrafico() {
           "#84cc16",
           "#a855f7"
         ],
-        borderColor: "#ffffff",
+        borderColor: "#0b0b0b",
         borderWidth: 3,
-        hoverOffset: 16
+        hoverOffset: 26,
+        offset: 12,
+        radius: "94%"
       }]
     },
 
     options: {
       responsive: true,
       maintainAspectRatio: false,
+
+      layout: {
+        padding: {
+          top: 18,
+          bottom: 12,
+          left: 8,
+          right: 8
+        }
+      },
 
       plugins: {
         legend: {
@@ -2482,10 +2564,39 @@ function atualizarGrafico() {
           }
         }
       }
-    }
+    },
+
+    plugins: [pluginPizzaPremium]
+  });
+  let legenda =
+  document.getElementById("legendaGrafico");
+
+if (legenda) {
+
+  legenda.innerHTML = "";
+
+  dadosGrafico.forEach((item, index) => {
+
+    let percentual =
+      total > 0
+        ? Math.round((item.valor / total) * 100)
+        : 0;
+
+    legenda.innerHTML += `
+      <div class="item-legenda">
+        <span
+          class="cor-legenda"
+          style="background:${cores[index % cores.length]}"
+        ></span>
+
+        <span>
+          ${item.nome} - ${percentual}%
+        </span>
+      </div>
+    `;
   });
 }
-
+}
 function atualizarInsightSemana() {
   if (!usuarioAtual) return;
 

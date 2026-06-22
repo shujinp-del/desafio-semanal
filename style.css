@@ -2150,11 +2150,33 @@ canvas {
 }
 #grafico {
   width: 100% !important;
-  height: 320px !important;
-  background: radial-gradient(circle at top, #1f2937, #050505);
-  border-radius: 18px;
-  padding: 12px;
+  height: 380px !important;
+  background:
+    radial-gradient(circle at 50% 30%, rgba(255,255,255,0.10), transparent 25%),
+    radial-gradient(circle at top, #1f2937, #050505 70%);
+  border-radius: 22px;
+  padding: 14px;
   box-shadow:
-    inset 0 0 25px rgba(255, 255, 255, 0.05),
-    0 18px 35px rgba(0, 0, 0, 0.45);
+    inset 0 0 35px rgba(255, 255, 255, 0.06),
+    0 22px 45px rgba(0, 0, 0, 0.55);
+}
+.legenda-grafico {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.item-legenda {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: white;
+}
+
+.cor-legenda {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
 }
