@@ -1185,6 +1185,39 @@ if (nomeMotoristaAtual) {
   atualizarMetaInteligente();
   
 }
+window.setValorRapido = function(valor) {
+
+  let valorInput =
+    document.getElementById("valor");
+
+  if (valorInput) {
+
+    let valorAtual =
+      Number(valorInput.value || 0);
+
+    valorInput.value =
+      valorAtual + valor;
+
+  }
+
+};
+
+window.setCorridasRapidas = function(qtd) {
+
+  let corridasInput =
+    document.getElementById("corridas");
+
+  if (corridasInput) {
+
+    let corridasAtual =
+      Number(corridasInput.value || 0);
+
+    corridasInput.value =
+      corridasAtual + qtd;
+
+  }
+
+};
 function atualizarRanking() {
   let lista = document.getElementById("ranking");
 
@@ -3791,6 +3824,7 @@ function atualizarGastos() {
     }
   });
 
+
   let gastoCombustivel = document.getElementById("gastoCombustivel");
   let rankingCategoriasGastos =document.getElementById("rankingCategoriasGastos");
   let gastoManutencao = document.getElementById("gastoManutencao");
@@ -4172,7 +4206,21 @@ if (listaGastos) {
     });
   }
 }
+function setValorRapido(valor) {
+  let valorInput = document.getElementById("valor");
 
+  if (valorInput) {
+    valorInput.value = valor;
+  }
+}
+
+function setCorridasRapidas(qtd) {
+  let corridasInput = document.getElementById("corridas");
+
+  if (corridasInput) {
+    corridasInput.value = qtd;
+  }
+}
 
 window.entrar = entrar;
 window.cadastrar = cadastrar;

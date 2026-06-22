@@ -222,6 +222,28 @@
 
 <input id="valor" type="number" placeholder="Valor R$">
         <input id="corridas" type="number" placeholder="Número de corridas">
+        <div class="atalhos-rapidos">
+ <div class="atalhos-rapidos grupo-corridas-rapidas">
+  <p>🚗 Corridas rápidas</p>
+
+  <div class="atalhos-grid">
+    <button onclick="setCorridasRapidas(1)">1</button>
+    <button onclick="setCorridasRapidas(2)">2</button>
+    <button onclick="setCorridasRapidas(5)">5</button>
+    <button onclick="setCorridasRapidas(10)">10</button>
+  </div>
+</div>
+
+<div class="atalhos-rapidos grupo-valores-rapidos">
+  <p>⚡ Valores rápidos</p>
+
+  <div class="atalhos-grid">
+    <button onclick="setValorRapido(20)">R$ 20</button>
+    <button onclick="setValorRapido(30)">R$ 30</button>
+    <button onclick="setValorRapido(50)">R$ 50</button>
+    <button onclick="setValorRapido(100)">R$ 100</button>
+  </div>
+</div>
 
         <select id="origem">
           <option value="Uber">🟢 Uber</option>

@@ -2104,3 +2104,44 @@ canvas {
 .ranking-categoria-item small {
   color: #bbb;
 }
+.atalhos-rapidos {
+  margin: 10px 0 16px;
+}
+
+.atalhos-rapidos p {
+  margin: 0 0 8px;
+  font-size: 0.85rem;
+  color: #ddd;
+  font-weight: 700;
+}
+
+.atalhos-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.atalhos-grid button {
+  padding: 10px 6px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 165, 0, 0.35);
+  background: linear-gradient(135deg, #1d1d1d, #2b2b2b);
+  color: #fff;
+  font-weight: 800;
+}
+
+.atalhos-grid button:hover {
+  background: linear-gradient(135deg, #ff7a18, #ffb347);
+  color: #111;
+}
+.grupo-corridas-rapidas {
+  margin-top: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.grupo-valores-rapidos {
+  margin-top: 4px;
+  margin-bottom: 20px;
+}
