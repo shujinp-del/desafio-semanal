@@ -2145,3 +2145,6 @@ canvas {
   margin-top: 4px;
   margin-bottom: 20px;
 }
+#assistenteTitulo {
+  white-space: pre-line;
+}

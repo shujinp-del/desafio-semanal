@@ -1688,25 +1688,14 @@ function atualizarAssistenteMMS() {
       ? totalSemana / diasTrabalhados
       : 0;
 
-  let hoje = new Date();
-  let diaSemana = hoje.getDay();
-
-  let diasRestantes =
-    diaSemana === 0
-      ? 1
-      : 7 - diaSemana;
-
   let projecaoFinal =
-  mediaDiaria * 7;
+    mediaDiaria * 7;
 
   let diferenca =
     projecaoFinal - metaReal;
 
   let falta =
     Math.abs(diferenca);
-
-  let lucroAtual =
-    totalSemana - gastosSemana;
 
   if (minhasSemana.length === 0) {
     tituloEl.innerText =
@@ -1744,13 +1733,13 @@ function atualizarAssistenteMMS() {
 
   if (diferenca >= 0) {
     tituloEl.innerText =
-      "🟢 Farol Verde";
+      `📈 Projeção semanal\n${formatarMoeda(projecaoFinal)}`;
 
     linha1El.innerText =
-      `Projeção: ${formatarMoeda(projecaoFinal)}.`;
+      "🟢 Farol Verde";
 
     linha2El.innerText =
-      `Você deve ultrapassar a meta real em ${formatarMoeda(diferenca)}.`;
+      `Você deve passar da meta real em ${formatarMoeda(diferenca)}.`;
 
     if (cardAssistente) {
       cardAssistente.classList.add("assistente-verde");
@@ -1761,10 +1750,10 @@ function atualizarAssistenteMMS() {
 
   if (falta <= metaReal * 0.10) {
     tituloEl.innerText =
-      "🟡 Farol Amarelo";
+      `📈 Projeção semanal\n${formatarMoeda(projecaoFinal)}`;
 
     linha1El.innerText =
-      `Projeção: ${formatarMoeda(projecaoFinal)}.`;
+      "🟡 Farol Amarelo";
 
     linha2El.innerText =
       `Faltariam apenas ${formatarMoeda(falta)} para atingir a meta real.`;
@@ -1777,10 +1766,10 @@ function atualizarAssistenteMMS() {
   }
 
   tituloEl.innerText =
-    "🔴 Farol Vermelho";
+    `📈 Projeção semanal\n${formatarMoeda(projecaoFinal)}`;
 
   linha1El.innerText =
-    `Projeção: ${formatarMoeda(projecaoFinal)}.`;
+    "🔴 Farol Vermelho";
 
   linha2El.innerText =
     `Ritmo abaixo. Faltariam ${formatarMoeda(falta)} para a meta real.`;
@@ -1789,6 +1778,7 @@ function atualizarAssistenteMMS() {
     cardAssistente.classList.add("assistente-vermelho");
   }
 }
+
 function atualizarLider() {
   let lider = document.getElementById("liderSemana");
 
