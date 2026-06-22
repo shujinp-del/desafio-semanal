@@ -2399,7 +2399,7 @@ function obterRankingParaGrafico() {
   return ranking;
 }
 
-  function atualizarGrafico() {
+function atualizarGrafico() {
   let canvas = document.getElementById("grafico");
 
   if (!canvas) return;
@@ -2414,63 +2414,76 @@ function obterRankingParaGrafico() {
   let dadosPizza;
 
   if (usuarioEhAdmin()) {
-
-    dadosPizza = dadosGrafico.map(
-      m => m.valor
-    );
-
+    dadosPizza = dadosGrafico.map(m => m.valor);
   } else {
-
-    dadosPizza = dadosGrafico.map(
-      m => Math.round((m.valor / total) * 100)
+    dadosPizza = dadosGrafico.map(m =>
+      total > 0 ? Math.round((m.valor / total) * 100) : 0
     );
-
   }
 
   if (grafico) {
     grafico.destroy();
   }
 
- grafico = new Chart(canvas.getContext("2d"), {
-  type: "doughnut",
+  grafico = new Chart(canvas.getContext("2d"), {
+    type: "pie",
 
-  data: {
-    labels: dadosGrafico.map(m => m.nome),
+    data: {
+      labels: dadosGrafico.map(m => m.nome),
 
-    datasets: [{
-      data: dadosPizza,
-      backgroundColor: [
-        "#2563eb",
-        "#dc2626",
-        "#16a34a",
-        "#facc15",
-        "#9333ea",
-        "#f97316",
-        "#06b6d4",
-        "#ec4899",
-        "#111827",
-        "#84cc16"
-      ]
-    }]
-  },
+      datasets: [{
+        data: dadosPizza,
+        backgroundColor: [
+          "#2563eb",
+          "#dc2626",
+          "#16a34a",
+          "#facc15",
+          "#9333ea",
+          "#f97316",
+          "#06b6d4",
+          "#ec4899",
+          "#84cc16",
+          "#a855f7"
+        ],
+        borderColor: "#ffffff",
+        borderWidth: 3,
+        hoverOffset: 16
+      }]
+    },
 
-  options: {
-    plugins: {
-      tooltip: {
-        callbacks: {
-          label: function(context) {
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
 
-            if (usuarioEhAdmin()) {
-              return `${context.label}: ${formatarMoeda(context.raw)}`;
+      plugins: {
+        legend: {
+          position: "bottom",
+          labels: {
+            color: "#ffffff",
+            padding: 16,
+            boxWidth: 14,
+            boxHeight: 14,
+            font: {
+              size: 12,
+              weight: "bold"
             }
+          }
+        },
 
-            return `${context.label}: ${context.raw}%`;
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              if (usuarioEhAdmin()) {
+                return `${context.label}: ${formatarMoeda(context.raw)}`;
+              }
+
+              return `${context.label}: ${context.raw}%`;
+            }
           }
         }
       }
     }
-  }
-});
+  });
 }
 
 function atualizarInsightSemana() {
