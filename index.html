@@ -332,13 +332,13 @@
   <div class="card grupo-menu">
     <h2>⚙️ Configurações</h2>
 
-    <button onclick="abrirTela('minhasTela')">
-      👤 Minhas Corridas
-    </button>
+ <button onclick="abrirTela('minhasTela')">
+  👤 Minhas Corridas
+</button>
 
-    <button class="secundario">
-      ⚙️ Configurações do app
-    </button>
+  <button onclick="abrirTela('contaTela')">
+  👤 Minha Conta
+</button>
 
     <button class="secundario">
       ℹ️ Sobre o MMS
@@ -350,6 +350,43 @@
 
     <button onclick="abrirTela('adminTela')">
       Abrir painel admin
+    </button>
+  </div>
+</section>
+<section id="contaTela" class="tela">
+  <h1>👤 Minha Conta</h1>
+
+  <p class="subtitulo">
+    Dados do seu perfil no MMS
+  </p>
+
+  <div class="card">
+    <h2>Nome de exibição</h2>
+
+    <input
+      id="nomeExibicao"
+      placeholder="Ex: André Motorista"
+    >
+
+    <button onclick="salvarNomeExibicao()">
+      Salvar nome
+    </button>
+  </div>
+
+  <div class="card">
+    <h2>Conta</h2>
+
+    <p>
+      📧 Email:
+      <strong id="emailConta">Carregando...</strong>
+    </p>
+
+    <button class="secundario" onclick="recuperarSenha()">
+      🔐 Recuperar senha
+    </button>
+
+    <button class="secundario" onclick="sair()">
+      🚪 Sair
     </button>
   </div>
 </section>

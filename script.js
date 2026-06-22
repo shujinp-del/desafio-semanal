@@ -531,6 +531,46 @@ async function salvarMeta() {
     alert("Erro ao salvar meta");
   }
 }
+window.salvarNomeExibicao = async function() {
+  if (!usuarioAtual) return;
+
+  let input =
+    document.getElementById("nomeExibicao");
+
+  if (!input) return;
+
+  let nome =
+    input.value.trim();
+
+  if (!nome) {
+    alert("Digite um nome de exibição.");
+    return;
+  }
+
+  try {
+    await setDoc(
+      doc(db, "usuarios", usuarioAtual.uid),
+      {
+        nomeExibicao: nome,
+        email: usuarioAtual.email
+      },
+      { merge: true }
+    );
+
+    dadosUsuario = {
+      ...(dadosUsuario || {}),
+      nomeExibicao: nome
+    };
+
+    alert("Nome de exibição salvo com sucesso!");
+
+    atualizarTudo();
+
+  } catch (erro) {
+    console.error(erro);
+    alert("Erro ao salvar nome de exibição.");
+  }
+};
 
 function atualizarMetas() {
   if (!usuarioAtual) return;
@@ -1152,6 +1192,21 @@ if (corridasHojeCorrida) {
 }
 let nomeMotoristaAtual =
   document.getElementById("nomeMotoristaAtual");
+  let nomeExibicaoInput =
+  document.getElementById("nomeExibicao");
+
+let emailConta =
+  document.getElementById("emailConta");
+
+if (nomeExibicaoInput) {
+  nomeExibicaoInput.value =
+    dadosUsuario?.nomeExibicao || "";
+}
+
+if (emailConta) {
+  emailConta.innerText =
+    usuarioAtual?.email || "Sem email";
+}
 
 let nomeVisual =
   dadosUsuario?.nomeExibicao ||
@@ -1161,6 +1216,13 @@ let nomeVisual =
 
 if (nomeMotoristaAtual) {
   nomeMotoristaAtual.innerText = nomeVisual;
+}
+let usuarioLogado =
+  document.getElementById("usuarioLogado");
+
+if (usuarioLogado) {
+  usuarioLogado.innerText =
+    `👋 Bem-vindo, ${nomeVisual}`;
 }
 
 
