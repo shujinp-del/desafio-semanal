@@ -2699,18 +2699,64 @@ function atualizarGraficoLinha() {
 
   graficoLinha = new Chart(canvas.getContext("2d"), {
     type: "line",
+
     data: {
       labels: datas,
+
       datasets: [{
         label: usuarioEhAdmin()
           ? "Evolução geral"
           : "Minha evolução",
+
         data: valores,
-        borderColor: "#ff7a18",
-        backgroundColor: "rgba(255,122,24,0.2)",
+        borderColor: "#22c55e",
+        backgroundColor: "rgba(34, 197, 94, 0.18)",
+        pointBackgroundColor: "#22c55e",
+        pointBorderColor: "#ffffff",
+        pointBorderWidth: 2,
+        pointRadius: 5,
+        pointHoverRadius: 8,
+        borderWidth: 4,
         fill: true,
-        tension: 0.3
+        tension: 0.35
       }]
+    },
+
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+
+      plugins: {
+        legend: {
+          labels: {
+            color: "#ffffff",
+            font: {
+              size: 12,
+              weight: "bold"
+            }
+          }
+        }
+      },
+
+      scales: {
+        x: {
+          ticks: {
+            color: "#d1d5db"
+          },
+          grid: {
+            color: "rgba(255,255,255,0.08)"
+          }
+        },
+
+        y: {
+          ticks: {
+            color: "#d1d5db"
+          },
+          grid: {
+            color: "rgba(255,255,255,0.08)"
+          }
+        }
+      }
     }
   });
 }
