@@ -2389,3 +2389,62 @@ canvas {
 .fechamento-item.margem strong {
   color: #facc15;
 }
+.comparacao-gastos-premium {
+  background:
+    radial-gradient(circle at top left, rgba(59, 130, 246, 0.20), transparent 35%),
+    linear-gradient(135deg, #0b1320, #111111 75%);
+  border: 1px solid rgba(59, 130, 246, 0.35);
+  box-shadow:
+    0 0 24px rgba(59, 130, 246, 0.12),
+    0 18px 35px rgba(0, 0, 0, 0.45);
+}
+
+.comparacao-gastos-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.comparacao-gasto-item,
+.comparacao-destaque {
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 14px;
+  padding: 12px;
+}
+
+.comparacao-gasto-item small {
+  display: block;
+  font-size: 11px;
+  color: #d1d5db;
+  margin-bottom: 7px;
+}
+
+.comparacao-gasto-item strong {
+  color: #ffffff;
+  font-size: 15px;
+}
+
+.comparacao-destaque {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+}
+
+.comparacao-destaque span {
+  color: #d1d5db;
+  font-size: 13px;
+}
+
+.comparacao-destaque strong {
+  color: #ffffff;
+  font-size: 14px;
+  text-align: right;
+}
+
+.comparacao-destaque.variacao strong {
+  color: #60a5fa;
+  font-size: 18px;
+}
