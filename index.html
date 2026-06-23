@@ -520,46 +520,26 @@
     <ul id="rankingCategoriasGastos"></ul>
   </div>
 
-  <div class="card insight-economia-card">
-    <h2>💡 Economia Inteligente</h2>
+  <div class="card insight-economia-card economia-premium-card">
+  <h2>💡 Economia Inteligente</h2>
 
-    <p id="insightEconomia">
-      Analisando seus gastos...
-    </p>
+  <div id="insightEconomia" class="economia-lista">
+    <div class="economia-item">
+      <span class="economia-icone">🤖</span>
+
+      <div>
+        <strong>Analisando seus gastos...</strong>
+        <p>O MMS vai mostrar sugestões inteligentes aqui.</p>
+      </div>
+    </div>
   </div>
+</div>
 
-  <div class="card">
-    <h2>📋 Gastos por Categoria</h2>
-
-    <div class="gasto-item">
-      <span>⛽ Combustível</span>
-      <strong id="gastoCombustivel">R$ 0,00</strong>
-    </div>
-
-    <div class="gasto-item">
-      <span>🔧 Manutenção</span>
-      <strong id="gastoManutencao">R$ 0,00</strong>
-    </div>
-
-    <div class="gasto-item">
-      <span>🍔 Alimentação</span>
-      <strong id="gastoAlimentacao">R$ 0,00</strong>
-    </div>
-
-    <div class="gasto-item">
-      <span>🧽 Lavagem</span>
-      <strong id="gastoLavagem">R$ 0,00</strong>
-    </div>
-
-    <div class="gasto-item">
-      <span>📦 Outros</span>
-      <strong id="gastoOutros">R$ 0,00</strong>
-    </div>
-
-    <button onclick="abrirFormularioGasto()">
-      ➕ Adicionar gasto
-    </button>
-  </div>
+  <div class="card adicionar-gasto-card">
+  <button onclick="abrirFormularioGasto()">
+    ➕ Adicionar gasto
+  </button>
+</div>
 
   <div class="card" id="formularioGasto" style="display:none;">
     <h2>➕ Novo Gasto</h2>

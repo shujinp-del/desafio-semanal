@@ -4148,15 +4148,45 @@ function atualizarGastos() {
     let economia10 =
       maiorValor * 0.10;
 
-    insightEconomia.innerHTML =
-      `
-      Seu maior gasto é <strong>${maiorCategoria}</strong>.
-      <br><br>
-      Ele representa <strong>${Math.round((maiorValor / totalGastos) * 100)}%</strong> dos seus gastos.
-      <br><br>
-      Se você reduzir 10% nessa categoria, pode economizar cerca de
-      <strong>${formatarMoeda(economia10)}</strong>.
-      `;
+let percentualCategoria =
+  Math.round((maiorValor / totalGastos) * 100);
+
+insightEconomia.innerHTML =
+`
+<div class="economia-item">
+  <span class="economia-icone">⛽</span>
+
+  <div>
+    <strong>Maior gasto: ${maiorCategoria}</strong>
+    <p>
+      Representa ${percentualCategoria}% dos seus gastos.
+    </p>
+  </div>
+</div>
+
+<div class="economia-item">
+  <span class="economia-icone">💰</span>
+
+  <div>
+    <strong>Economia possível</strong>
+    <p>
+      Reduzindo 10%, você economiza
+      ${formatarMoeda(economia10)}.
+    </p>
+  </div>
+</div>
+
+<div class="economia-item">
+  <span class="economia-icone">📈</span>
+
+  <div>
+    <strong>Dica MMS</strong>
+    <p>
+      Pequenas reduções recorrentes geram mais lucro no fim do mês.
+    </p>
+  </div>
+</div>
+`;
   }
 }
 
