@@ -2192,3 +2192,97 @@ canvas {
     inset 0 0 35px rgba(255, 255, 255, 0.05),
     0 22px 45px rgba(0, 0, 0, 0.55);
 }
+.lucro-premium-card {
+  background:
+    radial-gradient(circle at top right, rgba(34, 197, 94, 0.26), transparent 35%),
+    linear-gradient(135deg, #07130d, #111111 70%);
+  border: 1px solid rgba(34, 197, 94, 0.55);
+  box-shadow:
+    0 0 28px rgba(34, 197, 94, 0.18),
+    0 18px 35px rgba(0, 0, 0, 0.45);
+}
+
+.lucro-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.lucro-premium-card small {
+  color: #d1fae5;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.lucro-premium-card h1 {
+  margin: 8px 0 6px;
+  font-size: 32px;
+  color: #22c55e;
+  line-height: 1;
+}
+
+.lucro-premium-card p {
+  margin: 0;
+  color: #d1d5db;
+  font-size: 12px;
+}
+
+.lucro-selo {
+  width: 82px;
+  height: 82px;
+  border-radius: 50%;
+  border: 7px solid #22c55e;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #ffffff;
+  background:
+    radial-gradient(circle, rgba(34,197,94,0.20), rgba(0,0,0,0.75));
+  box-shadow:
+    0 0 22px rgba(34, 197, 94, 0.45),
+    inset 0 0 18px rgba(34, 197, 94, 0.18);
+  flex-shrink: 0;
+}
+
+.lucro-selo span {
+  font-size: 20px;
+  font-weight: 900;
+  color: #22c55e;
+}
+
+.lucro-selo small {
+  font-size: 10px;
+  color: #d1d5db;
+}
+
+.lucro-metricas {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.lucro-metrica {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 14px;
+  padding: 12px;
+}
+
+.lucro-metrica span {
+  display: block;
+  font-size: 11px;
+  color: #d1d5db;
+  margin-bottom: 6px;
+}
+
+.lucro-metrica strong {
+  color: #ffffff;
+  font-size: 15px;
+}
+
+.lucro-metrica.negativo strong {
+  color: #ff5a3c;
+}

@@ -4057,6 +4057,7 @@ function atualizarGastos() {
   let gastoFaturamento = document.getElementById("gastoFaturamento");
   let gastoLucro = document.getElementById("gastoLucro");
   let gastoPercentualTexto = document.getElementById("gastoPercentualTexto");
+  let lucroPercentualSelo =document.getElementById("lucroPercentualSelo");
   let listaGastos = document.getElementById("listaGastos");
   let insightGastos = document.getElementById("insightGastos");
   let insightEconomia =document.getElementById("insightEconomia");
@@ -4191,6 +4192,10 @@ function atualizarGastos() {
     gastoPercentualTexto.innerText =
       `Seus gastos representam ${percentualGastos}% do faturamento`;
   }
+  if (lucroPercentualSelo) {
+  lucroPercentualSelo.innerText =
+    `${Math.max(0, 100 - percentualGastos)}%`;
+}
 let fechamentoGastoFaturamento =
   document.getElementById(
     "fechamentoGastoFaturamento"

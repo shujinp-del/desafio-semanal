@@ -454,7 +454,6 @@
 
 </section>
  
-
 <section id="gastosTela" class="tela">
 
   <h1>💰 Gastos</h1>
@@ -477,44 +476,57 @@
     </button>
   </div>
 
-  <div class="card gasto-resumo-card premium">
+  <div class="card gasto-resumo-card premium lucro-premium-card">
 
-  <small>💰 LUCRO LÍQUIDO</small>
+    <div class="lucro-topo">
+      <div>
+        <small>💰 LUCRO LÍQUIDO</small>
 
-  <h1 id="gastoLucro">
-    R$ 0,00
-  </h1>
+        <h1 id="gastoLucro">
+          R$ 0,00
+        </h1>
 
-  <div class="linha-financeira">
-    <span>📈 Faturamento</span>
-    <strong id="gastoFaturamento">
-      R$ 0,00
-    </strong>
+        <p id="gastoPercentualTexto">
+          Seus gastos representam 0% do faturamento
+        </p>
+      </div>
+
+      <div class="lucro-selo">
+        <span id="lucroPercentualSelo">0%</span>
+        <small>Margem</small>
+      </div>
+    </div>
+
+    <div class="lucro-metricas">
+      <div class="lucro-metrica">
+        <span>📈 Faturamento</span>
+        <strong id="gastoFaturamento">
+          R$ 0,00
+        </strong>
+      </div>
+
+      <div class="lucro-metrica negativo">
+        <span>📉 Gastos</span>
+        <strong id="gastoTotal">
+          R$ 0,00
+        </strong>
+      </div>
+    </div>
+
   </div>
 
-  <div class="linha-financeira">
-    <span>📉 Gastos</span>
-    <strong id="gastoTotal">
-      R$ 0,00
-    </strong>
+  <div class="card">
+    <h2>🏆 Ranking de Categorias</h2>
+    <ul id="rankingCategoriasGastos"></ul>
   </div>
 
-  <p id="gastoPercentualTexto">
-    Seus gastos representam 0% do faturamento
-  </p>
+  <div class="card insight-economia-card">
+    <h2>💡 Economia Inteligente</h2>
 
-</div>
-<div class="card">
-  <h2>🏆 Ranking de Categorias</h2>
-  <ul id="rankingCategoriasGastos"></ul>
-</div>
-<div class="card insight-economia-card">
-  <h2>💡 Economia Inteligente</h2>
-
-  <p id="insightEconomia">
-    Analisando seus gastos...
-  </p>
-</div>
+    <p id="insightEconomia">
+      Analisando seus gastos...
+    </p>
+  </div>
 
   <div class="card">
     <h2>📋 Gastos por Categoria</h2>
@@ -581,9 +593,10 @@
     <h2>📜 Histórico de Gastos</h2>
     <ul id="listaGastos"></ul>
   </div>
+
   <button onclick="abrirTela('historicoCompletoGastos')">
-  📜 Ver histórico completo
-</button>
+    📜 Ver histórico completo
+  </button>
 
   <div class="card">
     <h2>📅 Fechamento do Mês</h2>
@@ -604,6 +617,7 @@
   </div>
 
 </section>
+
 <section id="historicoCompletoGastos" class="tela">
 
   <h1>📜 Histórico Completo</h1>
