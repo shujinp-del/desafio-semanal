@@ -2343,3 +2343,49 @@ canvas {
 .adicionar-gasto-card button {
   margin: 0;
 }
+.fechamento-premium-card {
+  background:
+    radial-gradient(circle at top right, rgba(249, 115, 22, 0.22), transparent 35%),
+    linear-gradient(135deg, #1a120b, #111111 75%);
+  border: 1px solid rgba(249, 115, 22, 0.35);
+  box-shadow:
+    0 0 24px rgba(249, 115, 22, 0.12),
+    0 18px 35px rgba(0, 0, 0, 0.45);
+}
+
+.fechamento-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.fechamento-item {
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 14px;
+  padding: 12px;
+}
+
+.fechamento-item small {
+  display: block;
+  font-size: 11px;
+  color: #d1d5db;
+  margin-bottom: 7px;
+}
+
+.fechamento-item strong {
+  font-size: 15px;
+  color: #ffffff;
+}
+
+.fechamento-item.positivo strong {
+  color: #22c55e;
+}
+
+.fechamento-item.negativo strong {
+  color: #ff5a3c;
+}
+
+.fechamento-item.margem strong {
+  color: #facc15;
+}

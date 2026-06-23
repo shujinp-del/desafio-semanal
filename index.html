@@ -578,24 +578,31 @@
     📜 Ver histórico completo
   </button>
 
-  <div class="card">
-    <h2>📅 Fechamento do Mês</h2>
+  <div class="card fechamento-premium-card">
+  <h2>📅 Fechamento do Mês</h2>
 
-    <p>💰 Faturamento: <strong id="fechamentoGastoFaturamento">R$ 0,00</strong></p>
-    <p>➖ Gastos: <strong id="fechamentoGastoTotal">R$ 0,00</strong></p>
-    <p>🟢 Lucro: <strong id="fechamentoGastoLucro">R$ 0,00</strong></p>
-    <p>📊 Margem: <strong id="fechamentoGastoMargem">0%</strong></p>
+  <div class="fechamento-grid">
+    <div class="fechamento-item">
+      <small>💰 Faturamento</small>
+      <strong id="fechamentoGastoFaturamento">R$ 0,00</strong>
+    </div>
+
+    <div class="fechamento-item negativo">
+      <small>➖ Gastos</small>
+      <strong id="fechamentoGastoTotal">R$ 0,00</strong>
+    </div>
+
+    <div class="fechamento-item positivo">
+      <small>🟢 Lucro</small>
+      <strong id="fechamentoGastoLucro">R$ 0,00</strong>
+    </div>
+
+    <div class="fechamento-item margem">
+      <small>📊 Margem</small>
+      <strong id="fechamentoGastoMargem">0%</strong>
+    </div>
   </div>
-
-  <div class="card">
-    <h2>📊 Comparação de Gastos</h2>
-
-    <p>📅 Mês atual: <strong id="comparacaoGastoAtual">R$ 0,00</strong></p>
-    <p>📆 Mês passado: <strong id="comparacaoGastoAnterior">R$ 0,00</strong></p>
-    <p>🔁 Diferença: <strong id="comparacaoGastoDiferenca">R$ 0,00</strong></p>
-    <p>📈 Variação: <strong id="comparacaoGastoVariacao">0%</strong></p>
-  </div>
-
+</div>
 </section>
 
 <section id="historicoCompletoGastos" class="tela">
