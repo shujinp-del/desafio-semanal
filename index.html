@@ -597,6 +597,66 @@
     </div>
   </div>
 </div>
+<div class="card comparacao-gastos-premium">
+  <h2>📊 Comparação de Gastos</h2>
+
+  <div class="comparacao-gastos-grid">
+    <div class="comparacao-gasto-item">
+      <small>📅 Mês atual</small>
+      <strong id="comparacaoGastoAtual">R$ 0,00</strong>
+    </div>
+
+    <div class="comparacao-gasto-item">
+      <small>📆 Mês passado</small>
+      <strong id="comparacaoGastoAnterior">R$ 0,00</strong>
+    </div>
+  </div>
+
+  <div class="comparacao-destaque">
+    <span>🔁 Diferença</span>
+    <strong id="comparacaoGastoDiferenca">R$ 0,00</strong>
+  </div>
+
+  <div class="comparacao-destaque variacao">
+    <span>📈 Variação</span>
+    <strong id="comparacaoGastoVariacao">0%</strong>
+  </div>
+</div>
+
+<div class="card meta-gastos-premium">
+  <h2>🎯 Meta de Gastos</h2>
+
+  <div class="meta-gastos-topo">
+    <div>
+      <small>Meta mensal</small>
+      <strong id="metaGastosValor">R$ 0,00</strong>
+    </div>
+
+    <div class="meta-gastos-selo">
+      <span id="metaGastosPercentual">0%</span>
+      <small>usado</small>
+    </div>
+  </div>
+
+  <p>
+    Utilizado até agora:
+    <strong id="metaGastosUsado">R$ 0,00</strong>
+  </p>
+
+  <div class="barra-meta-gastos">
+    <div id="barraMetaGastos"></div>
+  </div>
+
+  <input id="inputMetaGastos" type="number" placeholder="Ex: 800">
+
+  <button onclick="salvarMetaGastos()">
+    💾 Salvar meta de gastos
+  </button>
+
+  <p id="metaGastosStatus">
+    Defina uma meta mensal para acompanhar seus gastos.
+  </p>
+</div>
 </section>
 
 <section id="historicoCompletoGastos" class="tela">

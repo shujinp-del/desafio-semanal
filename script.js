@@ -4306,6 +4306,21 @@ let comparacaoGastoVariacao =
     "comparacaoGastoVariacao"
   );
 
+let metaGastosValor =
+  document.getElementById("metaGastosValor");
+
+let metaGastosUsado =
+  document.getElementById("metaGastosUsado");
+
+let metaGastosPercentual =
+  document.getElementById("metaGastosPercentual");
+
+let barraMetaGastos =
+  document.getElementById("barraMetaGastos");
+
+let metaGastosStatus =
+  document.getElementById("metaGastosStatus");
+
 let mesAnterior =
   mesAtual === 0 ? 11 : mesAtual - 1;
 
@@ -4350,6 +4365,57 @@ let totalGastosMesAnterior =
     0
   );
 
+let metaGastosSalva =
+  Number(localStorage.getItem("metaGastosMMS") || 0);
+
+let percentualMetaGastos =
+  metaGastosSalva > 0
+    ? Math.min(
+        100,
+        Math.round(
+          (totalGastosMesAtual / metaGastosSalva) * 100
+        )
+      )
+    : 0;
+
+if (metaGastosValor) {
+  metaGastosValor.innerText =
+    formatarMoeda(metaGastosSalva);
+}
+
+if (metaGastosUsado) {
+  metaGastosUsado.innerText =
+    formatarMoeda(totalGastosMesAtual);
+}
+
+if (metaGastosPercentual) {
+  metaGastosPercentual.innerText =
+    percentualMetaGastos + "%";
+}
+
+if (barraMetaGastos) {
+  barraMetaGastos.style.width =
+    percentualMetaGastos + "%";
+}
+
+if (metaGastosStatus) {
+  if (metaGastosSalva <= 0) {
+    metaGastosStatus.innerText =
+      "Defina uma meta mensal para acompanhar seus gastos.";
+  } else if (totalGastosMesAtual <= metaGastosSalva) {
+    metaGastosStatus.innerText =
+      `Você ainda pode gastar ${formatarMoeda(
+        metaGastosSalva - totalGastosMesAtual
+      )} este mês.`;
+  } else {
+    metaGastosStatus.innerText =
+      `Atenção: você passou da meta em ${formatarMoeda(
+        totalGastosMesAtual - metaGastosSalva
+      )}.`;
+  }
+}
+
+/* COMPARAÇÃO DE GASTOS */
 let diferencaGastos =
   totalGastosMesAtual - totalGastosMesAnterior;
 
@@ -4369,7 +4435,9 @@ let emojiComparacao =
 
 let textoDiferenca =
   diferencaGastos <= 0
-    ? `Economia de ${formatarMoeda(Math.abs(diferencaGastos))}`
+    ? `Economia de ${formatarMoeda(
+        Math.abs(diferencaGastos)
+      )}`
     : `Aumento de ${formatarMoeda(diferencaGastos)}`;
 
 if (comparacaoGastoAtual) {
@@ -4393,75 +4461,24 @@ if (comparacaoGastoVariacao) {
       ? `${variacaoGastos}%`
       : "Sem mês anterior";
 }
-let listaHistoricoCompleto =
-  document.getElementById("listaHistoricoCompleto");
-
-if (listaHistoricoCompleto) {
-  listaHistoricoCompleto.innerHTML = "";
-
-  gastosFiltrados
-    .slice()
-    .sort((a, b) => new Date(b.data) - new Date(a.data))
-    .forEach(gasto => {
-      listaHistoricoCompleto.innerHTML += `
-        <li>
-          <strong>${gasto.categoria}</strong>
-          <br>
-          💰 ${formatarMoeda(gasto.valor)}
-          <br>
-          📅 ${gasto.data || "sem data"}
-          <br>
-          ${gasto.descricao ? `
-📝 ${gasto.descricao}
-<br>
-` : ""}
-
-          <div class="acoes-gasto">
-  <button onclick="editarGasto('${gasto.id}')">
-    ✏️ Editar
-  </button>
-
-  <button onclick="excluirGasto('${gasto.id}')">
-    🗑️ Excluir
-  </button>
-</div>
-        </li>
-      `;
-    });
 }
+function salvarMetaGastos() {
 
-if (listaGastos) {
-    listaGastos.innerHTML = "";
+  let input =
+    document.getElementById("inputMetaGastos");
 
-    gastosFiltrados
-  .slice()
-  .sort((a, b) => new Date(b.data) - new Date(a.data))
-  .slice(0, 3)
-  .forEach((gasto, index) => {
-      let indexReal = gastos.indexOf(gasto);
+  if (!input) return;
 
-      listaGastos.innerHTML += `
-        <li>
-          <strong>${gasto.categoria}</strong>
-          <br>
-          💰 ${formatarMoeda(gasto.valor)}
-          <br>
-          📅 ${gasto.data || "sem data"}
-          <br>
-          📝 ${gasto.descricao || "sem descrição"}
-          <br><br>
+  let valor =
+    Number(input.value || 0);
 
-          <button onclick="editarGasto('${gasto.id}')">
-            ✏️ Editar
-          </button>
+  localStorage.setItem(
+    "metaGastosMMS",
+    valor
+  );
 
-          <button onclick="excluirGasto('${gasto.id}')">
-            🗑️ Excluir
-          </button>
-        </li>
-      `;
-    });
-  }
+  atualizarGastos();
+
 }
 function setValorRapido(valor) {
   let valorInput = document.getElementById("valor");
@@ -4508,3 +4525,4 @@ window.buscarGrupo = buscarGrupo;
 window.mudarPeriodoGastos = mudarPeriodoGastos;
 window.carregarGastosFirebase =carregarGastosFirebase;
 window.recuperarSenha = recuperarSenha;
+window.salvarMetaGastos = salvarMetaGastos; 

@@ -2448,3 +2448,99 @@ canvas {
   color: #60a5fa;
   font-size: 18px;
 }
+.gasto-historico-card {
+  list-style: none;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,140,0,0.15);
+  border-radius: 14px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.gasto-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.gasto-topo span {
+  color: #ffb347;
+}
+
+.gasto-info {
+  font-size: 13px;
+  opacity: 0.85;
+  margin-bottom: 4px;
+}
+
+.gasto-acoes {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.gasto-acoes button {
+  flex: 1;
+}
+.comparacao-gastos-premium,
+.meta-gastos-premium {
+  background:
+    radial-gradient(circle at top left, rgba(59, 130, 246, 0.18), transparent 35%),
+    linear-gradient(135deg, #0b1320, #111111 75%);
+  border: 1px solid rgba(59, 130, 246, 0.35);
+  box-shadow: 0 18px 35px rgba(0, 0, 0, 0.45);
+}
+
+.comparacao-gastos-grid,
+.meta-gastos-topo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.comparacao-gasto-item,
+.comparacao-destaque {
+  background: rgba(255,255,255,0.055);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 14px;
+  padding: 12px;
+}
+
+.comparacao-destaque {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.comparacao-destaque.variacao strong {
+  color: #60a5fa;
+  font-size: 18px;
+}
+
+.meta-gastos-selo {
+  border: 5px solid #22c55e;
+  border-radius: 50%;
+  width: 76px;
+  height: 76px;
+  display: grid;
+  place-items: center;
+  justify-self: end;
+  color: #22c55e;
+  font-weight: 900;
+}
+
+.barra-meta-gastos {
+  height: 10px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 12px 0;
+}
+
+#barraMetaGastos {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #22c55e, #facc15, #ef4444);
+}
