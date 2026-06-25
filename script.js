@@ -2057,6 +2057,12 @@ let total99 = minhasSemana
 let totalParticular = minhasSemana
   .filter(item => item.origem === "Particular")
   .reduce((soma, item) => soma + Number(item.valor), 0);
+  console.log(
+  minhasSemana.map(item => ({
+    origem: item.origem,
+    valor: item.valor
+  }))
+);
 
   let homeTotal = document.getElementById("homeTotal");
   let faltamMetaHome =document.getElementById("faltamMetaHome");
@@ -2419,6 +2425,17 @@ let porcentagemParticular = totalSemanaValor > 0
   ? Math.round((totalParticular / totalSemanaValor) * 100)
   : 0;
 
+if (totalUberEl) {
+  totalUberEl.innerText = formatarMoeda(totalUber);
+}
+
+if (total99El) {
+  total99El.innerText = formatarMoeda(total99);
+}
+
+if (totalParticularEl) {
+  totalParticularEl.innerText = formatarMoeda(totalParticular);
+}
 
 if (porcentagemUberEl) {
   porcentagemUberEl.innerText = `${porcentagemUber}% do total`;
