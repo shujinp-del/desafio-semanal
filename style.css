@@ -2544,3 +2544,35 @@ canvas {
   width: 0%;
   background: linear-gradient(90deg, #22c55e, #facc15, #ef4444);
 }
+.card-principal-v2.meta-concluida {
+  box-shadow:
+    0 0 14px rgba(255, 190, 60, 0.55),
+    0 0 34px rgba(255, 122, 24, 0.35),
+    0 18px 40px rgba(0, 0, 0, 0.45);
+
+  border: 1px solid rgba(255, 220, 120, 0.75);
+  animation: brilhoMeta 2.5s ease-in-out infinite;
+}
+
+@keyframes brilhoMeta {
+  0% {
+    box-shadow:
+      0 0 10px rgba(255, 190, 60, 0.35),
+      0 0 24px rgba(255, 122, 24, 0.20),
+      0 18px 40px rgba(0, 0, 0, 0.45);
+  }
+
+  50% {
+    box-shadow:
+      0 0 18px rgba(255, 220, 120, 0.75),
+      0 0 42px rgba(255, 122, 24, 0.45),
+      0 18px 40px rgba(0, 0, 0, 0.45);
+  }
+
+  100% {
+    box-shadow:
+      0 0 10px rgba(255, 190, 60, 0.35),
+      0 0 24px rgba(255, 122, 24, 0.20),
+      0 18px 40px rgba(0, 0, 0, 0.45);
+  }
+}

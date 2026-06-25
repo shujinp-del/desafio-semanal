@@ -2059,6 +2059,8 @@ let totalParticular = minhasSemana
   .reduce((soma, item) => soma + Number(item.valor), 0);
 
   let homeTotal = document.getElementById("homeTotal");
+  let faltamMetaHome =document.getElementById("faltamMetaHome");
+let cardPrincipal =document.querySelector(".card-principal-v2");
   let homeMensal = document.getElementById("homeMensal");
   let totalSemana = document.getElementById("totalSemana");
   let totalCorridas = document.getElementById("totalCorridas");
@@ -2363,14 +2365,49 @@ if (cardsConquista[3]) {
   }
 
 }
-if (barraMetaHome) barraMetaHome.style.width = `${progressoMeta}%`;
-if (metaHomeValor) metaHomeValor.innerText = formatarMoeda(metaSemanal);
-if (metaHomePorcentagem) metaHomePorcentagem.innerText = `${progressoMeta}%`;
 
-if (totalUberEl) totalUberEl.innerText = formatarMoeda(totalUber);
-if (total99El) total99El.innerText = formatarMoeda(total99);
-if (totalParticularEl) totalParticularEl.innerText = formatarMoeda(totalParticular);
-let porcentagemUber = totalSemanaValor > 0
+if (barraMetaHome)
+  barraMetaHome.style.width = `${progressoMeta}%`;
+
+if (metaHomeValor)
+  metaHomeValor.innerText = formatarMoeda(metaSemanal);
+
+if (metaHomePorcentagem)
+  metaHomePorcentagem.innerText = `${progressoMeta}%`;
+
+if (faltamMetaHome) {
+
+  if (metaSemanal <= 0) {
+
+    faltamMetaHome.innerText =
+      "Defina uma meta semanal";
+
+  } else if (totalSemanaValor < metaSemanal) {
+
+    faltamMetaHome.innerText =
+      `🎯 Faltam ${formatarMoeda(metaSemanal - totalSemanaValor)} para sua meta`;
+
+    cardPrincipal?.classList.remove("meta-concluida");
+
+  } else if (totalSemanaValor === metaSemanal) {
+
+    faltamMetaHome.innerText =
+      "🏆 Meta concluída!";
+
+    cardPrincipal?.classList.add("meta-concluida");
+
+  } else {
+
+    faltamMetaHome.innerText =
+      `🚀 Você ultrapassou a meta em ${formatarMoeda(totalSemanaValor - metaSemanal)}`;
+
+    cardPrincipal?.classList.add("meta-concluida");
+
+  }
+
+}
+
+ let porcentagemUber = totalSemanaValor > 0
   ? Math.round((totalUber / totalSemanaValor) * 100)
   : 0;
 
@@ -2381,6 +2418,7 @@ let porcentagem99 = totalSemanaValor > 0
 let porcentagemParticular = totalSemanaValor > 0
   ? Math.round((totalParticular / totalSemanaValor) * 100)
   : 0;
+
 
 if (porcentagemUberEl) {
   porcentagemUberEl.innerText = `${porcentagemUber}% do total`;
