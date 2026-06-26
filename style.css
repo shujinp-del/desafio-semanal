@@ -1,4 +1,4 @@
-* {
+o* {
   box-sizing: border-box;
 }
 
@@ -2805,4 +2805,40 @@ background:#0b8b4d;
 
 color:white;
 
+}
+#historicoTela .comparativo-grid .mini-card strong {
+  font-size: 16px !important;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+#historicoTela .comparativo-grid .mini-card small {
+  font-size: 11px !important;
+}
+
+#historicoTela .comparativo-grid .mini-card span {
+  font-size: 10px !important;
+}
+
+#historicoTela .badge-tendencia {
+  font-size: 14px !important;
+  padding: 6px 9px;
+}
+#historicoTela .comparativo-grid .mini-card strong {
+  font-size: 16px !important;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+#historicoTela .comparativo-grid .mini-card small {
+  font-size: 11px !important;
+}
+
+#historicoTela .comparativo-grid .mini-card span {
+  font-size: 10px !important;
+}
+
+#historicoTela .badge-tendencia {
+  font-size: 14px !important;
+  padding: 6px 9px;
 }
