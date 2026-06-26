@@ -285,9 +285,11 @@ function iniciarSincronia() {
 
       ranking = montarRanking(corridasSemana);
 
-      atualizarRankingMetas();
+atualizarRankingMetas();
 
-      atualizarTudo();
+atualizarTudo();
+atualizarHistoricoMensalCards();
+atualizarComparativoMensal();
     }
   );
 }
@@ -1230,6 +1232,7 @@ if (usuarioLogado) {
   atualizarLider();
   atualizarAssistenteMMS();
   atualizarMetricas();
+  atualizarHistoricoMensalCards();
   carregarGrupo();
   atualizarGrafico();
   atualizarGraficoLinha();
@@ -1437,17 +1440,17 @@ function atualizarHistoricoMensal() {
 }
 function atualizarComparativoMensal() {
 
-  let atualEl =
-    document.getElementById("mesAtualAteHoje");
+ let atualEl =
+  document.getElementById("comparativoMesAtual");
 
-  let projecaoEl =
-    document.getElementById("projecaoMensal");
+let projecaoEl =
+  document.getElementById("comparativoProjecao");
 
-  let anteriorEl =
-    document.getElementById("mesAnteriorComparativo");
+let anteriorEl =
+  document.getElementById("comparativoMesAnterior");
 
-  let tendenciaEl =
-    document.getElementById("tendenciaMensal");
+let tendenciaEl =
+  document.getElementById("comparativoTendencia");
 
   if (
     !atualEl ||
@@ -1552,8 +1555,18 @@ function atualizarComparativoMensal() {
       ? "+"
       : "";
 
-  tendenciaEl.innerText =
-    `${emoji} ${sinal}${tendencia.toFixed(1)}%`;
+  tendenciaEl.innerHTML =
+`${emoji} ${sinal}${tendencia.toFixed(1)}%`;
+
+if(tendencia>=0){
+
+tendenciaEl.style.background="#0c9d58";
+
+}else{
+
+tendenciaEl.style.background="#d32f2f";
+}
+
 }
 function atualizarRecordes() {
   if (!usuarioAtual) return;
@@ -1619,6 +1632,7 @@ function atualizarRecordes() {
   melhorMesEl.innerText = formatarMoeda(melhorMes);
   corridasEl.innerText = `${maiorCorridas} corridas`;
 }
+
 function atualizarAssistenteMMS() {
   if (!usuarioAtual) return;
 
@@ -2955,19 +2969,51 @@ async function baixarBackup() {
 }
 function atualizarHistoricoMensalCards() {
   let totalAcumuladoResumo =
-  document.getElementById("totalAcumuladoResumo");
-  let container = document.getElementById("historicoMensalCards");
+    document.getElementById("totalAcumuladoResumo");
 
-  let melhorSemanaResumo = document.getElementById("melhorSemanaResumo");
-  let melhorMesResumo = document.getElementById("melhorMesResumo");
-  let totalMesesResumo = document.getElementById("totalMesesResumo");
-  let graficoTotalAcumulado = document.getElementById("graficoTotalAcumulado");
-let graficoMelhorSemana = document.getElementById("graficoMelhorSemana");
-let graficoMelhorMes = document.getElementById("graficoMelhorMes");
+  let container =
+    document.getElementById("historicoMensalCards");
 
-  if (!container || !usuarioAtual) return;
+  let melhorSemanaResumo =
+    document.getElementById("melhorSemanaResumo");
 
+  let melhorMesResumo =
+    document.getElementById("melhorMesResumo");
+
+  let totalMesesResumo =
+    document.getElementById("totalMesesResumo");
+
+  let graficoTotalAcumulado =
+    document.getElementById("graficoTotalAcumulado");
+
+  let graficoMelhorSemana =
+    document.getElementById("graficoMelhorSemana");
+
+  let graficoMelhorMes =
+    document.getElementById("graficoMelhorMes");
+
+  let totalUberHistorico =
+    document.getElementById("totalUberHistorico");
+
+  let total99Historico =
+    document.getElementById("total99Historico");
+
+  let totalParticularHistorico =
+    document.getElementById("totalParticularHistorico");
+
+  let porcentagemUberHistorico =
+    document.getElementById("porcentagemUberHistorico");
+
+  let porcentagem99Historico =
+    document.getElementById("porcentagem99Historico");
+
+  let porcentagemParticularHistorico =
+    document.getElementById("porcentagemParticularHistorico");
+if (!usuarioAtual) return;
+
+if (container) {
   container.innerHTML = "";
+}
 
   let nomesMeses = [
     "Janeiro", "Fevereiro", "Março", "Abril",
@@ -2979,15 +3025,30 @@ let graficoMelhorMes = document.getElementById("graficoMelhorMes");
   let semanas = {};
   let totalAcumulado = 0;
 
-  corridasFirebase.forEach(item => {
-    if (
-      item.uid !== usuarioAtual.uid &&
-      item.email !== usuarioAtual.email
-    ) return;
+  let hoje = new Date();
+  let mesAtual = hoje.getMonth();
+  let anoAtual = hoje.getFullYear();
 
+  let totalUberMesHistorico = 0;
+  let total99MesHistorico = 0;
+  let totalParticularMesHistorico = 0;
+
+  corridasFirebase.forEach(item => {
+    let pertenceAoUsuario =
+      item.uid === usuarioAtual.uid ||
+      item.email === usuarioAtual.email;
+
+    if (!pertenceAoUsuario) return;
     if (!item.data) return;
 
-    let data = new Date(item.data + "T00:00:00");
+    let data =
+      new Date(item.data + "T00:00:00");
+
+    let valor =
+      Number(item.valor || 0);
+
+    let corridas =
+      Number(item.corridas || 0);
 
     let chaveMes =
       `${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, "0")}`;
@@ -2999,12 +3060,30 @@ let graficoMelhorMes = document.getElementById("graficoMelhorMes");
       };
     }
 
-    meses[chaveMes].total += Number(item.valor || 0);
-    meses[chaveMes].corridas += Number(item.corridas || 0);
-    totalAcumulado += Number(item.valor || 0);
+    meses[chaveMes].total += valor;
+    meses[chaveMes].corridas += corridas;
+    totalAcumulado += valor;
 
-    let inicioSemana = obterInicioSemana(data);
-    let chaveSemana = inicioSemana.toISOString().slice(0, 10);
+    let origemItem =
+  String(item.origem || "").trim();
+
+if (origemItem === "Uber") {
+  totalUberMesHistorico += valor;
+}
+
+if (origemItem === "99") {
+  total99MesHistorico += valor;
+}
+
+if (origemItem === "Particular") {
+  totalParticularMesHistorico += valor;
+}
+
+    let inicioSemana =
+      obterInicioSemana(data);
+
+    let chaveSemana =
+      inicioSemana.toISOString().slice(0, 10);
 
     if (!semanas[chaveSemana]) {
       semanas[chaveSemana] = {
@@ -3013,13 +3092,16 @@ let graficoMelhorMes = document.getElementById("graficoMelhorMes");
       };
     }
 
-    semanas[chaveSemana].total += Number(item.valor || 0);
-    semanas[chaveSemana].corridas += Number(item.corridas || 0);
+    semanas[chaveSemana].total += valor;
+    semanas[chaveSemana].corridas += corridas;
   });
 
-  let lista = Object.entries(meses);
+  let lista =
+    Object.entries(meses);
 
-  lista.sort((a, b) => b[0].localeCompare(a[0]));
+  lista.sort((a, b) =>
+    b[0].localeCompare(a[0])
+  );
 
   if (lista.length === 0) {
     container.innerHTML = `
@@ -3028,56 +3110,136 @@ let graficoMelhorMes = document.getElementById("graficoMelhorMes");
       </div>
     `;
 
-    if (melhorSemanaResumo) melhorSemanaResumo.innerText = formatarMoeda(0);
-    if (melhorMesResumo) melhorMesResumo.innerText = formatarMoeda(0);
-    if (totalMesesResumo) totalMesesResumo.innerText = 0;
+    if (melhorSemanaResumo)
+      melhorSemanaResumo.innerText =
+        formatarMoeda(0);
+
+    if (melhorMesResumo)
+      melhorMesResumo.innerText =
+        formatarMoeda(0);
+
+    if (totalMesesResumo)
+      totalMesesResumo.innerText = 0;
+
+    if (totalAcumuladoResumo)
+      totalAcumuladoResumo.innerText =
+        formatarMoeda(0);
 
     return;
   }
 
-  let melhorMes = lista.reduce((maior, atual) => {
-    return atual[1].total > maior[1].total ? atual : maior;
-  }, lista[0]);
+  let melhorMes =
+    lista.reduce((maior, atual) => {
+      return atual[1].total > maior[1].total
+        ? atual
+        : maior;
+    }, lista[0]);
 
-  let listaSemanas = Object.entries(semanas);
+  let listaSemanas =
+    Object.entries(semanas);
 
-  let melhorSemana = listaSemanas.reduce((maior, atual) => {
-    return atual[1].total > maior[1].total ? atual : maior;
-  }, listaSemanas[0]);
+  let melhorSemana =
+    listaSemanas.reduce((maior, atual) => {
+      return atual[1].total > maior[1].total
+        ? atual
+        : maior;
+    }, listaSemanas[0]);
 
   if (melhorMesResumo) {
-    melhorMesResumo.innerText = formatarMoeda(melhorMes[1].total);
+    melhorMesResumo.innerText =
+      formatarMoeda(melhorMes[1].total);
   }
 
   if (melhorSemanaResumo) {
-    melhorSemanaResumo.innerText = formatarMoeda(melhorSemana[1].total);
+    melhorSemanaResumo.innerText =
+      formatarMoeda(melhorSemana[1].total);
   }
 
   if (totalMesesResumo) {
-    totalMesesResumo.innerText = lista.length;
+    totalMesesResumo.innerText =
+      lista.length;
   }
+
   if (totalAcumuladoResumo) {
-  totalAcumuladoResumo.innerText =
-    formatarMoeda(totalAcumulado);
-}
-if (graficoTotalAcumulado) {
-  graficoTotalAcumulado.innerText = formatarMoeda(totalAcumulado);
-}
+    totalAcumuladoResumo.innerText =
+      formatarMoeda(totalAcumulado);
+  }
 
-if (graficoMelhorSemana) {
-  graficoMelhorSemana.innerText = formatarMoeda(melhorSemana[1].total);
-}
+  if (graficoTotalAcumulado) {
+    graficoTotalAcumulado.innerText =
+      formatarMoeda(totalAcumulado);
+  }
 
-if (graficoMelhorMes) {
-  graficoMelhorMes.innerText = formatarMoeda(melhorMes[1].total);
-}
+  if (graficoMelhorSemana) {
+    graficoMelhorSemana.innerText =
+      formatarMoeda(melhorSemana[1].total);
+  }
 
+  if (graficoMelhorMes) {
+    graficoMelhorMes.innerText =
+      formatarMoeda(melhorMes[1].total);
+  }
+
+  let totalOrigemMesHistorico =
+    totalUberMesHistorico +
+    total99MesHistorico +
+    totalParticularMesHistorico;
+
+
+  let porcentagemUberMesHistorico =
+    totalOrigemMesHistorico > 0
+      ? Math.round((totalUberMesHistorico / totalOrigemMesHistorico) * 100)
+      : 0;
+
+  let porcentagem99MesHistorico =
+    totalOrigemMesHistorico > 0
+      ? Math.round((total99MesHistorico / totalOrigemMesHistorico) * 100)
+      : 0;
+
+  let porcentagemParticularMesHistorico =
+    totalOrigemMesHistorico > 0
+      ? Math.round((totalParticularMesHistorico / totalOrigemMesHistorico) * 100)
+      : 0;
+
+  if (totalUberHistorico) {
+    totalUberHistorico.innerText =
+      formatarMoeda(totalUberMesHistorico);
+  }
+
+  if (total99Historico) {
+    total99Historico.innerText =
+      formatarMoeda(total99MesHistorico);
+  }
+
+  if (totalParticularHistorico) {
+    totalParticularHistorico.innerText =
+      formatarMoeda(totalParticularMesHistorico);
+  }
+
+  if (porcentagemUberHistorico) {
+    porcentagemUberHistorico.innerText =
+      `${porcentagemUberMesHistorico}% do total`;
+  }
+
+  if (porcentagem99Historico) {
+    porcentagem99Historico.innerText =
+      `${porcentagem99MesHistorico}% do total`;
+  }
+
+  if (porcentagemParticularHistorico) {
+    porcentagemParticularHistorico.innerText =
+      `${porcentagemParticularMesHistorico}% do total`;
+  }
+
+  if (container) {
   lista.forEach(([mes, dados]) => {
-    let icone = "📅";
+    let [ano, mesNumero] =
+      mes.split("-");
 
-    let [ano, mesNumero] = mes.split("-");
     let nomeMes =
-      nomesMeses[parseInt(mesNumero) - 1] + " " + ano;
+      nomesMeses[parseInt(mesNumero) - 1] +
+      " " +
+      ano;
 
     let media =
       dados.corridas > 0
@@ -3088,7 +3250,7 @@ if (graficoMelhorMes) {
       <div class="card card-mes-v2">
 
         <div class="mes-topo">
-          <h3>${icone} ${nomeMes}</h3>
+          <h3>📅 ${nomeMes}</h3>
         </div>
 
         <div class="mes-total">
@@ -3107,6 +3269,10 @@ if (graficoMelhorMes) {
     `;
   });
 }
+
+}
+
+
 function obterInicioSemana(dataBase) {
   let data = new Date(dataBase);
   let diaSemana = data.getDay();
@@ -3377,9 +3543,7 @@ let mediaDiariaGastos =
 
   let mediaSemanalGastos =
     mediaDiariaGastos * 7;
-    console.log("Ganhos 30 dias:", totalGanhos30Dias);
-console.log("Gastos 30 dias:", totalGastos30Dias);
-console.log("Gastos semanais médios:", mediaSemanalGastos);
+   
 
   let metaConservadora =
     mediaSemanalGanhos + mediaSemanalGastos;
@@ -4028,7 +4192,7 @@ function atualizarGastos() {
 
     return true;
   });
-  console.log("Período atual:", periodo);
+ 
 
   let totais = {
     combustivel: 0,

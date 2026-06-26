@@ -1049,89 +1049,73 @@
 </div>
 <div class="card">
 
+ <div class="card">
+
   <h2>📈 Comparativo Mensal</h2>
 
   <div class="comparativo-grid">
 
-    <div class="comparativo-item">
-      <small>📅 Até hoje</small>
-      <strong id="mesAtualAteHoje">
-        R$ 0,00
-      </strong>
+  <div class="mini-card verde">
+    <small>📅 Até hoje</small>
+    <strong id="comparativoMesAtual">R$ 0,00</strong>
+    <span>Valor acumulado</span>
+  </div>
+
+  <div class="mini-card azul">
+    <small>🚀 Projeção</small>
+    <strong id="comparativoProjecao">R$ 0,00</strong>
+    <span>Até o fim do mês</span>
+  </div>
+
+  <div class="mini-card roxo">
+    <small>📅 Mês anterior</small>
+    <strong id="comparativoMesAnterior">R$ 0,00</strong>
+    <span>Comparativo</span>
+  </div>
+
+  <div class="mini-card dourado">
+    <small>📈 Tendência</small>
+
+    <div id="comparativoTendencia"
+         class="badge-tendencia">
+      🔥 +0%
     </div>
 
-    <div class="comparativo-item">
-      <small>🚀 Projeção</small>
-      <strong id="projecaoMensal">
-        R$ 0,00
-      </strong>
-    </div>
+    <span>Em relação ao mês anterior</span>
+  </div>
 
-    <div class="comparativo-item">
-      <small>📅 Mês anterior</small>
-      <strong id="mesAnteriorComparativo">
-        R$ 0,00
-      </strong>
-    </div>
-
-    <div class="comparativo-item">
-      <small>📈 Tendência</small>
-      <strong id="tendenciaMensal">
-        0%
-      </strong>
-    </div>
-
+</div>
   </div>
 
 </div>
 
-  <div class="card">
-    <h2>🔎 Pesquisar Semana</h2>
+<div class="card card-origens-home">
 
-    <input type="date" id="dataPesquisaSemana">
-
-    <button onclick="pesquisarSemanaHistorico()">
-      Buscar semana
-    </button>
+  <div class="titulo-card">
+    🪙 Origens dos ganhos do mês
   </div>
 
-  <div id="resultadoSemanaHistorico"></div>
+  <div class="origem uber">
+    <strong>Uber</strong>
+    <h2 id="totalUberHistorico">R$ 0,00</h2>
+    <small id="porcentagemUberHistorico">0% do total</small>
+  </div>
 
-  
+  <div class="origem noventaNove">
+    <strong>99</strong>
+    <h2 id="total99Historico">R$ 0,00</h2>
+    <small id="porcentagem99Historico">0% do total</small>
+  </div>
 
-  <div id="historicoMensalCards" class="dashboard-cards"></div>
+  <div class="origem particular">
+    <strong>Particular</strong>
+    <h2 id="totalParticularHistorico">R$ 0,00</h2>
+    <small id="porcentagemParticularHistorico">0% do total</small>
+  </div>
+
+</div>
 
 </section>
-
-    <section id="adminTela" class="tela">
-      <h1>⚙️ Central de Controle</h1>
-
-      <p class="subtitulo">
-        Backup, segurança e gerenciamento do sistema
-      </p>
-
-      <div class="card">
-        <h2>⚙️ Administração do Sistema</h2>
-
-        <button onclick="baixarBackup()">
-          💾 Baixar Backup
-        </button>
-
-        <button onclick="restaurarBackup()">
-          📤 Restaurar Backup
-        </button>
-
-        <button class="secundario" onclick="resetSemana()">
-          🗑️ Resetar Sistema
-        </button>
-      </div>
-
-      <div class="card">
-        <h2>👥 Gerenciar Usuários</h2>
-        <ul id="listaAdminUsuarios"></ul>
-      </div>
-    </section>
-
   
   <section id="graficoTela" class="tela grafico-v2">
 

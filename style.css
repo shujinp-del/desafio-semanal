@@ -180,7 +180,45 @@ li,
   padding: 12px 0;
   border-bottom: 1px solid rgba(255,255,255,0.08);
 }
+.card-origens-home{
+    margin-top:18px;
+}
 
+.card-origens-home .titulo-card{
+    font-size:18px;
+    font-weight:700;
+    margin-bottom:15px;
+}
+
+.card-origens-home .origem{
+    padding:18px;
+    border-radius:16px;
+    margin-bottom:14px;
+    background:#1b1b1b;
+    transition:.25s;
+}
+
+.card-origens-home .origem:hover{
+    transform:translateY(-2px);
+}
+
+.card-origens-home .origem strong{
+    display:block;
+    font-size:18px;
+    margin-bottom:8px;
+}
+
+.card-origens-home .origem h2{
+    margin:0;
+    font-size:36px;
+    font-weight:700;
+}
+
+.card-origens-home .origem small{
+    display:block;
+    margin-top:8px;
+    opacity:.75;
+}
 .origem-item:last-child {
   border-bottom: none;
 }
@@ -1348,25 +1386,50 @@ canvas {
 .comparativo-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-top: 12px;
+  gap: 10px;
+  margin-top: 16px;
+  width: 100%;
 }
 
-.comparativo-item {
-  background: rgba(255,255,255,0.05);
-  border-radius: 12px;
+.mini-card {
+  min-width: 0;
+  background: #1d1d1d;
+  border-radius: 16px;
   padding: 12px;
-  text-align: center;
+  border: 1px solid rgba(255,255,255,.08);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
-.comparativo-item small {
-  display: block;
-  color: #aaa;
-  margin-bottom: 6px;
+.mini-card strong {
+  font-size: 22px;
+  line-height: 1.1;
+  word-break: break-word;
 }
 
-.comparativo-item strong {
-  font-size: 18px;
+.mini-card small {
+  font-size: 12px;
+  font-weight: 800;
+  opacity: .85;
+}
+
+.mini-card span {
+  font-size: 10px;
+  opacity: .75;
+}
+
+.badge-tendencia {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 10px;
+  border-radius: 30px;
+  font-weight: 800;
+  font-size: 16px;
+  width: max-content;
+  max-width: 100%;
+  background: #0c9d58;
   color: white;
 }
 .raro-verde {
@@ -2575,4 +2638,171 @@ canvas {
       0 0 24px rgba(255, 122, 24, 0.20),
       0 18px 40px rgba(0, 0, 0, 0.45);
   }
+}
+#historicoTela .card-origens-home {
+  background: linear-gradient(180deg, #1f1f1f, #121212);
+  border: 1px solid rgba(255, 170, 0, 0.25);
+  border-radius: 22px;
+  padding: 18px;
+  margin-top: 18px;
+}
+
+#historicoTela .card-origens-home .titulo-card {
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 16px;
+}
+
+#historicoTela .card-origens-home .origem {
+  background: linear-gradient(180deg, #1b1b1b, #101010);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+#historicoTela .card-origens-home .origem h2 {
+  margin: 8px 0 4px;
+  font-size: 26px;
+}
+
+#historicoTela .card-origens-home .origem small {
+  opacity: 0.8;
+}
+
+#historicoTela .card-origens-home .uber {
+  border: 1px solid #00c853;
+}
+
+#historicoTela .card-origens-home .uber h2 {
+  color: #00c853;
+}
+
+#historicoTela .card-origens-home .noventaNove {
+  border: 1px solid #1e88ff;
+}
+
+#historicoTela .card-origens-home .noventaNove h2 {
+  color: #1e88ff;
+}
+
+#historicoTela .card-origens-home .particular {
+  border: 1px solid #b14cff;
+}
+
+#historicoTela .card-origens-home .particular h2 {
+  color: #b14cff;
+}
+.comparativo-grid{
+
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:12px;
+margin-top:15px;
+
+}
+
+.mini-card{
+
+background:#1d1d1d;
+
+border-radius:18px;
+
+padding:15px;
+
+border:1px solid rgba(255,255,255,.08);
+
+display:flex;
+
+flex-direction:column;
+
+gap:8px;
+
+transition:.3s;
+
+}
+
+.mini-card strong{
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 1.2;
+    word-break: normal;
+    white-space: nowrap;
+}
+
+.mini-card small{
+    font-size: 11px;
+    color:#bdbdbd;
+    font-weight:600;
+}
+
+.mini-card span{
+    font-size:12px;
+    font-weight:700;
+    color:#bfbfbf;
+}
+
+.verde{
+
+border-color:#00d26a;
+
+}
+
+.verde strong{
+
+color:#00d26a;
+
+}
+
+.azul{
+
+border-color:#3b9cff;
+
+}
+
+.azul strong{
+
+color:#3b9cff;
+
+}
+
+.roxo{
+
+border-color:#b05cff;
+
+}
+
+.roxo strong{
+
+color:#b05cff;
+
+}
+
+.dourado{
+
+border-color:#ffb300;
+
+}
+
+.badge-tendencia{
+
+display:inline-flex;
+
+align-items:center;
+
+justify-content:center;
+
+padding:8px 14px;
+
+border-radius:30px;
+
+font-weight:bold;
+
+font-size:20px;
+
+width:max-content;
+
+background:#0b8b4d;
+
+color:white;
+
 }
