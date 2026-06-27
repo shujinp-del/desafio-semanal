@@ -3654,6 +3654,18 @@ function usarMetaDesafio() {
   alert("🔴 Meta desafio aplicada!");
 }
 
+function gerarCodigoGrupo() {
+  const caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let codigo = "MMS-";
+
+  for (let i = 0; i < 5; i++) {
+    codigo += caracteres.charAt(
+      Math.floor(Math.random() * caracteres.length)
+    );
+  }
+
+  return codigo;
+}
 async function criarGrupo() {
   if (!usuarioAtual) {
     alert("Faça login primeiro");
@@ -3669,13 +3681,17 @@ async function criarGrupo() {
     alert("Digite o nome do grupo");
     return;
   }
+  let codigoConvite = gerarCodigoGrupo();
 
   try {
     let grupoRef = await addDoc(
       collection(db, "grupos"),
-      {
-        nome,
-        donoUid: usuarioAtual.uid,
+      
+       {
+  nome,
+  codigoConvite,
+  privado: true,
+  donoUid: usuarioAtual.uid,
         donoEmail: usuarioAtual.email,
         criadoEm: serverTimestamp(),
         membros: [
@@ -3690,11 +3706,12 @@ async function criarGrupo() {
 
     await updateDoc(
       doc(db, "usuarios", usuarioAtual.uid),
-      {
-        grupoId: grupoRef.id,
-        grupoNome: nome,
-        papelGrupo: "dono"
-      }
+   {
+  grupoId: grupoRef.id,
+  grupoNome: nome,
+  papelGrupo: "dono",
+  codigoConviteGrupo: codigoConvite
+}
     );
 
     dadosUsuario.grupoId = grupoRef.id;
@@ -3876,6 +3893,9 @@ function carregarGrupo() {
   let campoNovoGrupo =
     document.getElementById("novoGrupo");
 
+    let btnSairGrupo =
+  document.getElementById("btnSairGrupo");
+
   if (!nomeGrupo) return;
 
   if (
@@ -3895,6 +3915,9 @@ function carregarGrupo() {
     if (campoNovoGrupo) {
       campoNovoGrupo.style.display = "none";
     }
+    if (btnSairGrupo) {
+  btnSairGrupo.style.display = "block";
+}
 
     let botaoCriar =
       document.querySelector("button[onclick='criarGrupo()']");
@@ -3925,7 +3948,10 @@ function carregarGrupo() {
     if (campoNovoGrupo) {
       campoNovoGrupo.style.display = "block";
     }
-
+    if (btnSairGrupo) {
+  btnSairGrupo.style.display = "none";
+}
+ 
     let botaoCriar =
       document.querySelector("button[onclick='criarGrupo()']");
 
@@ -3939,6 +3965,41 @@ function carregarGrupo() {
     }
   }
 }
+async function sairDoGrupo() {
+  if (!usuarioAtual) {
+    alert("Faça login primeiro");
+    return;
+  }
+
+  const confirmar = confirm("Deseja sair deste grupo?");
+
+  if (!confirmar) return;
+
+  try {
+    await updateDoc(
+      doc(db, "usuarios", usuarioAtual.uid),
+      {
+        grupoId: "",
+        grupoNome: "",
+        papelGrupo: "",
+        codigoConviteGrupo: ""
+      }
+    );
+
+    dadosUsuario.grupoId = "";
+    dadosUsuario.grupoNome = "";
+    dadosUsuario.papelGrupo = "";
+    dadosUsuario.codigoConviteGrupo = "";
+
+    carregarGrupo();
+
+    alert("Você saiu do grupo.");
+  } catch (erro) {
+    console.error(erro);
+    alert("Erro ao sair do grupo");
+  }
+}
+window.sairDoGrupo = sairDoGrupo;
 function mudarPeriodoGastos(periodo) {
 
   periodoGastosAtual = periodo;
