@@ -253,6 +253,35 @@ usuarioLogado.innerText =
   iniciarSincronia();
 });
 
+async function obterCorridasSemanaDoGrupo(corridasSemana) {
+  if (!dadosUsuario || !dadosUsuario.grupoId) {
+    return [];
+  }
+
+  try {
+    let grupoRef = doc(db, "grupos", dadosUsuario.grupoId);
+    let grupoSnap = await getDoc(grupoRef);
+
+    if (!grupoSnap.exists()) {
+      return [];
+    }
+
+    let grupo = grupoSnap.data();
+    let membros = grupo.membros || [];
+
+    let idsMembros = membros.map(m => m.uid);
+    let emailsMembros = membros.map(m => m.email);
+
+    return corridasSemana.filter(corrida =>
+      idsMembros.includes(corrida.uid) ||
+      emailsMembros.includes(corrida.email)
+    );
+
+  } catch (erro) {
+    console.error("Erro ao obter corridas do grupo:", erro);
+    return [];
+  }
+}
 function iniciarSincronia() {
   pararSincronia = onSnapshot(
     collection(db, "corridas"),
@@ -283,7 +312,15 @@ function iniciarSincronia() {
 
       corridasFirebase = todasCorridas;
 
-      ranking = montarRanking(corridasSemana);
+  obterCorridasSemanaDoGrupo(corridasSemana)
+  .then(corridasGrupoSemana => {
+    ranking = montarRanking(corridasGrupoSemana);
+
+    atualizarRanking();
+    atualizarCampeonatoSemana();
+    atualizarGrafico();
+    atualizarGraficoLinha();
+  });
 
 atualizarRankingMetas();
 
@@ -337,9 +374,36 @@ async function atualizarRankingMetas() {
   let usuariosSnap = await getDocs(collection(db, "usuarios"));
 
   let rankingTemp = [];
+  let membrosGrupo = [];
+
+if (dadosUsuario && dadosUsuario.grupoId) {
+  let grupoSnap = await getDoc(
+    doc(db, "grupos", dadosUsuario.grupoId)
+  );
+
+ if (grupoSnap.exists()) {
+
+  let grupo =
+    grupoSnap.data();
+
+  dadosUsuario.membrosGrupo =
+    grupo.membros || [];
+
+  carregarEventosGrupo();
+}
+}
+
+let emailsGrupo = membrosGrupo.map(m => m.email);
 
   usuariosSnap.forEach(docSnap => {
     let usuario = docSnap.data();
+    if (
+  dadosUsuario &&
+  dadosUsuario.grupoId &&
+  !emailsGrupo.includes(usuario.email)
+) {
+  return;
+}
 
     if (!usuario.metaSemanal || usuario.metaSemanal <= 0) {
       return;
@@ -1341,6 +1405,52 @@ function atualizarRanking() {
       </li>
     `;
   });
+}
+function atualizarCampeonatoSemana() {
+
+  let div = document.getElementById("campeaoSemana");
+
+  if (!div) return;
+
+  if (!ranking || ranking.length === 0) {
+
+    div.innerHTML = `
+      <p>Nenhum resultado esta semana.</p>
+    `;
+
+    return;
+  }
+
+  let html = "";
+
+  let medalhas = ["🥇", "🥈", "🥉"];
+
+  ranking.slice(0, 3).forEach((item, index) => {
+
+    html += `
+      <div class="campeonato-item">
+
+        <div class="campeonato-posicao">
+          ${medalhas[index] || `${index + 1}º`}
+        </div>
+
+        <div class="campeonato-info">
+
+          <strong>${item.nome}</strong><br>
+
+          💰 ${formatarMoeda(item.valor)}<br>
+
+          🚗 ${item.corridas} corridas
+
+        </div>
+
+      </div>
+    `;
+
+  });
+
+  div.innerHTML = html;
+
 }
 
 function atualizarMinhasCorridas() {
@@ -2773,9 +2883,9 @@ function atualizarGraficoLinha() {
       labels: datas,
 
       datasets: [{
-        label: usuarioEhAdmin()
-          ? "Evolução geral"
-          : "Minha evolução",
+       label: dadosUsuario && dadosUsuario.grupoId
+  ? "Evolução do grupo"
+  : "Minha evolução",
 
         data: valores,
         borderColor: "#22c55e",
@@ -3104,11 +3214,13 @@ if (origemItem === "Particular") {
   );
 
   if (lista.length === 0) {
+  if (container) {
     container.innerHTML = `
       <div class="card">
         Nenhum histórico encontrado.
       </div>
     `;
+  }
 
     if (melhorSemanaResumo)
       melhorSemanaResumo.innerText =
@@ -3728,10 +3840,11 @@ async function criarGrupo() {
 }
 async function buscarGrupo() {
 
-  let nome = document
-    .getElementById("buscarGrupoNome")
-    .value
-    .trim();
+ let campoBusca =
+  document.getElementById("buscarGrupoNome") ||
+  document.getElementById("codigoGrupo");
+
+let nome = campoBusca.value.trim();
 
   if (!nome) {
     alert("Digite o nome do grupo");
@@ -3817,6 +3930,12 @@ resultado.innerHTML = `
     `;
   }
 }
+
+function entrarGrupo() {
+  buscarGrupo();
+}
+
+window.entrarGrupo = entrarGrupo;
 async function solicitarEntradaGrupo(
   grupoId
 ) {
@@ -3853,11 +3972,13 @@ async function solicitarEntradaGrupo(
       return;
     }
 
-    solicitacoes.push({
-      uid: usuarioAtual.uid,
-      email: usuarioAtual.email,
-      status: "pendente"
-    });
+   solicitacoes.push({
+  uid: usuarioAtual.uid,
+  email: usuarioAtual.email,
+  status: "pendente",
+  grupoNome: grupo.nome,
+  criadoEm: new Date()
+});
 
     await updateDoc(
       grupoRef,
@@ -3880,7 +4001,7 @@ async function solicitarEntradaGrupo(
   }
 }
 
-function carregarGrupo() {
+async function carregarGrupo() {
   let nomeGrupo =
     document.getElementById("nomeGrupo");
 
@@ -3895,7 +4016,14 @@ function carregarGrupo() {
 
     let btnSairGrupo =
   document.getElementById("btnSairGrupo");
+  let cardSolicitacoesGrupo =
+  document.getElementById("cardSolicitacoesGrupo");
 
+let listaSolicitacoesGrupo =
+  document.getElementById("listaSolicitacoesGrupo");
+
+let btnCompartilharGrupo =
+  document.getElementById("btnCompartilharGrupo");
   if (!nomeGrupo) return;
 
   if (
@@ -3904,10 +4032,25 @@ function carregarGrupo() {
   ) {
     nomeGrupo.innerText =
       dadosUsuario.grupoNome;
+let grupoRef =
+  doc(db, "grupos", dadosUsuario.grupoId);
 
+let grupoSnap =
+  await getDoc(grupoRef);
+
+if (grupoSnap.exists()) {
+
+  let grupo =
+    grupoSnap.data();
+
+  dadosUsuario.membrosGrupo =
+    grupo.membros || [];
+
+}
     if (statusGrupo) {
       statusGrupo.innerText =
         dadosUsuario.papelGrupo === "dono"
+        
           ? "👑 Você é o dono deste grupo."
           : "👥 Você participa deste grupo.";
     }
@@ -3918,6 +4061,9 @@ function carregarGrupo() {
     if (btnSairGrupo) {
   btnSairGrupo.style.display = "block";
 }
+if (btnCompartilharGrupo) {
+  btnCompartilharGrupo.style.display = "block";
+}
 
     let botaoCriar =
       document.querySelector("button[onclick='criarGrupo()']");
@@ -3927,14 +4073,46 @@ function carregarGrupo() {
     }
 
     if (listaGrupo) {
-      listaGrupo.innerHTML = `
-        <li>
-          👑 ${usuarioAtual.email}
-          <br>
-          <small>Dono do grupo</small>
-        </li>
-      `;
-    }
+
+  listaGrupo.innerHTML = "";
+
+  let membros = dadosUsuario.membrosGrupo || [];
+
+  membros.forEach(membro => {
+
+    listaGrupo.innerHTML += `
+      <li>
+
+        ${membro.papel === "dono" ? "👑" : "👤"}
+        ${membro.email}
+
+        <br>
+
+        <small>
+          ${
+            membro.papel === "dono"
+              ? "Dono do grupo"
+              : "Membro"
+          }
+        </small>
+
+      </li>
+    `;
+  });
+
+}
+    if (
+  cardSolicitacoesGrupo &&
+  listaSolicitacoesGrupo &&
+  dadosUsuario.papelGrupo === "dono"
+) {
+  cardSolicitacoesGrupo.style.display = "block";
+
+  listaSolicitacoesGrupo.innerHTML =
+    "Carregando solicitações...";
+
+  carregarSolicitacoesGrupo();
+}
 
   } else {
     nomeGrupo.innerText =
@@ -3951,6 +4129,22 @@ function carregarGrupo() {
     if (btnSairGrupo) {
   btnSairGrupo.style.display = "none";
 }
+if (btnCompartilharGrupo) {
+  btnCompartilharGrupo.style.display = "none";
+}
+
+if (grupo.eventos) {
+
+  document.getElementById("metaDesafioGrupo").value =
+    grupo.eventos.desafio || "";
+
+  document.getElementById("descricaoCampeonatoGrupo").value =
+    grupo.eventos.campeonato || "";
+
+  document.getElementById("premiacaoGrupo").value =
+    grupo.eventos.premiacao || "";
+
+}
  
     let botaoCriar =
       document.querySelector("button[onclick='criarGrupo()']");
@@ -3966,8 +4160,8 @@ function carregarGrupo() {
   }
 }
 async function sairDoGrupo() {
-  if (!usuarioAtual) {
-    alert("Faça login primeiro");
+  if (!usuarioAtual || !dadosUsuario?.grupoId) {
+    alert("Grupo não encontrado.");
     return;
   }
 
@@ -3976,6 +4170,57 @@ async function sairDoGrupo() {
   if (!confirmar) return;
 
   try {
+    let grupoRef = doc(db, "grupos", dadosUsuario.grupoId);
+    let grupoSnap = await getDoc(grupoRef);
+
+   if (!grupoSnap.exists()) {
+  await updateDoc(
+    doc(db, "usuarios", usuarioAtual.uid),
+    {
+      grupoId: "",
+      grupoNome: "",
+      papelGrupo: "",
+      codigoConviteGrupo: ""
+    }
+  );
+
+  dadosUsuario.grupoId = "";
+  dadosUsuario.grupoNome = "";
+  dadosUsuario.papelGrupo = "";
+  dadosUsuario.codigoConviteGrupo = "";
+  dadosUsuario.membrosGrupo = [];
+
+  await carregarGrupo();
+
+  alert("Grupo antigo removido da sua conta.");
+  return;
+}
+
+    let grupo = grupoSnap.data();
+    let membros = grupo.membros || [];
+
+    let souDono =
+      dadosUsuario.papelGrupo === "dono";
+
+    if (souDono && membros.length > 1) {
+      alert(
+        "Você é o dono do grupo. Antes de sair, remova os membros ou transfira a liderança."
+      );
+      return;
+    }
+
+   let novosMembros = membros.filter(
+  membro => membro.uid !== usuarioAtual.uid
+);
+
+if (souDono && membros.length === 1) {
+  await deleteDoc(grupoRef);
+} else {
+  await updateDoc(grupoRef, {
+    membros: novosMembros
+  });
+}
+
     await updateDoc(
       doc(db, "usuarios", usuarioAtual.uid),
       {
@@ -3990,6 +4235,7 @@ async function sairDoGrupo() {
     dadosUsuario.grupoNome = "";
     dadosUsuario.papelGrupo = "";
     dadosUsuario.codigoConviteGrupo = "";
+    dadosUsuario.membrosGrupo = [];
 
     carregarGrupo();
 
@@ -3999,7 +4245,191 @@ async function sairDoGrupo() {
     alert("Erro ao sair do grupo");
   }
 }
+
 window.sairDoGrupo = sairDoGrupo;
+async function carregarSolicitacoesGrupo() {
+
+  let lista =
+    document.getElementById("listaSolicitacoesGrupo");
+
+  if (!lista || !dadosUsuario?.grupoId) return;
+
+  try {
+
+    let grupoSnap =
+      await getDoc(
+        doc(db, "grupos", dadosUsuario.grupoId)
+      );
+
+    if (!grupoSnap.exists()) return;
+
+    let grupo = grupoSnap.data();
+
+    let solicitacoes =
+      grupo.solicitacoes || [];
+
+    if (solicitacoes.length === 0) {
+      lista.innerHTML =
+        "Nenhuma solicitação pendente.";
+      return;
+    }
+
+    lista.innerHTML = "";
+
+    solicitacoes.forEach(item => {
+
+      if (item.status !== "pendente") return;
+
+      lista.innerHTML += `
+        <div class="item-solicitacao">
+
+          <strong>${item.email}</strong>
+
+          <br>
+
+          <button
+            onclick="aceitarSolicitacao('${item.uid}')"
+          >
+            ✅ Aceitar
+          </button>
+
+          <button
+            onclick="recusarSolicitacao('${item.uid}')"
+          >
+            ❌ Recusar
+          </button>
+
+        </div>
+      `;
+    });
+
+  } catch (erro) {
+
+    console.error(erro);
+
+  }
+
+}
+async function aceitarSolicitacao(uidSolicitante) {
+  if (!usuarioAtual || !dadosUsuario?.grupoId) {
+    alert("Grupo não encontrado.");
+    return;
+  }
+
+  try {
+    let grupoRef = doc(db, "grupos", dadosUsuario.grupoId);
+    let grupoSnap = await getDoc(grupoRef);
+
+ if (!grupoSnap.exists()) {
+  await updateDoc(
+    doc(db, "usuarios", usuarioAtual.uid),
+    {
+      grupoId: "",
+      grupoNome: "",
+      papelGrupo: "",
+      codigoConviteGrupo: ""
+    }
+  );
+
+  dadosUsuario.grupoId = "";
+  dadosUsuario.grupoNome = "";
+  dadosUsuario.papelGrupo = "";
+  dadosUsuario.codigoConviteGrupo = "";
+  dadosUsuario.membrosGrupo = [];
+
+  carregarGrupo();
+
+  alert("Grupo antigo removido da sua conta.");
+  return;
+}
+
+    let grupo = grupoSnap.data();
+
+    let solicitacoes = grupo.solicitacoes || [];
+    let membros = grupo.membros || [];
+
+    let solicitacao = solicitacoes.find(
+      item => item.uid === uidSolicitante
+    );
+
+    if (!solicitacao) {
+      alert("Solicitação não encontrada.");
+      return;
+    }
+
+    let jaMembro = membros.some(
+      membro => membro.uid === uidSolicitante
+    );
+
+    if (!jaMembro) {
+      membros.push({
+        uid: solicitacao.uid,
+        email: solicitacao.email,
+        papel: "membro"
+      });
+    }
+
+    let novasSolicitacoes = solicitacoes.filter(
+      item => item.uid !== uidSolicitante
+    );
+
+    await updateDoc(grupoRef, {
+      membros,
+      solicitacoes: novasSolicitacoes
+    });
+
+    await updateDoc(doc(db, "usuarios", uidSolicitante), {
+      grupoId: dadosUsuario.grupoId,
+      grupoNome: grupo.nome,
+      papelGrupo: "membro"
+    });
+
+    carregarGrupo();
+
+    alert("✅ Solicitação aceita!");
+  } catch (erro) {
+    console.error(erro);
+    alert("Erro ao aceitar solicitação.");
+  }
+}
+
+window.aceitarSolicitacao = aceitarSolicitacao;
+async function recusarSolicitacao(uidSolicitante) {
+  if (!usuarioAtual || !dadosUsuario?.grupoId) {
+    alert("Grupo não encontrado.");
+    return;
+  }
+
+  try {
+    let grupoRef = doc(db, "grupos", dadosUsuario.grupoId);
+    let grupoSnap = await getDoc(grupoRef);
+
+    if (!grupoSnap.exists()) {
+      alert("Grupo não encontrado.");
+      return;
+    }
+
+    let grupo = grupoSnap.data();
+    let solicitacoes = grupo.solicitacoes || [];
+
+    let novasSolicitacoes = solicitacoes.filter(
+      item => item.uid !== uidSolicitante
+    );
+
+    await updateDoc(grupoRef, {
+      solicitacoes: novasSolicitacoes
+    });
+
+    carregarGrupo();
+
+    alert("❌ Solicitação recusada.");
+  } catch (erro) {
+    console.error(erro);
+    alert("Erro ao recusar solicitação.");
+  }
+}
+
+window.recusarSolicitacao = recusarSolicitacao;
 function mudarPeriodoGastos(periodo) {
 
   periodoGastosAtual = periodo;
@@ -4767,6 +5197,138 @@ function setValorRapido(valor) {
     valorInput.value = valor;
   }
 }
+async function carregarEventosGrupo() {
+  if (!dadosUsuario?.grupoId) return;
+
+  let grupoRef =
+    doc(db, "grupos", dadosUsuario.grupoId);
+
+  let grupoSnap =
+    await getDoc(grupoRef);
+
+  if (!grupoSnap.exists()) return;
+
+  let grupo =
+    grupoSnap.data();
+
+  let titulo =
+    document.getElementById("tituloDesafioGrupo");
+
+  let descricao =
+    document.getElementById("descricaoDesafioGrupo");
+
+  let premio =
+    document.getElementById("metaDesafioGrupo");
+
+  let visual =
+    document.getElementById("visualDesafioGrupo");
+
+  if (titulo) titulo.value = grupo.desafioTitulo || "";
+  if (descricao) descricao.value = grupo.campeonatoDescricao || "";
+  if (premio) premio.value = grupo.premiacao || "";
+
+  if (visual) {
+    if (
+      grupo.desafioTitulo ||
+      grupo.campeonatoDescricao ||
+      grupo.premiacao
+    ) {
+      visual.innerHTML = `
+        <strong>🔥 Evento ativo</strong><br><br>
+
+        🎯 <strong>Desafio:</strong><br>
+        ${grupo.desafioTitulo || "Sem desafio definido"}<br><br>
+
+        🏆 <strong>Campeonato:</strong><br>
+        ${grupo.campeonatoDescricao || "Sem campeonato definido"}<br><br>
+
+        🎁 <strong>Premiação:</strong><br>
+        ${grupo.premiacao || "Sem premiação definida"}
+      `;
+    } else {
+      visual.innerHTML =
+        "Nenhum desafio ativo.";
+    }
+  }
+}
+async function salvarDesafioGrupo() {
+  if (!usuarioAtual || !dadosUsuario?.grupoId) {
+    alert("Grupo não encontrado.");
+    return;
+  }
+
+  if (dadosUsuario.papelGrupo !== "dono") {
+    alert("Apenas o dono do grupo pode editar.");
+    return;
+  }
+
+  let titulo =
+    document.getElementById("tituloDesafioGrupo").value.trim();
+
+  let campeonato =
+    document.getElementById("descricaoDesafioGrupo").value.trim();
+
+  let premiacao =
+    document.getElementById("metaDesafioGrupo").value.trim();
+
+  try {
+    await updateDoc(
+      doc(db, "grupos", dadosUsuario.grupoId),
+      {
+        desafioTitulo: titulo,
+        campeonatoDescricao: campeonato,
+        premiacao: premiacao,
+        eventosAtualizadosEm: new Date()
+      }
+    );
+
+    alert("🎯 Eventos do grupo salvos!");
+    carregarEventosGrupo();
+
+  } catch (erro) {
+    console.error(erro);
+    alert("Erro ao salvar eventos.");
+  }
+}
+
+window.salvarDesafioGrupo = salvarDesafioGrupo;
+
+function compartilharGrupo() {
+  if (!dadosUsuario || !dadosUsuario.grupoNome) {
+    alert("Você ainda não está em um grupo.");
+    return;
+  }
+
+ let mensagem =
+`🏆 ENTRE PARA O NOSSO GRUPO NO MMS!
+
+🚗 Grupo:
+${dadosUsuario.grupoNome}
+
+Aqui nós acompanhamos:
+
+🥇 Ranking Financeiro
+🎯 Desafios do Grupo
+🏆 Campeonato Semanal
+🎁 Premiações
+
+📲 Como entrar:
+
+1️⃣ Abra o MMS
+2️⃣ Vá até a aba "Grupo"
+3️⃣ Pesquise por:
+
+👉 ${dadosUsuario.grupoNome}
+
+4️⃣ Clique em:
+📨 Solicitar Entrada
+
+🔥 Espero você no ranking!`;
+
+}
+
+
+window.compartilharGrupo = compartilharGrupo;
 
 function setCorridasRapidas(qtd) {
   let corridasInput = document.getElementById("corridas");

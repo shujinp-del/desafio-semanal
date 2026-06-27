@@ -2842,3 +2842,46 @@ color:white;
   font-size: 14px !important;
   padding: 6px 9px;
 }
+/* ===========================
+   DESAFIO DO GRUPO
+=========================== */
+
+#cardDesafioGrupo label{
+    display:block;
+    margin-top:14px;
+    margin-bottom:6px;
+    font-weight:600;
+}
+
+#cardDesafioGrupo input,
+#cardDesafioGrupo textarea{
+
+    width:100%;
+    padding:12px;
+    border-radius:12px;
+    border:1px solid rgba(255,170,0,.25);
+    background:#181818;
+    color:#fff;
+    box-sizing:border-box;
+}
+
+#cardDesafioGrupo textarea{
+
+    min-height:120px;
+    resize:none;
+}
+
+#cardDesafioGrupo button{
+
+    width:100%;
+    margin-top:14px;
+}
+
+#visualDesafioGrupo{
+
+    padding:16px;
+    border-radius:14px;
+    background:rgba(255,170,0,.08);
+    border:1px solid rgba(255,170,0,.18);
+    margin-bottom:16px;
+}

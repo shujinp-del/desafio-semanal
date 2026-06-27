@@ -414,6 +414,10 @@
   🚪 Sair do Grupo
 </button>
 
+<button id="btnCompartilharGrupo" onclick="compartilharGrupo()" style="display:none;">
+  📤 Compartilhar Grupo
+</button>
+
   <input
     id="novoGrupo"
     placeholder="Nome do grupo"
@@ -428,15 +432,16 @@
 <h3>🔍 Encontrar Grupo</h3>
 
 <input
-  id="buscarGrupoNome"
-  placeholder="Nome do grupo"
+  id="codigoGrupo"
+  placeholder="Código do convite"
 >
 
-<button onclick="buscarGrupo()">
-  Buscar Grupo
+<button onclick="entrarGrupo()">
+  🚪 Entrar no grupo
 </button>
 
 <div id="resultadoBuscaGrupo"></div>
+
 
 
   <div class="card">
@@ -446,15 +451,90 @@
       <li>Nenhum membro</li>
     </ul>
   </div>
+  <div class="card" id="cardSolicitacoesGrupo" style="display:none;">
 
-  <div class="card">
-    <h2>🚀 Em breve</h2>
+  <h2>🔔 Solicitações</h2>
 
-    <p>🎯 Desafios do grupo</p>
-    <p>🏆 Campeonato semanal</p>
-    <p>🎁 Premiações</p>
-    <p>➕ Convites</p>
+  <div id="listaSolicitacoesGrupo">
+    Nenhuma solicitação pendente.
   </div>
+
+</div>
+
+  <div class="card" id="cardDesafioGrupo">
+
+  <h2>🎯 Eventos do Grupo</h2>
+
+  <label>🎯 Desafio do grupo</label>
+<input
+  id="tituloDesafioGrupo"
+  placeholder="Ex: Bater R$ 2.500 na semana"
+>
+
+<label>🏆 Campeonato</label>
+<textarea
+  id="descricaoDesafioGrupo"
+  placeholder="Ex: Quem fizer mais corridas vence"
+></textarea>
+
+<label>🎁 Premiação</label>
+<input
+  id="metaDesafioGrupo"
+  placeholder="Ex: Campeão escolhe o próximo desafio"
+>
+
+  <div id="visualDesafioGrupo">
+    Nenhum desafio ativo.
+  </div>
+  <button onclick="salvarDesafioGrupo()">
+  💾 Salvar Eventos
+</button>
+
+<button onclick="removerDesafioGrupo()">
+  🗑️ Limpar Eventos
+</button>
+
+  <div id="formDesafioGrupo" style="display:none;">
+
+    <label>Título do desafio</label>
+    <input
+      id="tituloDesafioGrupo"
+      placeholder="Ex: Bater R$ 2.500 na semana"
+    >
+
+    <label>Descrição</label>
+    <textarea
+      id="descricaoDesafioGrupo"
+      placeholder="Explique o desafio do grupo"
+    ></textarea>
+
+    <label>Meta do desafio</label>
+    <input
+      id="metaDesafioGrupo"
+      type="number"
+      placeholder="2500"
+    >
+
+    <button onclick="salvarDesafioGrupo()">
+      💾 Salvar Desafio
+    </button>
+
+    <button onclick="removerDesafioGrupo()">
+      🗑️ Remover Desafio
+    </button>
+
+  </div>
+
+</div>
+
+<div class="card">
+  <h2>🚀 Em breve</h2>
+
+  <p>🏆 Campeonato semanal</p>
+  <p>🎁 Premiações</p>
+  <p>➕ Convites</p>
+</div>
+
 
 </section>
  
@@ -966,6 +1046,15 @@
       <p class="subtitulo">
         Competição semanal dos motoristas
       </p>
+      <div class="card campeonato-card">
+
+    <h2>🏆 Campeonato da Semana</h2>
+
+    <div id="campeaoSemana">
+        Carregando campeonato...
+    </div>
+
+</div>
 
       <div class="card">
         <h2>💰 Ranking Financeiro</h2>
