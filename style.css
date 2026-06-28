@@ -3091,3 +3091,98 @@ text-transform:uppercase;
 letter-spacing:1px;
 
 }
+/* ===========================
+   MMS V2 - ABA RANKING
+=========================== */
+
+#ranking{
+
+--cor-modulo:#facc15;
+
+--cor-modulo-suave:rgba(250,204,21,.15);
+
+--cor-modulo-borda:rgba(250,204,21,.35);
+
+}
+
+#ranking .card{
+
+border:1px solid var(--cor-modulo-borda);
+
+box-shadow:0 0 22px var(--cor-modulo-suave);
+
+}
+
+#ranking h2,
+#ranking h3{
+
+color:#fff8dc;
+
+}
+
+#ranking button{
+
+background:linear-gradient(
+135deg,
+#d4a017,
+#ffd54f
+);
+
+}
+/* ===========================
+   ABA GASTOS
+=========================== */
+
+#gastos{
+
+--cor-modulo:#22c55e;
+
+--cor-modulo-suave:rgba(34,197,94,.15);
+
+--cor-modulo-borda:rgba(34,197,94,.35);
+
+}
+
+#gastos .card{
+
+border:1px solid var(--cor-modulo-borda);
+
+box-shadow:0 0 22px var(--cor-modulo-suave);
+
+}
+
+#gastos button{
+
+background:linear-gradient(
+135deg,
+#16a34a,
+#4ade80
+);
+
+}
+/* ===========================
+   HISTÓRICO
+=========================== */
+
+#historico{
+
+--cor-modulo:#3b82f6;
+
+--cor-modulo-suave:rgba(59,130,246,.15);
+
+--cor-modulo-borda:rgba(59,130,246,.35);
+
+}
+/* ===========================
+   METAS
+=========================== */
+
+#metas{
+
+--cor-modulo:#ef4444;
+
+--cor-modulo-suave:rgba(239,68,68,.15);
+
+--cor-modulo-borda:rgba(239,68,68,.35);
+
+}
