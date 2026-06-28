@@ -4206,12 +4206,21 @@ async function carregarExplorarGrupos() {
 
     let quantidade =
       (grupo.membros || []).length;
+      let dono =
+  grupo.donoNome ||
+  grupo.donoEmail ||
+  "Administrador";
 
     lista.innerHTML += `
+
 
       <div class="card-grupo-publico">
 
         <h3>🏆 ${grupo.nome}</h3>
+
+        <p>
+  👑 ${dono}
+</p>
 
         <p>
           👥 ${quantidade} membros
