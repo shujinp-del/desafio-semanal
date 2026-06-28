@@ -1908,9 +1908,25 @@ function atualizarLider() {
 
   if (!lider || !usuarioAtual) return;
 
-  let rankingSemana = montarRanking(
-    corridasFirebase.filter(item => estaNaSemanaAtual(item.data))
+ let corridasBase = corridasFirebase.filter(item =>
+  estaNaSemanaAtual(item.data)
+);
+
+if (
+  dadosUsuario &&
+  dadosUsuario.membrosGrupo &&
+  dadosUsuario.membrosGrupo.length > 0
+) {
+  let emailsGrupo =
+    dadosUsuario.membrosGrupo.map(membro => membro.email);
+
+  corridasBase = corridasBase.filter(item =>
+    emailsGrupo.includes(item.email)
   );
+}
+
+let rankingSemana =
+  montarRanking(corridasBase);
 
   let minhasSemana = corridasFirebase.filter(
     item =>
@@ -1937,8 +1953,11 @@ function atualizarLider() {
   }
 
   let posicao = rankingSemana.findIndex(
-    item => item.valor === totalUsuario
-  ) + 1;
+  item =>
+    item.nome === dadosUsuario.nomeExibicao ||
+    item.nome === usuarioAtual.email ||
+    item.nome === usuarioAtual.displayName
+) + 1;
 
   if (posicao <= 0) posicao = "-";
 
@@ -4158,6 +4177,61 @@ if (grupo.eventos) {
         "<li>Nenhum membro</li>";
     }
   }
+  carregarExplorarGrupos();
+}
+
+async function carregarExplorarGrupos() {
+
+  let lista =
+    document.getElementById("listaExplorarGrupos");
+
+  if (!lista) return;
+
+  lista.innerHTML = "Carregando...";
+
+  let gruposSnap =
+    await getDocs(collection(db, "grupos"));
+
+  lista.innerHTML = "";
+
+  gruposSnap.forEach(docGrupo => {
+
+    let grupo = docGrupo.data();
+
+    let jaParticipo =
+  dadosUsuario &&
+  dadosUsuario.grupoId === docGrupo.id;
+
+  if (jaParticipo) return;
+
+    let quantidade =
+      (grupo.membros || []).length;
+
+    lista.innerHTML += `
+
+      <div class="card-grupo-publico">
+
+        <h3>🏆 ${grupo.nome}</h3>
+
+        <p>
+          👥 ${quantidade} membros
+        </p>
+
+      ${
+  jaParticipo
+    ? `<p>✅ Você já participa deste grupo.</p>`
+    : `
+      <button onclick="solicitarEntradaGrupo('${docGrupo.id}')">
+        📨 Solicitar Entrada
+      </button>
+    `
+}
+      </div>
+
+    `;
+
+  });
+
 }
 async function sairDoGrupo() {
   if (!usuarioAtual || !dadosUsuario?.grupoId) {
