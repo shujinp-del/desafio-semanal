@@ -3295,3 +3295,116 @@ background:linear-gradient(
 #conquistasTela .card {
   border-color: var(--cor-hall-borda);
 }
+/* ===========================
+   HALL DA FAMA - HISTÓRICO POR MÊS
+=========================== */
+
+.grupo-medalhas-mes {
+  margin-bottom: 18px;
+}
+
+.grupo-medalhas-mes h3 {
+  font-size: 15px;
+  margin-bottom: 10px;
+  color: #facc15;
+}
+
+.lista-medalhas-mes {
+  display: grid;
+  gap: 8px;
+}
+
+.medalha-compacta {
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(250,204,21,.18);
+}
+
+.medalha-compacta strong {
+  display: block;
+  font-size: 14px;
+}
+
+.medalha-compacta p {
+  margin: 4px 0;
+  font-size: 13px;
+}
+
+.medalha-compacta small {
+  opacity: .75;
+  font-size: 12px;
+}
+.grupo-medalhas{
+
+    margin-bottom:22px;
+
+}
+
+.titulo-mes{
+
+    color:#ffb000;
+
+    font-size:17px;
+
+    margin-bottom:12px;
+
+    border-bottom:1px solid rgba(255,176,0,.25);
+
+    padding-bottom:6px;
+
+}
+
+.lista-medalhas{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:10px;
+
+}
+
+.medalha-item{
+
+    background:rgba(255,255,255,.04);
+
+    border-radius:12px;
+
+    padding:12px;
+
+    border-left:4px solid #ffb000;
+
+}
+
+.medalha-item strong{
+
+    display:block;
+
+    font-size:15px;
+
+    color:#fff;
+
+}
+
+.medalha-item small{
+
+    display:block;
+
+    margin-top:4px;
+
+    color:#aaa;
+
+}
+
+.medalha-item span{
+
+    display:block;
+
+    margin-top:6px;
+
+    font-weight:bold;
+
+    color:#ffb000;
+
+}

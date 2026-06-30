@@ -2098,17 +2098,54 @@ function atualizarHallFama() {
   totalBronze.innerText = bronze;
 
   if (medalhas.length === 0) {
-    historicoMedalhas.innerHTML =
-      "<p>Nenhuma medalha conquistada ainda.</p>";
-  } else {
-    historicoMedalhas.innerHTML = medalhas.map(item => `
-      <div class="medalha-semana">
-        <strong>${item.medalha} ${item.texto}</strong>
-        <p>${item.posicao}º lugar — Semana de ${formatarData(item.semana)}</p>
-        <small>${formatarMoeda(item.valor)}</small>
+  historicoMedalhas.innerHTML =
+    "<p>Nenhuma medalha conquistada ainda.</p>";
+} else {
+  let meses = {};
+
+  medalhas.forEach(item => {
+    let data = new Date(item.semana + "T00:00:00");
+
+    let nomeMes = data.toLocaleDateString("pt-BR", {
+      month: "long",
+      year: "numeric"
+    });
+
+    nomeMes =
+      nomeMes.charAt(0).toUpperCase() + nomeMes.slice(1);
+
+    if (!meses[nomeMes]) {
+      meses[nomeMes] = [];
+    }
+
+    meses[nomeMes].push(item);
+  });
+
+  historicoMedalhas.innerHTML =
+    Object.keys(meses).map(mes => `
+      <div class="grupo-medalhas">
+
+        <h3 class="titulo-mes">📅 ${mes}</h3>
+
+        <div class="lista-medalhas">
+          ${meses[mes].map(item => `
+            <div class="medalha-item">
+              <strong>${item.medalha} ${item.texto}</strong>
+
+              <small>
+                ${item.posicao}º lugar — ${formatarData(item.semana)}
+              </small>
+
+              <span>
+                ${formatarMoeda(item.valor)}
+              </span>
+            </div>
+          `).join("")}
+        </div>
+
       </div>
     `).join("");
-  }
+}
 
   let melhor = medalhas.length > 0
     ? Math.min(...medalhas.map(item => item.posicao))
