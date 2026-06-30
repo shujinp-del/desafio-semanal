@@ -3186,3 +3186,112 @@ background:linear-gradient(
 --cor-modulo-borda:rgba(239,68,68,.35);
 
 }
+/* ===========================
+   HALL DA FAMA
+=========================== */
+
+#conquistasTela {
+  --cor-hall: #facc15;
+  --cor-hall-laranja: #f97316;
+  --cor-hall-suave: rgba(250, 204, 21, .14);
+  --cor-hall-borda: rgba(250, 204, 21, .35);
+}
+
+#conquistasTela h1 {
+  color: #fff7d6;
+  text-shadow: 0 0 18px rgba(250, 204, 21, .25);
+}
+
+#conquistasTela .subtitulo {
+  color: rgba(255,255,255,.75);
+}
+
+.hall-medalhas {
+  border: 1px solid var(--cor-hall-borda);
+  box-shadow: 0 0 24px var(--cor-hall-suave);
+}
+
+.grid-medalhas {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.medalha {
+  text-align: center;
+  padding: 14px 8px;
+  border-radius: 18px;
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,.07),
+    rgba(255,255,255,.02)
+  );
+  border: 1px solid rgba(255,255,255,.08);
+  transition: .25s ease;
+}
+
+.medalha:hover {
+  transform: translateY(-4px) scale(1.03);
+}
+
+.icone-medalha {
+  font-size: 42px;
+  margin-bottom: 8px;
+  filter: drop-shadow(0 0 10px rgba(255,255,255,.18));
+}
+
+.medalha h3 {
+  font-size: 30px;
+  margin: 4px 0;
+  line-height: 1;
+}
+
+.medalha small {
+  font-size: 12px;
+  opacity: .75;
+  text-transform: uppercase;
+  letter-spacing: .6px;
+}
+
+.medalha.ouro {
+  border-color: rgba(250, 204, 21, .45);
+  box-shadow: 0 0 18px rgba(250, 204, 21, .16);
+}
+
+.medalha.ouro h3,
+.medalha.ouro small {
+  color: #facc15;
+}
+
+.medalha.prata {
+  border-color: rgba(226, 232, 240, .45);
+  box-shadow: 0 0 18px rgba(226, 232, 240, .12);
+}
+
+.medalha.prata h3,
+.medalha.prata small {
+  color: #e5e7eb;
+}
+
+.medalha.bronze {
+  border-color: rgba(249, 115, 22, .45);
+  box-shadow: 0 0 18px rgba(249, 115, 22, .14);
+}
+
+.medalha.bronze h3,
+.medalha.bronze small {
+  color: #fb923c;
+}
+
+#historicoMedalhas {
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px dashed rgba(250, 204, 21, .25);
+  background: rgba(250, 204, 21, .05);
+  color: rgba(255,255,255,.75);
+}
+
+#conquistasTela .card {
+  border-color: var(--cor-hall-borda);
+}

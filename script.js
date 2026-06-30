@@ -1294,6 +1294,7 @@ if (usuarioLogado) {
 
   atualizarRanking();
   atualizarLider();
+  atualizarHallFama();
   atualizarAssistenteMMS();
   atualizarMetricas();
   atualizarHistoricoMensalCards();
@@ -1997,6 +1998,139 @@ let rankingSemana =
       </div>
     </div>
   `;
+}
+function atualizarHallFama() {
+  if (!usuarioAtual) return;
+
+  let totalOuro = document.getElementById("totalOuro");
+  let totalPrata = document.getElementById("totalPrata");
+  let totalBronze = document.getElementById("totalBronze");
+  let historicoMedalhas = document.getElementById("historicoMedalhas");
+  let totalPodios = document.getElementById("totalPodios");
+  let melhorColocacao = document.getElementById("melhorColocacao");
+  let totalSemanas = document.getElementById("totalSemanas");
+  let taxaPodios = document.getElementById("taxaPodios");
+
+  if (!totalOuro || !totalPrata || !totalBronze || !historicoMedalhas) return;
+
+  let corridasBase = [...corridasFirebase];
+
+  if (
+    dadosUsuario &&
+    dadosUsuario.membrosGrupo &&
+    dadosUsuario.membrosGrupo.length > 0
+  ) {
+    let emailsGrupo = dadosUsuario.membrosGrupo.map(membro => membro.email);
+
+    corridasBase = corridasBase.filter(item =>
+      emailsGrupo.includes(item.email)
+    );
+  }
+
+  let semanas = {};
+
+  corridasBase.forEach(item => {
+    if (!item.data) return;
+
+    let inicio = obterInicioSemana(new Date(item.data));
+    let chaveSemana = inicio.toISOString().split("T")[0];
+
+    if (!semanas[chaveSemana]) {
+      semanas[chaveSemana] = [];
+    }
+
+    semanas[chaveSemana].push(item);
+  });
+
+  let medalhas = [];
+
+  Object.keys(semanas).forEach(chaveSemana => {
+    let corridasSemana = semanas[chaveSemana];
+
+    let rankingSemana = montarRanking(corridasSemana);
+
+    let minhasSemana = corridasSemana.filter(item =>
+      item.uid === usuarioAtual.uid ||
+      item.email === usuarioAtual.email
+    );
+
+    if (minhasSemana.length === 0) return;
+
+    let totalUsuario = minhasSemana.reduce(
+      (soma, item) => soma + Number(item.valor || 0),
+      0
+    );
+
+    let posicao =
+      rankingSemana.findIndex(item => item.valor === totalUsuario) + 1;
+
+    if (posicao <= 0) return;
+
+    if (posicao <= 3) {
+      medalhas.push({
+        semana: chaveSemana,
+        posicao,
+        valor: totalUsuario,
+        medalha:
+          posicao === 1
+            ? "🥇"
+            : posicao === 2
+              ? "🥈"
+              : "🥉",
+        texto:
+          posicao === 1
+            ? "Ouro"
+            : posicao === 2
+              ? "Prata"
+              : "Bronze"
+      });
+    }
+  });
+
+  medalhas.sort((a, b) => new Date(b.semana) - new Date(a.semana));
+
+  let ouro = medalhas.filter(item => item.posicao === 1).length;
+  let prata = medalhas.filter(item => item.posicao === 2).length;
+  let bronze = medalhas.filter(item => item.posicao === 3).length;
+
+  totalOuro.innerText = ouro;
+  totalPrata.innerText = prata;
+  totalBronze.innerText = bronze;
+
+  if (medalhas.length === 0) {
+    historicoMedalhas.innerHTML =
+      "<p>Nenhuma medalha conquistada ainda.</p>";
+  } else {
+    historicoMedalhas.innerHTML = medalhas.map(item => `
+      <div class="medalha-semana">
+        <strong>${item.medalha} ${item.texto}</strong>
+        <p>${item.posicao}º lugar — Semana de ${formatarData(item.semana)}</p>
+        <small>${formatarMoeda(item.valor)}</small>
+      </div>
+    `).join("");
+  }
+
+  let melhor = medalhas.length > 0
+    ? Math.min(...medalhas.map(item => item.posicao))
+    : "-";
+
+  let totalSemanasDisputadas = Object.keys(semanas).length;
+
+  if (totalPodios) totalPodios.innerText = medalhas.length;
+  if (melhorColocacao) {
+    melhorColocacao.innerText =
+      melhor === "-" ? "-" : `${melhor}º lugar`;
+  }
+  if (totalSemanas) totalSemanas.innerText = totalSemanasDisputadas;
+
+  if (taxaPodios) {
+    let taxa =
+      totalSemanasDisputadas > 0
+        ? Math.round((medalhas.length / totalSemanasDisputadas) * 100)
+        : 0;
+
+    taxaPodios.innerText = `${taxa}%`;
+  }
 }
 
 function atualizarMetricas() {
