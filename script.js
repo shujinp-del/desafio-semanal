@@ -1759,6 +1759,9 @@ function atualizarAssistenteMMS() {
   let linha2El =
     document.getElementById("assistenteLinha2");
 
+  let insightEl =
+    document.getElementById("assistenteInsight1");
+
   if (!tituloEl || !linha1El || !linha2El) return;
 
   if (cardAssistente) {
@@ -1822,6 +1825,50 @@ function atualizarAssistenteMMS() {
   let falta =
     Math.abs(diferenca);
 
+  let rankingSemana =
+    montarRanking(
+      corridasFirebase.filter(item =>
+        estaNaSemanaAtual(item.data)
+      )
+    );
+
+  let posicaoUsuario =
+    rankingSemana.findIndex(item =>
+      Math.abs(Number(item.valor || 0) - totalSemana) < 0.01
+    );
+
+  let textoRanking = "";
+
+  if (posicaoUsuario >= 0) {
+    let posicaoReal = posicaoUsuario + 1;
+    let usuarioRanking = rankingSemana[posicaoUsuario];
+    let acima = rankingSemana[posicaoUsuario - 1];
+    let abaixo = rankingSemana[posicaoUsuario + 1];
+
+    if (posicaoReal === 1) {
+      let vantagem =
+        abaixo ? usuarioRanking.valor - abaixo.valor : 0;
+
+      textoRanking =
+        abaixo
+          ? `🏆 Você lidera a semana com ${formatarMoeda(vantagem)} de vantagem.`
+          : "🏆 Você está liderando a semana.";
+    } else {
+      let faltaParaSubir =
+        acima ? acima.valor - usuarioRanking.valor : 0;
+
+      textoRanking =
+        `🏁 Você está em ${posicaoReal}º. Faltam ${formatarMoeda(faltaParaSubir)} para alcançar o ${posicaoReal - 1}º.`;
+    }
+  } else {
+    textoRanking =
+      "🏁 Registre corridas para entrar no ranking da semana.";
+  }
+
+  if (insightEl) {
+    insightEl.innerText = textoRanking;
+  }
+
   if (minhasSemana.length === 0) {
     tituloEl.innerText =
       "⚪ Comece sua semana";
@@ -1831,6 +1878,11 @@ function atualizarAssistenteMMS() {
 
     linha2El.innerText =
       "O assistente vai acompanhar meta, gastos e lucro.";
+
+    if (insightEl) {
+      insightEl.innerText =
+        "🏁 Registre sua primeira corrida para entrar no ranking.";
+    }
 
     if (cardAssistente) {
       cardAssistente.classList.add("assistente-neutro");
