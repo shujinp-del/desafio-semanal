@@ -3416,19 +3416,25 @@ if (container) {
     meses[chaveMes].corridas += corridas;
     totalAcumulado += valor;
 
-    let origemItem =
+   let origemItem =
   String(item.origem || "").trim();
 
-if (origemItem === "Uber") {
-  totalUberMesHistorico += valor;
-}
+let ehMesAtual =
+  data.getMonth() === mesAtual &&
+  data.getFullYear() === anoAtual;
 
-if (origemItem === "99") {
-  total99MesHistorico += valor;
-}
+if (ehMesAtual) {
+  if (origemItem === "Uber") {
+    totalUberMesHistorico += valor;
+  }
 
-if (origemItem === "Particular") {
-  totalParticularMesHistorico += valor;
+  if (origemItem === "99") {
+    total99MesHistorico += valor;
+  }
+
+  if (origemItem === "Particular") {
+    totalParticularMesHistorico += valor;
+  }
 }
 
     let inicioSemana =
