@@ -1743,6 +1743,70 @@ function atualizarRecordes() {
   melhorMesEl.innerText = formatarMoeda(melhorMes);
   corridasEl.innerText = `${maiorCorridas} corridas`;
 }
+const bibliotecaInsights = {
+
+  inicio: {
+    semCorridas: {
+      titulo: "⚪ Comece sua semana",
+      linha1: "Registre suas corridas para o MMS calcular sua projeção.",
+      linha2: "O assistente vai acompanhar meta, gastos e lucro.",
+      classe: "assistente-neutro"
+    },
+
+    semMeta: {
+      titulo: "⚪ Defina uma meta",
+      linha1: "",
+      linha2: "Cadastre uma meta semanal para liberar o Farol MMS.",
+      classe: "assistente-neutro"
+    }
+  },
+
+  meta: {
+    verde: {
+      titulo: "📈 Projeção semanal",
+      linha1: "🟢 Farol Verde",
+      linha2: "",
+      classe: "assistente-verde"
+    },
+
+    amarelo: {
+      titulo: "📈 Projeção semanal",
+      linha1: "🟡 Farol Amarelo",
+      linha2: "",
+      classe: "assistente-amarelo"
+    },
+
+    vermelho: {
+      titulo: "📈 Projeção semanal",
+      linha1: "🔴 Farol Vermelho",
+      linha2: "",
+      classe: "assistente-vermelho"
+    }
+  },
+
+  ranking: {
+    lideranca: {
+      texto: "🏆 Você está liderando a semana."
+    },
+
+    perseguindo: {
+      texto: "🏁 Você está perto de subir no ranking."
+    }
+  },
+
+  xp: {
+    quaseNivel: {
+      texto: "⭐ Falta pouco para subir de nível."
+    }
+  },
+
+  gastos: {
+    alerta: {
+      texto: "💰 Atenção aos gastos desta semana."
+    }
+  }
+
+};
 
 function atualizarAssistenteMMS() {
   if (!usuarioAtual) return;
@@ -1865,32 +1929,66 @@ function atualizarAssistenteMMS() {
       "🏁 Registre corridas para entrar no ranking da semana.";
   }
 
-  if (insightEl) {
-    insightEl.innerText = textoRanking;
+ let dadosInsight = {
+  posicao: posicaoUsuario >= 0 ? posicaoUsuario + 1 : 0,
+  faltaPrimeiro: 0,
+  faltaSegundo: 0,
+  vantagem: 0,
+  meta,
+  totalSemana,
+  projecao: projecaoFinal
+};
+
+if (posicaoUsuario >= 0) {
+  let usuarioRanking = rankingSemana[posicaoUsuario];
+  let primeiro = rankingSemana[0];
+  let segundo = rankingSemana[1];
+  let acima = rankingSemana[posicaoUsuario - 1];
+  let abaixo = rankingSemana[posicaoUsuario + 1];
+
+  if (primeiro && usuarioRanking) {
+    dadosInsight.faltaPrimeiro =
+      primeiro.valor > usuarioRanking.valor
+        ? primeiro.valor - usuarioRanking.valor
+        : 0;
   }
 
-  if (minhasSemana.length === 0) {
-    tituloEl.innerText =
-      "⚪ Comece sua semana";
-
-    linha1El.innerText =
-      "Registre suas corridas para o MMS calcular sua projeção.";
-
-    linha2El.innerText =
-      "O assistente vai acompanhar meta, gastos e lucro.";
-
-    if (insightEl) {
-      insightEl.innerText =
-        "🏁 Registre sua primeira corrida para entrar no ranking.";
-    }
-
-    if (cardAssistente) {
-      cardAssistente.classList.add("assistente-neutro");
-    }
-
-    return;
+  if (segundo && usuarioRanking) {
+    dadosInsight.faltaSegundo =
+      segundo.valor > usuarioRanking.valor
+        ? segundo.valor - usuarioRanking.valor
+        : 0;
   }
 
+  if (posicaoUsuario === 0 && abaixo) {
+    dadosInsight.vantagem =
+      usuarioRanking.valor - abaixo.valor;
+  }
+
+  if (acima && usuarioRanking) {
+    dadosInsight.faltaAcima =
+      acima.valor - usuarioRanking.valor;
+  }
+}
+
+if (insightEl) {
+  insightEl.innerText =
+    gerarInsightAssistente(dadosInsight);
+}
+
+ if (minhasSemana.length === 0) {
+  let insight = bibliotecaInsights.inicio.semCorridas;
+
+  tituloEl.innerText = insight.titulo;
+  linha1El.innerText = insight.linha1;
+  linha2El.innerText = insight.linha2;
+
+  if (cardAssistente) {
+    cardAssistente.classList.add(insight.classe);
+  }
+
+  return;
+}
   if (meta <= 0) {
     tituloEl.innerText =
       "⚪ Defina uma meta";
@@ -1955,6 +2053,38 @@ function atualizarAssistenteMMS() {
     cardAssistente.classList.add("assistente-vermelho");
   }
 }
+
+function gerarInsightAssistente(dados) {
+
+  // 1 - Ranking (prioridade máxima)
+  if (dados.posicao === 2 && dados.faltaPrimeiro > 0) {
+    return `🥈 Faltam ${formatarMoeda(dados.faltaPrimeiro)} para assumir a liderança.`;
+  }
+
+  if (dados.posicao === 3 && dados.faltaSegundo > 0) {
+    return `🥉 Faltam ${formatarMoeda(dados.faltaSegundo)} para alcançar o 2º lugar.`;
+  }
+
+  if (dados.posicao === 1 && dados.vantagem > 0) {
+    return `🏆 Você lidera com ${formatarMoeda(dados.vantagem)} de vantagem.`;
+  }
+
+  // 2 - Meta
+  if (dados.meta > 0 && dados.totalSemana < dados.meta) {
+
+    let faltaMeta = dados.meta - dados.totalSemana;
+
+    return `🎯 Faltam ${formatarMoeda(faltaMeta)} para bater sua meta semanal.`;
+  }
+
+  // 3 - Projeção
+  if (dados.projecao > 0) {
+    return `📈 Mantendo o ritmo, você fechará a semana com ${formatarMoeda(dados.projecao)}.`;
+  }
+
+  // 4 - Motivação
+  return "🚀 Continue registrando suas corridas!";
+} 
 
 function atualizarLider() {
   let lider = document.getElementById("liderSemana");
