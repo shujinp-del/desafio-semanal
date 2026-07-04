@@ -1807,6 +1807,42 @@ const bibliotecaInsights = {
   }
 
 };
+function obterInsightInicio(minhasSemana, meta) {
+
+  if (minhasSemana.length === 0) {
+    return bibliotecaInsights.inicio.semCorridas;
+  }
+
+  if (meta <= 0) {
+    return bibliotecaInsights.inicio.semMeta;
+  }
+
+  return null;
+
+}
+function obterInsightMeta(meta, totalSemana, projecaoFinal, metaReal) {
+
+  if (meta <= 0) {
+    return bibliotecaInsights.inicio.semMeta;
+  }
+
+  let diferenca =
+    projecaoFinal - metaReal;
+
+  let falta =
+    Math.abs(diferenca);
+
+  if (diferenca >= 0) {
+    return bibliotecaInsights.meta.verde;
+  }
+
+  if (falta <= metaReal * 0.10) {
+    return bibliotecaInsights.meta.amarelo;
+  }
+
+  return bibliotecaInsights.meta.vermelho;
+
+}
 
 function atualizarAssistenteMMS() {
   if (!usuarioAtual) return;
@@ -1976,82 +2012,75 @@ if (insightEl) {
     gerarInsightAssistente(dadosInsight);
 }
 
- if (minhasSemana.length === 0) {
-  let insight = bibliotecaInsights.inicio.semCorridas;
+let insightInicio =
+  obterInsightInicio(minhasSemana, meta);
 
-  tituloEl.innerText = insight.titulo;
-  linha1El.innerText = insight.linha1;
-  linha2El.innerText = insight.linha2;
+if (insightInicio) {
+
+  tituloEl.innerText =
+    insightInicio.titulo;
+
+  linha1El.innerText =
+    insightInicio.linha1;
+
+  linha2El.innerText =
+    insightInicio.linha2;
 
   if (cardAssistente) {
-    cardAssistente.classList.add(insight.classe);
+    cardAssistente.classList.add(
+      insightInicio.classe
+    );
   }
 
   return;
 }
-  if (meta <= 0) {
-    tituloEl.innerText =
-      "⚪ Defina uma meta";
+  let insightMeta =
+  obterInsightMeta(
+    meta,
+    totalSemana,
+    projecaoFinal,
+    metaReal
+  );
 
-    linha1El.innerText =
-      `Você já faturou ${formatarMoeda(totalSemana)} nesta semana.`;
+if (insightMeta) {
 
-    linha2El.innerText =
-      "Cadastre uma meta semanal para liberar o Farol MMS.";
+  tituloEl.innerText =
+    `${insightMeta.titulo}\n${formatarMoeda(projecaoFinal)}`;
 
-    if (cardAssistente) {
-      cardAssistente.classList.add("assistente-neutro");
-    }
+  linha1El.innerText =
+    insightMeta.linha1;
 
-    return;
-  }
-
-  if (diferenca >= 0) {
-    tituloEl.innerText =
-      `📈 Projeção semanal\n${formatarMoeda(projecaoFinal)}`;
-
-    linha1El.innerText =
-      "🟢 Farol Verde";
+  if (insightMeta.classe === "assistente-verde") {
 
     linha2El.innerText =
       `Você deve passar da meta real em ${formatarMoeda(diferenca)}.`;
 
-    if (cardAssistente) {
-      cardAssistente.classList.add("assistente-verde");
-    }
-
-    return;
-  }
-
-  if (falta <= metaReal * 0.10) {
-    tituloEl.innerText =
-      `📈 Projeção semanal\n${formatarMoeda(projecaoFinal)}`;
-
-    linha1El.innerText =
-      "🟡 Farol Amarelo";
+  } else if (insightMeta.classe === "assistente-amarelo") {
 
     linha2El.innerText =
       `Faltariam apenas ${formatarMoeda(falta)} para atingir a meta real.`;
 
-    if (cardAssistente) {
-      cardAssistente.classList.add("assistente-amarelo");
-    }
+  } else if (insightMeta.classe === "assistente-vermelho") {
 
-    return;
+    linha2El.innerText =
+      `Ritmo abaixo. Faltariam ${formatarMoeda(falta)} para a meta real.`;
+
+  } else {
+
+    linha2El.innerText =
+      insightMeta.linha2;
+
   }
-
-  tituloEl.innerText =
-    `📈 Projeção semanal\n${formatarMoeda(projecaoFinal)}`;
-
-  linha1El.innerText =
-    "🔴 Farol Vermelho";
-
-  linha2El.innerText =
-    `Ritmo abaixo. Faltariam ${formatarMoeda(falta)} para a meta real.`;
 
   if (cardAssistente) {
-    cardAssistente.classList.add("assistente-vermelho");
+    cardAssistente.classList.add(
+      insightMeta.classe
+    );
   }
+
+  return;
+
+}
 }
 
 function gerarInsightAssistente(dados) {
