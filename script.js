@@ -2033,6 +2033,7 @@ if (insightInicio) {
   }
 
   return;
+
 }
   let insightMeta =
   obterInsightMeta(
@@ -2041,6 +2042,7 @@ if (insightInicio) {
     projecaoFinal,
     metaReal
   );
+ 
 
 if (insightMeta) {
 
