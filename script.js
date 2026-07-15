@@ -1825,6 +1825,7 @@ function obterInsightMeta(meta, totalSemana, projecaoFinal, metaReal) {
   if (meta <= 0) {
     return bibliotecaInsights.inicio.semMeta;
   }
+  
 
   let diferenca =
     projecaoFinal - metaReal;
@@ -1833,14 +1834,82 @@ function obterInsightMeta(meta, totalSemana, projecaoFinal, metaReal) {
     Math.abs(diferenca);
 
   if (diferenca >= 0) {
-    return bibliotecaInsights.meta.verde;
+
+    return {
+      titulo:
+        `📈 Projeção semanal\n${formatarMoeda(projecaoFinal)}`,
+
+      linha1:
+        bibliotecaInsights.meta.verde.linha1,
+
+      linha2:
+        `Você deve passar da meta real em ${formatarMoeda(diferenca)}.`,
+
+      classe:
+        bibliotecaInsights.meta.verde.classe
+    };
+
   }
 
   if (falta <= metaReal * 0.10) {
-    return bibliotecaInsights.meta.amarelo;
+
+    return {
+      titulo:
+        `📈 Projeção semanal\n${formatarMoeda(projecaoFinal)}`,
+
+      linha1:
+        bibliotecaInsights.meta.amarelo.linha1,
+
+      linha2:
+        `Faltariam apenas ${formatarMoeda(falta)} para atingir a meta real.`,
+
+      classe:
+        bibliotecaInsights.meta.amarelo.classe
+    };
+
   }
 
-  return bibliotecaInsights.meta.vermelho;
+  return {
+
+    titulo:
+      `📈 Projeção semanal\n${formatarMoeda(projecaoFinal)}`,
+
+    linha1:
+      bibliotecaInsights.meta.vermelho.linha1,
+
+    linha2:
+      `Ritmo abaixo. Faltariam ${formatarMoeda(falta)} para a meta real.`,
+
+    classe:
+      bibliotecaInsights.meta.vermelho.classe
+
+  };
+
+}
+function mostrarInsight(
+  insight,
+  tituloEl,
+  linha1El,
+  linha2El,
+  cardAssistente
+) {
+
+  if (!insight) return;
+
+  tituloEl.innerText =
+    insight.titulo;
+
+  linha1El.innerText =
+    insight.linha1;
+
+  linha2El.innerText =
+    insight.linha2;
+
+  if (cardAssistente) {
+    cardAssistente.classList.add(
+      insight.classe
+    );
+  }
 
 }
 
@@ -2017,20 +2086,13 @@ let insightInicio =
 
 if (insightInicio) {
 
-  tituloEl.innerText =
-    insightInicio.titulo;
-
-  linha1El.innerText =
-    insightInicio.linha1;
-
-  linha2El.innerText =
-    insightInicio.linha2;
-
-  if (cardAssistente) {
-    cardAssistente.classList.add(
-      insightInicio.classe
-    );
-  }
+  mostrarInsight(
+    insightInicio,
+    tituloEl,
+    linha1El,
+    linha2El,
+    cardAssistente
+  );
 
   return;
 
