@@ -1886,6 +1886,14 @@ function obterInsightMeta(meta, totalSemana, projecaoFinal, metaReal) {
   };
 
 }
+function obterInsightRanking(dadosInsight) {
+
+  return {
+    texto:
+      gerarInsightAssistente(dadosInsight)
+  };
+
+}
 function mostrarInsight(
   insight,
   tituloEl,
@@ -2076,9 +2084,14 @@ if (posicaoUsuario >= 0) {
   }
 }
 
-if (insightEl) {
+let insightRanking =
+  obterInsightRanking(dadosInsight);
+
+if (insightEl && insightRanking) {
+
   insightEl.innerText =
-    gerarInsightAssistente(dadosInsight);
+    insightRanking.texto;
+
 }
 
 let insightInicio =
