@@ -1921,6 +1921,18 @@ function mostrarInsight(
 
 }
 
+function mostrarInsightRanking(
+  insightRanking,
+  insightEl
+) {
+
+  if (!insightRanking || !insightEl) return;
+
+  insightEl.innerText =
+    insightRanking.texto;
+
+}
+
 function atualizarAssistenteMMS() {
   if (!usuarioAtual) return;
 
@@ -2087,12 +2099,10 @@ if (posicaoUsuario >= 0) {
 let insightRanking =
   obterInsightRanking(dadosInsight);
 
-if (insightEl && insightRanking) {
-
-  insightEl.innerText =
-    insightRanking.texto;
-
-}
+mostrarInsightRanking(
+  insightRanking,
+  insightEl
+);
 
 let insightInicio =
   obterInsightInicio(minhasSemana, meta);
