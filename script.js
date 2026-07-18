@@ -1888,9 +1888,23 @@ function obterInsightMeta(meta, totalSemana, projecaoFinal, metaReal) {
 }
 function obterInsightRanking(dadosInsight) {
 
+  let posicao =
+  dadosInsight.posicao;
+
+let meta =
+  dadosInsight.meta;
+
+let totalSemana =
+  dadosInsight.totalSemana;
+
+  let texto =
+    gerarInsightAssistente(dadosInsight);
+
   return {
-    texto:
-      gerarInsightAssistente(dadosInsight)
+
+    texto,
+    dados: dadosInsight
+
   };
 
 }
