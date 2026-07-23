@@ -1891,12 +1891,21 @@ function obterDadosSemana() {
 
   let meta =
     Number((dadosUsuario && dadosUsuario.metaSemanal) || 0);
+    let minhasSemana =
+  corridasFirebase.filter(item =>
+    (
+      item.uid === usuarioAtual.uid ||
+      item.email === usuarioAtual.email
+    ) &&
+    estaNaSemanaAtual(item.data)
+  );
 
   return {
 
-    meta
+  meta,
+  minhasSemana
 
-  };
+};
 
 }
 
@@ -1989,21 +1998,15 @@ function atualizarAssistenteMMS() {
       "assistente-neutro"
     );
   }
-  
+
 let dadosSemana =
   obterDadosSemana();
 
-  let meta =
-    Number((dadosUsuario && dadosUsuario.metaSemanal) || 0);
+ let meta =
+  dadosSemana.meta;
 
-  let minhasSemana =
-    corridasFirebase.filter(item =>
-      (
-        item.uid === usuarioAtual.uid ||
-        item.email === usuarioAtual.email
-      ) &&
-      estaNaSemanaAtual(item.data)
-    );
+ let minhasSemana =
+  dadosSemana.minhasSemana;
 
   let totalSemana =
     minhasSemana.reduce(
