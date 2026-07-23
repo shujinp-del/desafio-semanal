@@ -1886,6 +1886,20 @@ function obterInsightMeta(meta, totalSemana, projecaoFinal, metaReal) {
   };
 
 }
+
+function obterDadosSemana() {
+
+  let meta =
+    Number((dadosUsuario && dadosUsuario.metaSemanal) || 0);
+
+  return {
+
+    meta
+
+  };
+
+}
+
 function obterInsightRanking(dadosInsight) {
 
   let posicao =
@@ -1975,6 +1989,9 @@ function atualizarAssistenteMMS() {
       "assistente-neutro"
     );
   }
+  
+let dadosSemana =
+  obterDadosSemana();
 
   let meta =
     Number((dadosUsuario && dadosUsuario.metaSemanal) || 0);
