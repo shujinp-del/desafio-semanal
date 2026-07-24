@@ -6096,3 +6096,83 @@ function calcularMetaReal(valorQuero, gastosSemana) {
     aviso: `💡 Para lucrar R$ ${valorQuero.toFixed(2).replace('.',',')}, precisa faturar R$ ${totalPrecisa.toFixed(2).replace('.',',')}`
   };
 }
+// ===== INSIGHTS AUTOMÁTICOS (SEM DADOS EXTRAS) =====
+function calcularInsights(dadosCorridas) {
+  const dias = {
+    0: 'Domingo', 1: 'Segunda', 2: 'Terça', 3: 'Quarta',
+    4: 'Quinta', 5: 'Sexta', 6: 'Sábado'
+  };
+  const origens = ['Uber', '99', 'Particular'];
+
+  // Agrupa valores por dia da semana
+  const mediaPorDia = {};
+  for(let i=0; i<7; i++) mediaPorDia[i] = { total:0, qtd:0 };
+  // Agrupa por origem
+  const mediaPorOrigem = {};
+  origens.forEach(o => mediaPorOrigem[o] = { total:0, qtd:0 });
+
+  dadosCorridas.forEach(corrida => {
+    const data = new Date(corrida.data);
+    const diaSemana = data.getDay();
+    mediaPorDia[diaSemana].total += parseFloat(corrida.valor);
+    mediaPorDia[diaSemana].qtd += 1;
+
+    if(mediaPorOrigem[corrida.origem]) {
+      mediaPorOrigem[corrida.origem].total += parseFloat(corrida.valor);
+      mediaPorOrigem[corrida.origem].qtd += 1;
+    }
+  });
+
+  // Calcula médias
+  const diasOrdenados = Object.entries(mediaPorDia)
+    .map(([n, d]) => ({
+      nome: dias[n],
+      media: d.qtd>0 ? d.total/d.qtd : 0
+    }))
+    .sort((a,b) => b.media - a.media)
+    .slice(0,3);
+
+  const origensOrdenadas = Object.entries(mediaPorOrigem)
+    .map(([n, d]) => ({
+      nome: n,
+      media: d.qtd>0 ? d.total/d.qtd : 0
+    }))
+    .sort((a,b) => b.media - a.media);
+
+  return { dias: diasOrdenados, origens: origensOrdenadas };
+}
+
+// Atualiza na tela de Metas
+function mostrarInsightsNaMeta() {
+  const dados = JSON.parse(localStorage.getItem('corridas')) || [];
+  const resumo = calcularInsights(dados);
+
+  let html = `
+    <div class="card insights-card">
+      <h3>🧠 Seus Melhores Resultados</h3>
+      <small>📅 Melhores Dias</small>
+  `;
+
+  resumo.dias.forEach(d => {
+    html += `<p>• ${d.nome} → R$ ${d.media.toFixed(2).replace('.',',')}/dia</p>`;
+  });
+
+  html += `<br><small>🪙 Melhores Origens</small>`;
+
+  resumo.origens.forEach(o => {
+    html += `<p>• ${o.nome} → R$ ${o.media.toFixed(2).replace('.',',')}/dia</p>`;
+  });
+
+  html += `</div>`;
+
+  // Coloca depois do card "Seu Progresso" na tela de Metas
+  const alvo = document.querySelector('#metasTela .insights-da-semana') || document.querySelector('#metasTela .card:last-child');
+  if(alvo) alvo.after(html);
+}
+
+// Chama automaticamente ao abrir a tela de Metas
+const abrirTelaAntigo = abrirTela;
+abrirTela = function(id) {
+  abrirTelaAntigo(id);
+  if(id === 'metasTela') mostrarInsightsNaMeta();
+};
