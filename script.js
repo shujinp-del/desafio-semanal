@@ -5990,3 +5990,43 @@ window.mudarPeriodoGastos = mudarPeriodoGastos;
 window.carregarGastosFirebase =carregarGastosFirebase;
 window.recuperarSenha = recuperarSenha;
 window.salvarMetaGastos = salvarMetaGastos; 
+
+document.addEventListener('DOMContentLoaded', () => {
+  const campoData = document.getElementById('data');
+  if (campoData) {
+    const hoje = new Date().toISOString().split('T')[0];
+    campoData.value = hoje;
+  }
+
+  const valor = document.getElementById('valor');
+  const qtd = document.getElementById('corridas');
+  if (valor && qtd) {
+    const mediaBox = document.createElement('small');
+    mediaBox.style.display = 'block';
+    mediaBox.style.marginTop = '-10px';
+    mediaBox.style.marginBottom = '10px';
+    mediaBox.style.color = '#ff7a18';
+    qtd.after(mediaBox);
+
+    function atualizarMedia() {
+      const v = parseFloat(valor.value) || 0;
+      const q = parseInt(qtd.value) || 0;
+      mediaBox.textContent = q > 0 ? `Média por corrida: R$ ${(v/q).toFixed(2).replace('.',',')}` : '';
+    }
+
+    valor.addEventListener('input', atualizarMedia);
+    qtd.addEventListener('input', atualizarMedia);
+  }
+});
+
+// Registrar funcionamento offline
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', async () => {
+    try {
+      await navigator.serviceWorker.register('/sw.js');
+      console.log('✅ PWA pronto para funcionar sem internet');
+    } catch (erro) {
+      console.log('⚠️ Funcionalidade offline não ativada ainda:', erro);
+    }
+  });
+}

@@ -1,23 +1,14 @@
 {
   "name": "MMS - O Melhor da Semana",
-"short_name": "MMS",
-"description": "Melhor Motorista da Semana",
-  "start_url": "/desafio-semanal/",
-  "scope": "/desafio-semanal/",
+  "short_name": "MMS",
+  "description": "Controle de corridas, ganhos, gastos e metas para motoristas",
+  "start_url": "/index.html",
   "display": "standalone",
-  "background_color": "#111827",
+  "background_color": "#121212",
   "theme_color": "#ff7a18",
-  "orientation": "portrait",
+  "orientation": "portrait-primary",
   "icons": [
-    {
-      "src": "icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
   ]
 }

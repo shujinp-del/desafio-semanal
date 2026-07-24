@@ -1,25 +1,24 @@
-const CACHE_NAME = "desafio-semanal-v2"
+const CACHE = "mms-v1";
+const ARQUIVOS = [
+  "/index.html",
+  "/style.css",
+  "/manifest.json",
+  "/icon-192.png",
+  "/icon-512.png"
+];
 
-const arquivos = [
-  "./",
-  "./index.html",
-  "./style.css",
-  "./script.js",
-  "./manifest.json",
-  "./icon-192.png",
-  "./icon-512.png"
-]
-
-self.addEventListener("install", event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(arquivos))
-  )
-})
-
-self.addEventListener("fetch", event => {
-  event.respondWith(
-    caches.match(event.request).then(response => {
-      return response || fetch(event.request)
+self.addEventListener("install", (e) => {
+  e.waitUntil(
+    caches.open(CACHE).then(cache => {
+      return cache.addAll(ARQUIVOS).catch(erro => {
+        console.warn("Algum arquivo não foi cacheado ainda:", erro);
+      });
     })
-  )
-})
+  );
+});
+
+self.addEventListener("fetch", (e) => {
+  e.respondWith(
+    fetch(e.request).catch(() => caches.match(e.request))
+  );
+});
