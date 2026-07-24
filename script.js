@@ -6030,3 +6030,69 @@ if ('serviceWorker' in navigator) {
     }
   });
 }
+// ===== MELHORIAS TELA NOVA CORRIDA =====
+document.addEventListener('DOMContentLoaded', () => {
+  const valor = document.getElementById('valor');
+  const qtd = document.getElementById('corridas');
+  const btnSalvar = document.getElementById('botaoSalvarCorrida');
+
+  // Média por corrida em tempo real
+  if(valor && qtd) {
+    const avisoMedia = document.createElement('small');
+    avisoMedia.style.color = '#ff7a18';
+    avisoMedia.style.display = 'block';
+    avisoMedia.style.marginTop = '-8px';
+    qtd.after(avisoMedia);
+
+    function atualizarMedia() {
+      const v = parseFloat(valor.value) || 0;
+      const q = parseInt(qtd.value) || 0;
+      avisoMedia.textContent = q > 0 ? `Média por corrida: R$ ${(v/q).toFixed(2).replace('.',',')}` : '';
+    }
+    valor.addEventListener('input', atualizarMedia);
+    qtd.addEventListener('input', atualizarMedia);
+  }
+
+  // Após salvar: limpa valor/quantidade e já pronta para nova
+  if(btnSalvar) {
+    const cliqueOriginal = btnSalvar.onclick;
+    btnSalvar.onclick = async function() {
+      if(cliqueOriginal) await cliqueOriginal.call(this);
+      valor.value = '';
+      qtd.value = '';
+      valor.focus();
+    };
+  }
+});
+// ===== MELHORIAS TELA HOME =====
+function atualizarResumoDia(totalDia, metaDia, corridasDia) {
+  let bloco = document.getElementById('resumoDiaHome');
+  if(!bloco) {
+    bloco = document.createElement('div');
+    bloco.id = 'resumoDiaHome';
+    bloco.className = 'card-resumo';
+    const alvo = document.querySelector('.tela.ativa #conteudoHome') || document.querySelector('#home .grid-principal');
+    if(alvo) alvo.prepend(bloco);
+  }
+
+  const falta = Math.max(0, metaDia - totalDia);
+  bloco.innerHTML = `
+    <strong>📅 HOJE</strong>
+    <p>Feito: R$ ${totalDia.toFixed(2).replace('.',',')} | Corridas: ${corridasDia}</p>
+    <p style="color:${falta===0?'#4ade80':'#ff7a18'}">
+      ${falta===0?'✅ Meta de hoje batida!':`Faltam R$ ${falta.toFixed(2).replace('.',',')}`}
+    </p>
+  `;
+}
+// ===== MELHORIAS TELA METAS =====
+function calcularMetaReal(valorQuero, gastosSemana) {
+  const totalPrecisa = valorQuero + gastosSemana;
+  const diasRestantes = Math.max(1, 7 - new Date().getDay());
+  const porDia = totalPrecisa / diasRestantes;
+
+  return {
+    totalPrecisa: totalPrecisa.toFixed(2).replace('.',','),
+    porDia: porDia.toFixed(2).replace('.',','),
+    aviso: `💡 Para lucrar R$ ${valorQuero.toFixed(2).replace('.',',')}, precisa faturar R$ ${totalPrecisa.toFixed(2).replace('.',',')}`
+  };
+}
