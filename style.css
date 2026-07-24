@@ -3653,7 +3653,6 @@ input, select {
 
 /* Botões com toque mais moderno */
 button:not(.secundario) {
-  background: linear-gradient(90deg, #ff7a18, #ff9d4a);
   font-weight: 600;
   border: none;
   box-shadow: 0 2px 8px rgba(255, 122, 24, 0.3);
