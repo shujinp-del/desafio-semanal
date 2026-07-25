@@ -1488,15 +1488,19 @@ let total = minhas.reduce((soma, item) => {
 
   minhas.forEach(item => {
 
-  let selo = "⚪ Sem origem";
+ let selo = "Sem origem";
+let classeOrigem = "origem-sem";
 
-  if (item.origem === "Uber") {
-    selo = "🟢 Uber";
-  } else if (item.origem === "99") {
-    selo = "🔵 99";
-  } else if (item.origem === "Particular") {
-    selo = "🟣 Particular";
-  }
+if (item.origem === "Uber") {
+  selo = "Uber";
+  classeOrigem = "origem-uber";
+} else if (item.origem === "99") {
+  selo = "99";
+  classeOrigem = "origem-99";
+} else if (item.origem === "Particular") {
+  selo = "Particular";
+  classeOrigem = "origem-particular";
+}
 
   lista.innerHTML += `
     <li class="card-corrida">
@@ -1507,9 +1511,10 @@ let total = minhas.reduce((soma, item) => {
           ${formatarMoeda(item.valor)}
         </div>
 
-        <div class="origem-corrida">
-          ${selo}
-        </div>
+       <div class="origem-corrida ${classeOrigem}">
+  <span class="bolinha-origem"></span>
+  ${selo}
+</div>
 
       </div>
 
