@@ -1455,93 +1455,216 @@ function atualizarCampeonatoSemana() {
   div.innerHTML = html;
 
 }
+let filtroCorridaAtual = "Todas";
+
+window.filtrarCorridas = function (origem, botao) {
+  filtroCorridaAtual = origem;
+
+  document
+    .querySelectorAll(".filtro-corrida")
+    .forEach(btn => btn.classList.remove("ativo"));
+
+  botao.classList.add("ativo");
+
+  atualizarMinhasCorridas();
+};
 
 function atualizarMinhasCorridas() {
-  let lista = document.getElementById("listaMinhas");
-  let totalEl = document.getElementById("meuTotal");
+  const lista = document.getElementById("listaMinhas");
+  const totalEl = document.getElementById("meuTotal");
 
   if (!lista || !totalEl || !usuarioAtual) return;
 
   lista.innerHTML = "";
 
-  let minhas = corridasFirebase.filter(
-    item =>
-      item.uid === usuarioAtual.uid ||
-      item.email === usuarioAtual.email
+  const converterValor = valor => {
+    if (typeof valor === "string") {
+      valor = valor
+        .replace("R$", "")
+        .replace(/\./g, "")
+        .replace(",", ".")
+        .trim();
+    }
+
+    return Number(valor) || 0;
+  };
+
+  const criarDataLocal = dataTexto => {
+    if (!dataTexto) return null;
+
+    const partes = dataTexto.split("-");
+
+    if (partes.length !== 3) {
+      return new Date(dataTexto);
+    }
+
+    const ano = Number(partes[0]);
+    const mes = Number(partes[1]) - 1;
+    const dia = Number(partes[2]);
+
+    return new Date(ano, mes, dia);
+  };
+
+  const obterTituloData = dataTexto => {
+    const dataRegistro = criarDataLocal(dataTexto);
+
+    if (!dataRegistro || isNaN(dataRegistro.getTime())) {
+      return "Data não informada";
+    }
+
+    dataRegistro.setHours(0, 0, 0, 0);
+
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+
+    const ontem = new Date(hoje);
+    ontem.setDate(ontem.getDate() - 1);
+
+    if (dataRegistro.getTime() === hoje.getTime()) {
+      return "Hoje";
+    }
+
+    if (dataRegistro.getTime() === ontem.getTime()) {
+      return "Ontem";
+    }
+
+    return formatarData(dataTexto);
+  };
+
+let minhas = corridasFirebase.filter(
+  item =>
+    item.uid === usuarioAtual.uid ||
+    item.email === usuarioAtual.email
+);
+
+if (filtroCorridaAtual !== "Todas") {
+  minhas = minhas.filter(
+    item => item.origem === filtroCorridaAtual
   );
+}
+  const total = minhas.reduce((soma, item) => {
+    return soma + converterValor(item.valor);
+  }, 0);
 
-let total = minhas.reduce((soma, item) => {
-  let valor = item.valor;
+  minhas.sort((a, b) => {
+    const dataA = criarDataLocal(a.data);
+    const dataB = criarDataLocal(b.data);
 
-  if (typeof valor === "string") {
-    valor = valor
-      .replace("R$", "")
-      .replace(/\./g, "")
-      .replace(",", ".")
-      .trim();
-  }
+    return (dataB?.getTime() || 0) - (dataA?.getTime() || 0);
+  });
 
-  return soma + (Number(valor) || 0);
-}, 0);
-
-  minhas.sort((a, b) => new Date(b.data) - new Date(a.data));
+  const corridasPorData = {};
 
   minhas.forEach(item => {
+    const chaveData = item.data || "sem-data";
 
- let selo = "Sem origem";
-let classeOrigem = "origem-sem";
+    if (!corridasPorData[chaveData]) {
+      corridasPorData[chaveData] = [];
+    }
 
-if (item.origem === "Uber") {
-  selo = "Uber";
-  classeOrigem = "origem-uber";
-} else if (item.origem === "99") {
-  selo = "99";
-  classeOrigem = "origem-99";
-} else if (item.origem === "Particular") {
-  selo = "Particular";
-  classeOrigem = "origem-particular";
-}
+    corridasPorData[chaveData].push(item);
+  });
 
-  lista.innerHTML += `
-    <li class="card-corrida">
+  Object.entries(corridasPorData).forEach(([data, registrosDoDia]) => {
+    const totalDia = registrosDoDia.reduce((soma, item) => {
+      return soma + converterValor(item.valor);
+    }, 0);
 
-      <div class="topo-corrida">
+    const quantidadeCorridasDia = registrosDoDia.reduce((soma, item) => {
+      return soma + (Number(item.corridas) || 0);
+    }, 0);
 
-        <div class="valor-corrida">
-          ${formatarMoeda(item.valor)}
+    let cardsDoDia = "";
+
+    registrosDoDia.forEach(item => {
+      let selo = "Sem origem";
+      let classeOrigem = "origem-sem";
+
+      if (item.origem === "Uber") {
+        selo = "Uber";
+        classeOrigem = "origem-uber";
+      } else if (item.origem === "99") {
+        selo = "99";
+        classeOrigem = "origem-99";
+      } else if (item.origem === "Particular") {
+        selo = "Particular";
+        classeOrigem = "origem-particular";
+      }
+
+      cardsDoDia += `
+        <li class="card-corrida">
+
+          <div class="topo-corrida">
+
+            <div class="valor-corrida">
+              ${formatarMoeda(item.valor)}
+            </div>
+
+            <div class="origem-corrida ${classeOrigem}">
+              <span class="bolinha-origem"></span>
+              ${selo}
+            </div>
+
+          </div>
+
+          <div class="info-corrida">
+            <span>🚗 ${item.corridas || 0} corridas</span>
+          </div>
+
+          <div class="acoes-corrida">
+
+            <button onclick="editarCorrida('${item.id}')">
+              ✏️ Editar
+            </button>
+
+            <button onclick="excluirCorrida('${item.id}')">
+              🗑️ Excluir
+            </button>
+
+          </div>
+
+        </li>
+      `;
+    });
+
+    lista.innerHTML += `
+      <li class="grupo-corridas-dia">
+
+        <div class="cabecalho-corridas-dia">
+
+          <div>
+            <strong class="titulo-corridas-dia">
+              ${obterTituloData(data)}
+            </strong>
+
+            <span class="resumo-corridas-dia">
+              ${quantidadeCorridasDia} corridas
+            </span>
+          </div>
+
+          <strong class="total-corridas-dia">
+            ${formatarMoeda(totalDia)}
+          </strong>
+
         </div>
 
-       <div class="origem-corrida ${classeOrigem}">
-  <span class="bolinha-origem"></span>
-  ${selo}
-</div>
+        <ul class="lista-corridas-dia">
+          ${cardsDoDia}
+        </ul>
 
-      </div>
+      </li>
+    `;
+  });
 
-      <div class="info-corrida">
-        <span>📅 ${formatarData(item.data)}</span>
-        <span>🚗 ${item.corridas || 0} corridas</span>
-      </div>
+  if (minhas.length === 0) {
+    lista.innerHTML = `
+      <li class="minhas-vazio">
+        Nenhuma corrida registrada.
+      </li>
+    `;
+  }
 
-      <div class="acoes-corrida">
-
-        <button onclick="editarCorrida('${item.id}')">
-          ✏️ Editar
-        </button>
-
-        <button onclick="excluirCorrida('${item.id}')">
-          🗑️ Excluir
-        </button>
-
-      </div>
-
-    </li>
-  `;
-});
-
-
-totalEl.innerText = formatarMoeda(total);
-
+  totalEl.innerText = formatarMoeda(total);
 }
 
 function atualizarHistoricoMensal() {
