@@ -419,6 +419,8 @@ let emailsGrupo = membrosGrupo.map(m => m.email);
       (soma, item) => soma + Number(item.valor),
       0
     );
+    console.log("Total:", total);
+console.log("Minhas:", minhas);
 
     let progresso = Math.round(
       (total / usuario.metaSemanal) * 100
@@ -1468,38 +1470,73 @@ function atualizarMinhasCorridas() {
       item.email === usuarioAtual.email
   );
 
-  let total = minhas.reduce(
-    (soma, item) => soma + Number(item.valor),
-    0
-  );
+let total = minhas.reduce((soma, item) => {
+  let valor = item.valor;
+
+  if (typeof valor === "string") {
+    valor = valor
+      .replace("R$", "")
+      .replace(/\./g, "")
+      .replace(",", ".")
+      .trim();
+  }
+
+  return soma + (Number(valor) || 0);
+}, 0);
 
   minhas.sort((a, b) => new Date(b.data) - new Date(a.data));
 
   minhas.forEach(item => {
-    lista.innerHTML += `
-      <li>
-        <div class="posicao">🚗 ${item.nome}</div>
-        <br>
-        <div class="valor">💰 ${formatarMoeda(item.valor)}</div>
-        <div>
-  📅 ${formatarData(item.data)}
-</div>
 
-<div>
-  🏷️ ${item.origem || "Sem origem"}
-</div>
+  let selo = "⚪ Sem origem";
 
-<div>
-  🛣️ ${item.corridas || 0} corridas
-</div>
-        <br>
-        <button onclick="editarCorrida('${item.id}')">✏️ Editar</button>
-        <button onclick="excluirCorrida('${item.id}')">🗑️ Excluir</button>
-      </li>
-    `;
-  });
+  if (item.origem === "Uber") {
+    selo = "🟢 Uber";
+  } else if (item.origem === "99") {
+    selo = "🔵 99";
+  } else if (item.origem === "Particular") {
+    selo = "🟣 Particular";
+  }
 
-  totalEl.innerText = formatarMoeda(total);
+  lista.innerHTML += `
+    <li class="card-corrida">
+
+      <div class="topo-corrida">
+
+        <div class="valor-corrida">
+          ${formatarMoeda(item.valor)}
+        </div>
+
+        <div class="origem-corrida">
+          ${selo}
+        </div>
+
+      </div>
+
+      <div class="info-corrida">
+        <span>📅 ${formatarData(item.data)}</span>
+        <span>🚗 ${item.corridas || 0} corridas</span>
+      </div>
+
+      <div class="acoes-corrida">
+
+        <button onclick="editarCorrida('${item.id}')">
+          ✏️ Editar
+        </button>
+
+        <button onclick="excluirCorrida('${item.id}')">
+          🗑️ Excluir
+        </button>
+
+      </div>
+
+    </li>
+  `;
+});
+
+
+totalEl.innerText = formatarMoeda(total);
+
 }
 
 function atualizarHistoricoMensal() {
@@ -1547,7 +1584,8 @@ function atualizarHistoricoMensal() {
     `;
   });
 
-  totalEl.innerText = formatarMoeda(total);
+  console.log("Total calculado:", total);
+totalEl.innerText = total;
 }
 function atualizarComparativoMensal() {
 
