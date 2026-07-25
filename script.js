@@ -1825,7 +1825,6 @@ function obterInsightMeta(meta, totalSemana, projecaoFinal, metaReal) {
   if (meta <= 0) {
     return bibliotecaInsights.inicio.semMeta;
   }
-  
 
   let diferenca =
     projecaoFinal - metaReal;
@@ -1834,139 +1833,14 @@ function obterInsightMeta(meta, totalSemana, projecaoFinal, metaReal) {
     Math.abs(diferenca);
 
   if (diferenca >= 0) {
-
-    return {
-      titulo:
-        `📈 Projeção semanal\n${formatarMoeda(projecaoFinal)}`,
-
-      linha1:
-        bibliotecaInsights.meta.verde.linha1,
-
-      linha2:
-        `Você deve passar da meta real em ${formatarMoeda(diferenca)}.`,
-
-      classe:
-        bibliotecaInsights.meta.verde.classe
-    };
-
+    return bibliotecaInsights.meta.verde;
   }
 
   if (falta <= metaReal * 0.10) {
-
-    return {
-      titulo:
-        `📈 Projeção semanal\n${formatarMoeda(projecaoFinal)}`,
-
-      linha1:
-        bibliotecaInsights.meta.amarelo.linha1,
-
-      linha2:
-        `Faltariam apenas ${formatarMoeda(falta)} para atingir a meta real.`,
-
-      classe:
-        bibliotecaInsights.meta.amarelo.classe
-    };
-
+    return bibliotecaInsights.meta.amarelo;
   }
 
-  return {
-
-    titulo:
-      `📈 Projeção semanal\n${formatarMoeda(projecaoFinal)}`,
-
-    linha1:
-      bibliotecaInsights.meta.vermelho.linha1,
-
-    linha2:
-      `Ritmo abaixo. Faltariam ${formatarMoeda(falta)} para a meta real.`,
-
-    classe:
-      bibliotecaInsights.meta.vermelho.classe
-
-  };
-
-}
-
-function obterDadosSemana() {
-
-  let meta =
-    Number((dadosUsuario && dadosUsuario.metaSemanal) || 0);
-    let minhasSemana =
-  corridasFirebase.filter(item =>
-    (
-      item.uid === usuarioAtual.uid ||
-      item.email === usuarioAtual.email
-    ) &&
-    estaNaSemanaAtual(item.data)
-  );
-
-  return {
-
-  meta,
-  minhasSemana
-
-};
-
-}
-
-function obterInsightRanking(dadosInsight) {
-
-  let posicao =
-  dadosInsight.posicao;
-
-let meta =
-  dadosInsight.meta;
-
-let totalSemana =
-  dadosInsight.totalSemana;
-
-  let texto =
-    gerarInsightAssistente(dadosInsight);
-
-  return {
-
-    texto,
-    dados: dadosInsight
-
-  };
-
-}
-function mostrarInsight(
-  insight,
-  tituloEl,
-  linha1El,
-  linha2El,
-  cardAssistente
-) {
-
-  if (!insight) return;
-
-  tituloEl.innerText =
-    insight.titulo;
-
-  linha1El.innerText =
-    insight.linha1;
-
-  linha2El.innerText =
-    insight.linha2;
-
-  if (cardAssistente) {
-    cardAssistente.classList.add(
-      insight.classe
-    );
-  }
-
-}
-
-function mostrarInsightRanking(
-  insightRanking,
-  insightEl
-) {
-
-  if (!insightRanking || !insightEl) return;
-
-  insightEl.innerText =
-    insightRanking.texto;
+  return bibliotecaInsights.meta.vermelho;
 
 }
 
@@ -1999,14 +1873,17 @@ function atualizarAssistenteMMS() {
     );
   }
 
-let dadosSemana =
-  obterDadosSemana();
+  let meta =
+    Number((dadosUsuario && dadosUsuario.metaSemanal) || 0);
 
- let meta =
-  dadosSemana.meta;
-
- let minhasSemana =
-  dadosSemana.minhasSemana;
+  let minhasSemana =
+    corridasFirebase.filter(item =>
+      (
+        item.uid === usuarioAtual.uid ||
+        item.email === usuarioAtual.email
+      ) &&
+      estaNaSemanaAtual(item.data)
+    );
 
   let totalSemana =
     minhasSemana.reduce(
@@ -2130,29 +2007,32 @@ if (posicaoUsuario >= 0) {
   }
 }
 
-let insightRanking =
-  obterInsightRanking(dadosInsight);
-
-mostrarInsightRanking(
-  insightRanking,
-  insightEl
-);
+if (insightEl) {
+  insightEl.innerText =
+    gerarInsightAssistente(dadosInsight);
+}
 
 let insightInicio =
   obterInsightInicio(minhasSemana, meta);
 
 if (insightInicio) {
 
-  mostrarInsight(
-    insightInicio,
-    tituloEl,
-    linha1El,
-    linha2El,
-    cardAssistente
-  );
+  tituloEl.innerText =
+    insightInicio.titulo;
+
+  linha1El.innerText =
+    insightInicio.linha1;
+
+  linha2El.innerText =
+    insightInicio.linha2;
+
+  if (cardAssistente) {
+    cardAssistente.classList.add(
+      insightInicio.classe
+    );
+  }
 
   return;
-
 }
   let insightMeta =
   obterInsightMeta(
@@ -2161,7 +2041,6 @@ if (insightInicio) {
     projecaoFinal,
     metaReal
   );
- 
 
 if (insightMeta) {
 
@@ -5990,189 +5869,3 @@ window.mudarPeriodoGastos = mudarPeriodoGastos;
 window.carregarGastosFirebase =carregarGastosFirebase;
 window.recuperarSenha = recuperarSenha;
 window.salvarMetaGastos = salvarMetaGastos; 
-
-document.addEventListener('DOMContentLoaded', () => {
-  const campoData = document.getElementById('data');
-  if (campoData) {
-    const hoje = new Date().toISOString().split('T')[0];
-    campoData.value = hoje;
-  }
-
-  const valor = document.getElementById('valor');
-  const qtd = document.getElementById('corridas');
-  if (valor && qtd) {
-    const mediaBox = document.createElement('small');
-    mediaBox.style.display = 'block';
-    mediaBox.style.marginTop = '-10px';
-    mediaBox.style.marginBottom = '10px';
-    mediaBox.style.color = '#ff7a18';
-    qtd.after(mediaBox);
-
-    function atualizarMedia() {
-      const v = parseFloat(valor.value) || 0;
-      const q = parseInt(qtd.value) || 0;
-      mediaBox.textContent = q > 0 ? `Média por corrida: R$ ${(v/q).toFixed(2).replace('.',',')}` : '';
-    }
-
-    valor.addEventListener('input', atualizarMedia);
-    qtd.addEventListener('input', atualizarMedia);
-  }
-});
-
-// Registrar funcionamento offline
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', async () => {
-    try {
-      await navigator.serviceWorker.register('/sw.js');
-      console.log('✅ PWA pronto para funcionar sem internet');
-    } catch (erro) {
-      console.log('⚠️ Funcionalidade offline não ativada ainda:', erro);
-    }
-  });
-}
-// ===== MELHORIAS TELA NOVA CORRIDA =====
-document.addEventListener('DOMContentLoaded', () => {
-  const valor = document.getElementById('valor');
-  const qtd = document.getElementById('corridas');
-  const btnSalvar = document.getElementById('botaoSalvarCorrida');
-
-  // Média por corrida em tempo real
-  if(valor && qtd) {
-    const avisoMedia = document.createElement('small');
-    avisoMedia.style.color = '#ff7a18';
-    avisoMedia.style.display = 'block';
-    avisoMedia.style.marginTop = '-8px';
-    qtd.after(avisoMedia);
-
-    function atualizarMedia() {
-      const v = parseFloat(valor.value) || 0;
-      const q = parseInt(qtd.value) || 0;
-      avisoMedia.textContent = q > 0 ? `Média por corrida: R$ ${(v/q).toFixed(2).replace('.',',')}` : '';
-    }
-    valor.addEventListener('input', atualizarMedia);
-    qtd.addEventListener('input', atualizarMedia);
-  }
-
-  // Após salvar: limpa valor/quantidade e já pronta para nova
-  if(btnSalvar) {
-    const cliqueOriginal = btnSalvar.onclick;
-    btnSalvar.onclick = async function() {
-      if(cliqueOriginal) await cliqueOriginal.call(this);
-      valor.value = '';
-      qtd.value = '';
-      valor.focus();
-    };
-  }
-});
-// ===== MELHORIAS TELA HOME =====
-function atualizarResumoDia(totalDia, metaDia, corridasDia) {
-  let bloco = document.getElementById('resumoDiaHome');
-  if(!bloco) {
-    bloco = document.createElement('div');
-    bloco.id = 'resumoDiaHome';
-    bloco.className = 'card-resumo';
-    const alvo = document.querySelector('.tela.ativa #conteudoHome') || document.querySelector('#home .grid-principal');
-    if(alvo) alvo.prepend(bloco);
-  }
-
-  const falta = Math.max(0, metaDia - totalDia);
-  bloco.innerHTML = `
-    <strong>📅 HOJE</strong>
-    <p>Feito: R$ ${totalDia.toFixed(2).replace('.',',')} | Corridas: ${corridasDia}</p>
-    <p style="color:${falta===0?'#4ade80':'#ff7a18'}">
-      ${falta===0?'✅ Meta de hoje batida!':`Faltam R$ ${falta.toFixed(2).replace('.',',')}`}
-    </p>
-  `;
-}
-// ===== MELHORIAS TELA METAS =====
-function calcularMetaReal(valorQuero, gastosSemana) {
-  const totalPrecisa = valorQuero + gastosSemana;
-  const diasRestantes = Math.max(1, 7 - new Date().getDay());
-  const porDia = totalPrecisa / diasRestantes;
-
-  return {
-    totalPrecisa: totalPrecisa.toFixed(2).replace('.',','),
-    porDia: porDia.toFixed(2).replace('.',','),
-    aviso: `💡 Para lucrar R$ ${valorQuero.toFixed(2).replace('.',',')}, precisa faturar R$ ${totalPrecisa.toFixed(2).replace('.',',')}`
-  };
-}
-// ===== INSIGHTS AUTOMÁTICOS (SEM DADOS EXTRAS) =====
-function calcularInsights(dadosCorridas) {
-  const dias = {
-    0: 'Domingo', 1: 'Segunda', 2: 'Terça', 3: 'Quarta',
-    4: 'Quinta', 5: 'Sexta', 6: 'Sábado'
-  };
-  const origens = ['Uber', '99', 'Particular'];
-
-  // Agrupa valores por dia da semana
-  const mediaPorDia = {};
-  for(let i=0; i<7; i++) mediaPorDia[i] = { total:0, qtd:0 };
-  // Agrupa por origem
-  const mediaPorOrigem = {};
-  origens.forEach(o => mediaPorOrigem[o] = { total:0, qtd:0 });
-
-  dadosCorridas.forEach(corrida => {
-    const data = new Date(corrida.data);
-    const diaSemana = data.getDay();
-    mediaPorDia[diaSemana].total += parseFloat(corrida.valor);
-    mediaPorDia[diaSemana].qtd += 1;
-
-    if(mediaPorOrigem[corrida.origem]) {
-      mediaPorOrigem[corrida.origem].total += parseFloat(corrida.valor);
-      mediaPorOrigem[corrida.origem].qtd += 1;
-    }
-  });
-
-  // Calcula médias
-  const diasOrdenados = Object.entries(mediaPorDia)
-    .map(([n, d]) => ({
-      nome: dias[n],
-      media: d.qtd>0 ? d.total/d.qtd : 0
-    }))
-    .sort((a,b) => b.media - a.media)
-    .slice(0,3);
-
-  const origensOrdenadas = Object.entries(mediaPorOrigem)
-    .map(([n, d]) => ({
-      nome: n,
-      media: d.qtd>0 ? d.total/d.qtd : 0
-    }))
-    .sort((a,b) => b.media - a.media);
-
-  return { dias: diasOrdenados, origens: origensOrdenadas };
-}
-
-// Atualiza na tela de Metas
-function mostrarInsightsNaMeta() {
-  const dados = JSON.parse(localStorage.getItem('corridas')) || [];
-  const resumo = calcularInsights(dados);
-
-  let html = `
-    <div class="card insights-card">
-      <h3>🧠 Seus Melhores Resultados</h3>
-      <small>📅 Melhores Dias</small>
-  `;
-
-  resumo.dias.forEach(d => {
-    html += `<p>• ${d.nome} → R$ ${d.media.toFixed(2).replace('.',',')}/dia</p>`;
-  });
-
-  html += `<br><small>🪙 Melhores Origens</small>`;
-
-  resumo.origens.forEach(o => {
-    html += `<p>• ${o.nome} → R$ ${o.media.toFixed(2).replace('.',',')}/dia</p>`;
-  });
-
-  html += `</div>`;
-
-  // Coloca depois do card "Seu Progresso" na tela de Metas
-  const alvo = document.querySelector('#metasTela .insights-da-semana') || document.querySelector('#metasTela .card:last-child');
-  if(alvo) alvo.after(html);
-}
-
-// Chama automaticamente ao abrir a tela de Metas
-const abrirTelaAntigo = abrirTela;
-abrirTela = function(id) {
-  abrirTelaAntigo(id);
-  if(id === 'metasTela') mostrarInsightsNaMeta();
-};
