@@ -1986,28 +1986,134 @@ function obterInsightInicio(minhasSemana, meta) {
   return null;
 
 }
-function obterInsightMeta(meta, totalSemana, projecaoFinal, metaReal) {
+function obterInsightMeta(
+  meta,
+  totalSemana,
+  projecaoFinal,
+  metaReal,
+  necessarioPorDia,
+  diasRestantes
+) {
 
+  const textoDias =
+    diasRestantes === 1
+      ? "no próximo 1 dia"
+      : `nos próximos ${diasRestantes} dias`;
+
+  // Nenhuma meta configurada
   if (meta <= 0) {
-    return bibliotecaInsights.inicio.semMeta;
+    return {
+      prioridade: 100,
+      titulo: "🎯 Defina sua meta semanal",
+      linha1: "O Assistente ainda não tem uma meta para acompanhar.",
+      linha2: "Escolha uma meta e eu acompanho seu progresso durante a semana.",
+      classe: "assistente-neutro"
+    };
   }
 
-  let diferenca =
+  const diferencaProjecao =
     projecaoFinal - metaReal;
 
-  let falta =
-    Math.abs(diferenca);
+  const faltaAtual =
+    Math.max(0, metaReal - totalSemana);
 
-  if (diferenca >= 0) {
-    return bibliotecaInsights.meta.verde;
+  // A meta já foi atingida
+  if (totalSemana >= metaReal) {
+    return {
+      prioridade: 95,
+      titulo: `🏆 Meta semanal atingida!\n${formatarMoeda(totalSemana)}`,
+      linha1: "Excelente trabalho!",
+      linha2:
+        `Você já superou sua meta real em ` +
+        `${formatarMoeda(totalSemana - metaReal)}.`,
+      classe: "assistente-verde"
+    };
   }
 
-  if (falta <= metaReal * 0.10) {
-    return bibliotecaInsights.meta.amarelo;
+  // A projeção indica que vai superar a meta
+  if (diferencaProjecao >= 0) {
+    return {
+      prioridade: 70,
+      titulo: `🔥 Excelente ritmo!\n${formatarMoeda(projecaoFinal)}`,
+      linha1: "Sua projeção está acima da meta.",
+      linha2:
+        `Mantendo esse ritmo, você deve superar sua meta em ` +
+        `${formatarMoeda(diferencaProjecao)}.`,
+      classe: "assistente-verde"
+    };
   }
 
-  return bibliotecaInsights.meta.vermelho;
+  // Está perto da meta: falta até 10%
+  if (faltaAtual <= metaReal * 0.10) {
+    return {
+      prioridade: 85,
+      titulo: `🎯 Você está muito perto!\n${formatarMoeda(projecaoFinal)}`,
+      linha1:
+        `Faltam ${formatarMoeda(faltaAtual)} para atingir sua meta.`,
+      linha2:
+        `Fazendo cerca de ${formatarMoeda(necessarioPorDia)} por dia ` +
+        `${textoDias}, você consegue.`,
+      classe: "assistente-amarelo"
+    };
+  }
 
+  // Ritmo abaixo da meta
+  return {
+    prioridade: 90,
+    titulo: `📉 Vamos recuperar o ritmo\n${formatarMoeda(projecaoFinal)}`,
+    linha1:
+      `Ainda faltam ${formatarMoeda(faltaAtual)} para sua meta.`,
+    linha2:
+      `Será preciso fazer cerca de ${formatarMoeda(necessarioPorDia)} por dia ` +
+      `${textoDias}.`,
+    classe: "assistente-vermelho"
+  };
+}
+function obterInsightRanking(dados) {
+
+  if (!dados || dados.posicao <= 0) {
+    return null;
+  }
+
+  if (dados.posicao === 1) {
+    return {
+      prioridade: 75,
+      titulo: "🏆 Você lidera a semana!",
+      linha1:
+        dados.vantagem > 0
+          ? `Sua vantagem é de ${formatarMoeda(dados.vantagem)}.`
+          : "Você está no topo do ranking.",
+      linha2:
+        "Continue registrando suas corridas para defender a liderança.",
+      classe: "assistente-verde"
+    };
+  }
+
+  if (dados.posicao === 2) {
+    return {
+      prioridade: 80,
+      titulo: "🥈 Você está perto da liderança",
+      linha1:
+        `Faltam ${formatarMoeda(dados.faltaPrimeiro)} para alcançar o 1º lugar.`,
+      linha2:
+        "Uma boa sequência pode colocar você no topo.",
+      classe: "assistente-amarelo"
+    };
+  }
+
+  if (dados.faltaAcima > 0) {
+    return {
+      prioridade: 60,
+      titulo: `🏁 Você está em ${dados.posicao}º lugar`,
+      linha1:
+        `Faltam ${formatarMoeda(dados.faltaAcima)} para subir uma posição.`,
+      linha2:
+        "Continue avançando no ranking semanal.",
+      classe: "assistente-neutro"
+    };
+  }
+
+  return null;
 }
 
 function atualizarAssistenteMMS() {
@@ -2084,6 +2190,23 @@ function atualizarAssistenteMMS() {
 
   let projecaoFinal =
     mediaDiaria * 7;
+    const hoje = new Date();
+
+let diaSemana = hoje.getDay();
+
+// domingo = 0
+if (diaSemana === 0) {
+  diaSemana = 7;
+}
+
+let diasRestantes =
+  Math.max(1, 8 - diaSemana);
+
+let faltaParaMeta =
+  Math.max(0, metaReal - totalSemana);
+
+let necessarioPorDia =
+  faltaParaMeta / diasRestantes;
 
   let diferenca =
     projecaoFinal - metaReal;
@@ -2205,49 +2328,42 @@ if (insightInicio) {
     meta,
     totalSemana,
     projecaoFinal,
-    metaReal
+    metaReal,
+    necessarioPorDia,
+    diasRestantes
   );
+  let insightRanking =
+  obterInsightRanking(dadosInsight);
 
-if (insightMeta) {
+let pensamentos = [
+  insightMeta,
+  insightRanking
+];
 
-  tituloEl.innerText =
-    `${insightMeta.titulo}\n${formatarMoeda(projecaoFinal)}`;
+let melhorInsight =
+  pensamentos
+    .filter(Boolean)
+    .sort((a, b) =>
+      b.prioridade - a.prioridade
+    )[0];
 
-  linha1El.innerText =
-    insightMeta.linha1;
+if (melhorInsight) {
 
-  if (insightMeta.classe === "assistente-verde") {
-
-    linha2El.innerText =
-      `Você deve passar da meta real em ${formatarMoeda(diferenca)}.`;
-
-  } else if (insightMeta.classe === "assistente-amarelo") {
-
-    linha2El.innerText =
-      `Faltariam apenas ${formatarMoeda(falta)} para atingir a meta real.`;
-
-  } else if (insightMeta.classe === "assistente-vermelho") {
-
-    linha2El.innerText =
-      `Ritmo abaixo. Faltariam ${formatarMoeda(falta)} para a meta real.`;
-
-  } else {
-
-    linha2El.innerText =
-      insightMeta.linha2;
-
-  }
+  tituloEl.innerText = melhorInsight.titulo;
+  linha1El.innerText = melhorInsight.linha1;
+  linha2El.innerText = melhorInsight.linha2;
 
   if (cardAssistente) {
     cardAssistente.classList.add(
-      insightMeta.classe
+      melhorInsight.classe
     );
   }
 
   return;
+}
 
 }
-}
+
 
 function gerarInsightAssistente(dados) {
 
