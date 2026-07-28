@@ -2030,18 +2030,24 @@ function obterInsightMeta(
     };
   }
 
-  // A projeção indica que vai superar a meta
-  if (diferencaProjecao >= 0) {
-    return {
-      prioridade: 70,
-      titulo: `🔥 Excelente ritmo!\n${formatarMoeda(projecaoFinal)}`,
-      linha1: "Sua projeção está acima da meta.",
-      linha2:
-        `Mantendo esse ritmo, você deve superar sua meta em ` +
-        `${formatarMoeda(diferencaProjecao)}.`,
-      classe: "assistente-verde"
-    };
-  }
+ // A previsão inteligente indica que vai superar a meta
+if (diferencaProjecao >= 0) {
+  return {
+    prioridade: 70,
+
+    titulo:
+      `🧠 Previsão Inteligente\n${formatarMoeda(projecaoFinal)}`,
+
+    linha1:
+      `Comparando sua semana atual com as 3 mais semelhantes do seu histórico.`,
+
+    linha2:
+      `Sua previsão indica que você deve superar sua meta em ${formatarMoeda(diferencaProjecao)}.`,
+
+    classe:
+      "assistente-verde"
+  };
+}
 
   // Está perto da meta: falta até 10%
   if (faltaAtual <= metaReal * 0.10) {
@@ -2115,6 +2121,534 @@ function obterInsightRanking(dados) {
 
   return null;
 }
+function analisarHistoricoSemanal(corridas, usuarioAtual) {
+
+  if (!usuarioAtual) {
+    return null;
+  }
+
+  const hoje = new Date();
+  hoje.setHours(0, 0, 0, 0);
+
+  const inicioSemanaAtual =
+    obterInicioSemana(hoje);
+
+  inicioSemanaAtual.setHours(0, 0, 0, 0);
+
+  let diaAtualSemana = hoje.getDay();
+
+  // Domingo passa a valer 7
+  if (diaAtualSemana === 0) {
+    diaAtualSemana = 7;
+  }
+
+  const converterValor = valor => {
+
+    if (typeof valor === "string") {
+      valor = valor
+        .replace("R$", "")
+        .replace(/\./g, "")
+        .replace(",", ".")
+        .trim();
+    }
+
+    return Number(valor) || 0;
+  };
+
+  const criarDataLocal = dataTexto => {
+
+    if (!dataTexto) {
+      return null;
+    }
+
+    const partes = dataTexto.split("-");
+
+    if (partes.length !== 3) {
+      return new Date(dataTexto);
+    }
+
+    return new Date(
+      Number(partes[0]),
+      Number(partes[1]) - 1,
+      Number(partes[2])
+    );
+  };
+
+  const minhasCorridas =
+    corridas.filter(item =>
+      item.uid === usuarioAtual.uid ||
+      item.email === usuarioAtual.email
+    );
+
+  const totaisSemanasAnteriores = [];
+  const valoresMesmoDia = [];
+
+  for (let numeroSemana = 1; numeroSemana <= 8; numeroSemana++) {
+
+    const inicioSemana =
+      new Date(inicioSemanaAtual);
+
+    inicioSemana.setDate(
+      inicioSemana.getDate() - numeroSemana * 7
+    );
+
+    const limiteMesmoPonto =
+      new Date(inicioSemana);
+
+    limiteMesmoPonto.setDate(
+      limiteMesmoPonto.getDate() + diaAtualSemana - 1
+    );
+
+    limiteMesmoPonto.setHours(23, 59, 59, 999);
+
+    const dataMesmoDia =
+      new Date(inicioSemana);
+
+    dataMesmoDia.setDate(
+      dataMesmoDia.getDate() + diaAtualSemana - 1
+    );
+
+    dataMesmoDia.setHours(0, 0, 0, 0);
+
+    let totalAteMesmoDia = 0;
+    let totalMesmoDia = 0;
+    let semanaPossuiDados = false;
+
+    minhasCorridas.forEach(item => {
+
+      const dataCorrida =
+        criarDataLocal(item.data);
+
+      if (
+        !dataCorrida ||
+        isNaN(dataCorrida.getTime())
+      ) {
+        return;
+      }
+
+      dataCorrida.setHours(0, 0, 0, 0);
+
+      if (
+        dataCorrida >= inicioSemana &&
+        dataCorrida <= limiteMesmoPonto
+      ) {
+        totalAteMesmoDia +=
+          converterValor(item.valor);
+
+        semanaPossuiDados = true;
+      }
+
+      if (
+        dataCorrida.getTime() ===
+        dataMesmoDia.getTime()
+      ) {
+        totalMesmoDia +=
+          converterValor(item.valor);
+      }
+
+    });
+
+    if (semanaPossuiDados) {
+      totaisSemanasAnteriores.push(
+        totalAteMesmoDia
+      );
+    }
+
+    if (totalMesmoDia > 0) {
+      valoresMesmoDia.push(
+        totalMesmoDia
+      );
+    }
+
+  }
+
+  const mediaSemanasMesmoPonto =
+    totaisSemanasAnteriores.length > 0
+      ? totaisSemanasAnteriores.reduce(
+          (soma, valor) => soma + valor,
+          0
+        ) / totaisSemanasAnteriores.length
+      : 0;
+
+  const mediaMesmoDia =
+    valoresMesmoDia.length > 0
+      ? valoresMesmoDia.reduce(
+          (soma, valor) => soma + valor,
+          0
+        ) / valoresMesmoDia.length
+      : 0;
+
+  const totalSemanaAtual =
+    minhasCorridas
+      .filter(item =>
+        estaNaSemanaAtual(item.data)
+      )
+      .reduce(
+        (soma, item) =>
+          soma + converterValor(item.valor),
+        0
+      );
+
+  const diferencaPercentual =
+    mediaSemanasMesmoPonto > 0
+      ? (
+          (
+            totalSemanaAtual -
+            mediaSemanasMesmoPonto
+          ) /
+          mediaSemanasMesmoPonto
+        ) * 100
+      : 0;
+
+  return {
+    totalSemanaAtual,
+    mediaSemanasMesmoPonto,
+    mediaMesmoDia,
+    diferencaPercentual,
+    semanasComparadas:
+      totaisSemanasAnteriores.length,
+    diasComparados:
+      valoresMesmoDia.length
+  };
+}
+function calcularProjecaoHistorica(corridas, usuarioAtual) {
+
+  if (!usuarioAtual) {
+    return null;
+  }
+
+  const hoje = new Date();
+  hoje.setHours(0, 0, 0, 0);
+
+  const inicioSemanaAtual =
+    obterInicioSemana(hoje);
+
+  inicioSemanaAtual.setHours(0, 0, 0, 0);
+
+  let diaAtualSemana = hoje.getDay();
+
+  // Domingo representa o 7º dia da semana.
+  if (diaAtualSemana === 0) {
+    diaAtualSemana = 7;
+  }
+
+  const converterValor = valor => {
+
+    if (typeof valor === "string") {
+      valor = valor
+        .replace("R$", "")
+        .replace(/\./g, "")
+        .replace(",", ".")
+        .trim();
+    }
+
+    return Number(valor) || 0;
+  };
+
+  const criarDataLocal = dataTexto => {
+
+    if (!dataTexto) {
+      return null;
+    }
+
+    const partes = dataTexto.split("-");
+
+    if (partes.length !== 3) {
+      return new Date(dataTexto);
+    }
+
+    return new Date(
+      Number(partes[0]),
+      Number(partes[1]) - 1,
+      Number(partes[2])
+    );
+  };
+
+  const minhasCorridas =
+    corridas.filter(item =>
+      item.uid === usuarioAtual.uid ||
+      item.email === usuarioAtual.email
+    );
+
+  const semanasHistoricas = [];
+
+  // Analisa até 8 semanas anteriores.
+  for (
+    let numeroSemana = 1;
+    numeroSemana <= 8;
+    numeroSemana++
+  ) {
+
+    const inicioSemana =
+      new Date(inicioSemanaAtual);
+
+    inicioSemana.setDate(
+      inicioSemana.getDate() -
+      numeroSemana * 7
+    );
+
+    const fimSemana =
+      new Date(inicioSemana);
+
+    fimSemana.setDate(
+      fimSemana.getDate() + 6
+    );
+
+    fimSemana.setHours(23, 59, 59, 999);
+
+    const limiteMesmoPonto =
+      new Date(inicioSemana);
+
+    limiteMesmoPonto.setDate(
+      limiteMesmoPonto.getDate() +
+      diaAtualSemana - 1
+    );
+
+    limiteMesmoPonto.setHours(
+      23,
+      59,
+      59,
+      999
+    );
+
+    let totalAteMesmoPonto = 0;
+    let totalFinalSemana = 0;
+    let possuiDados = false;
+
+    minhasCorridas.forEach(item => {
+
+      const dataCorrida =
+        criarDataLocal(item.data);
+
+      if (
+        !dataCorrida ||
+        isNaN(dataCorrida.getTime())
+      ) {
+        return;
+      }
+
+      dataCorrida.setHours(0, 0, 0, 0);
+
+      const valor =
+        converterValor(item.valor);
+
+      if (
+        dataCorrida >= inicioSemana &&
+        dataCorrida <= fimSemana
+      ) {
+        totalFinalSemana += valor;
+        possuiDados = true;
+      }
+
+      if (
+        dataCorrida >= inicioSemana &&
+        dataCorrida <= limiteMesmoPonto
+      ) {
+        totalAteMesmoPonto += valor;
+      }
+
+    });
+
+    if (
+      possuiDados &&
+      totalAteMesmoPonto > 0 &&
+      totalFinalSemana > 0
+    ) {
+      semanasHistoricas.push({
+        numeroSemana,
+        totalAteMesmoPonto,
+        totalFinalSemana
+      });
+    }
+
+  }
+
+  const totalSemanaAtual =
+    minhasCorridas
+      .filter(item =>
+        estaNaSemanaAtual(item.data)
+      )
+      .reduce(
+        (soma, item) =>
+          soma + converterValor(item.valor),
+        0
+      );
+
+  if (semanasHistoricas.length < 2) {
+    return {
+      totalSemanaAtual,
+      projecaoConservadora: 0,
+      projecaoProvavel: 0,
+      projecaoOtimista: 0,
+      fatorProvavel: 0,
+      semanasUsadas:
+        semanasHistoricas.length,
+      confianca: "baixa",
+      motivo: "Histórico insuficiente",
+      semanasSemelhantes: []
+    };
+  }
+
+  /*
+    Compara o total atual com o valor que cada
+    semana anterior possuía neste mesmo ponto.
+  */
+  const semanasSemelhantes =
+    semanasHistoricas
+      .map(semana => {
+
+        const diferencaAbsoluta =
+          Math.abs(
+            totalSemanaAtual -
+            semana.totalAteMesmoPonto
+          );
+
+        /*
+          A porcentagem usa o total atual como referência.
+
+          Exemplo:
+          atual = 1.000
+          anterior = 900
+          diferença = 10%
+        */
+        const diferencaPercentual =
+          totalSemanaAtual > 0
+            ? diferencaAbsoluta /
+              totalSemanaAtual
+            : 999;
+
+        const fatorCrescimento =
+          semana.totalFinalSemana /
+          semana.totalAteMesmoPonto;
+
+        return {
+          ...semana,
+          diferencaAbsoluta,
+          diferencaPercentual,
+          fatorCrescimento
+        };
+
+      })
+      .sort(
+        (a, b) =>
+          a.diferencaPercentual -
+          b.diferencaPercentual
+      )
+      .slice(0, 3);
+
+  // A semana mais parecida recebe o maior peso.
+  const pesosBase = [0.5, 0.3, 0.2];
+
+  const pesosUsados =
+    pesosBase.slice(
+      0,
+      semanasSemelhantes.length
+    );
+
+  const somaPesos =
+    pesosUsados.reduce(
+      (soma, peso) => soma + peso,
+      0
+    );
+
+  const pesosNormalizados =
+    pesosUsados.map(
+      peso => peso / somaPesos
+    );
+
+  const fatorProvavel =
+    semanasSemelhantes.reduce(
+      (soma, semana, indice) =>
+        soma +
+        semana.fatorCrescimento *
+        pesosNormalizados[indice],
+      0
+    );
+
+  const projecaoProvavel =
+    totalSemanaAtual *
+    fatorProvavel;
+
+  const fatoresSemelhantes =
+    semanasSemelhantes
+      .map(
+        semana =>
+          semana.fatorCrescimento
+      )
+      .sort((a, b) => a - b);
+
+  const fatorConservador =
+    fatoresSemelhantes[0];
+
+  const fatorOtimista =
+    fatoresSemelhantes[
+      fatoresSemelhantes.length - 1
+    ];
+
+  let projecaoConservadora =
+    totalSemanaAtual *
+    fatorConservador;
+
+  let projecaoOtimista =
+    totalSemanaAtual *
+    fatorOtimista;
+
+  /*
+    Garante a ordem correta dos três cenários,
+    mesmo quando os fatores históricos oscilarem.
+  */
+  projecaoConservadora =
+    Math.min(
+      projecaoConservadora,
+      projecaoProvavel
+    );
+
+  projecaoOtimista =
+    Math.max(
+      projecaoOtimista,
+      projecaoProvavel
+    );
+
+  const diferencaMediaSemelhanca =
+    semanasSemelhantes.reduce(
+      (soma, semana) =>
+        soma +
+        semana.diferencaPercentual,
+      0
+    ) / semanasSemelhantes.length;
+
+  let confianca = "baixa";
+
+  if (
+    semanasSemelhantes.length === 3 &&
+    diferencaMediaSemelhanca <= 0.20
+  ) {
+    confianca = "alta";
+  } else if (
+    semanasSemelhantes.length >= 2 &&
+    diferencaMediaSemelhanca <= 0.40
+  ) {
+    confianca = "média";
+  }
+
+  return {
+    totalSemanaAtual,
+
+    projecaoConservadora,
+    projecaoProvavel,
+    projecaoOtimista,
+
+    fatorProvavel,
+
+    semanasUsadas:
+      semanasSemelhantes.length,
+
+    confianca,
+    diferencaMediaSemelhanca,
+
+    semanasSemelhantes
+  };
+}
 
 function atualizarAssistenteMMS() {
   if (!usuarioAtual) return;
@@ -2147,6 +2681,28 @@ function atualizarAssistenteMMS() {
 
   let meta =
     Number((dadosUsuario && dadosUsuario.metaSemanal) || 0);
+
+    const analiseHistorica =
+  analisarHistoricoSemanal(
+    corridasFirebase,
+    usuarioAtual
+  );
+  const projecaoHistorica =
+  calcularProjecaoHistorica(
+    corridasFirebase,
+    usuarioAtual
+  );
+
+console.log(
+  "🔮 Projeção histórica MMS:",
+  JSON.stringify(
+    projecaoHistorica,
+    null,
+    2
+  )
+);
+
+console.log(JSON.stringify(analiseHistorica, null, 2));
 
   let minhasSemana =
     corridasFirebase.filter(item =>
@@ -2189,7 +2745,16 @@ function atualizarAssistenteMMS() {
       : 0;
 
   let projecaoFinal =
-    mediaDiaria * 7;
+  mediaDiaria * 7;
+
+if (
+  projecaoHistorica &&
+  projecaoHistorica.semanasUsadas >= 3 &&
+  projecaoHistorica.projecaoProvavel > 0
+) {
+  projecaoFinal =
+    projecaoHistorica.projecaoProvavel;
+}
     const hoje = new Date();
 
 let diaSemana = hoje.getDay();
@@ -2335,17 +2900,7 @@ if (insightInicio) {
   let insightRanking =
   obterInsightRanking(dadosInsight);
 
-let pensamentos = [
-  insightMeta,
-  insightRanking
-];
-
-let melhorInsight =
-  pensamentos
-    .filter(Boolean)
-    .sort((a, b) =>
-      b.prioridade - a.prioridade
-    )[0];
+let melhorInsight = insightMeta;
 
 if (melhorInsight) {
 
