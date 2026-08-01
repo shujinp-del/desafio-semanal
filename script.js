@@ -388,10 +388,13 @@ if (dadosUsuario && dadosUsuario.grupoId) {
   let grupo =
     grupoSnap.data();
 
-  dadosUsuario.membrosGrupo =
-    grupo.membros || [];
+  membrosGrupo =
+  grupo.membros || [];
 
-  carregarEventosGrupo();
+dadosUsuario.membrosGrupo =
+  membrosGrupo;
+
+carregarEventosGrupo();
 }
 }
 
