@@ -808,8 +808,16 @@ function atualizarMetaReal() {
       0
     );
 
-  let gastosSemana =
-    gastosFirebase.reduce(
+ let gastosSemana =
+  gastosFirebase
+    .filter(item =>
+      (
+        item.uid === usuarioAtual.uid ||
+        item.email === usuarioAtual.email
+      ) &&
+      estaNaSemanaAtual(item.data)
+    )
+    .reduce(
       (soma, item) =>
         soma + Number(item.valor || 0),
       0
