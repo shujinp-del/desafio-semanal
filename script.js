@@ -336,14 +336,16 @@ function montarRanking(corridas) {
 
   corridas.forEach(item => {
     let chave = item.uid || item.email || item.nome.toLowerCase();
-
-    if (!mapa[chave]) {
-      mapa[chave] = {
-        nome: item.nome || item.email || "Motorista",
-        valor: 0,
-        corridas: 0,
-        historico: []
-      };
+    
+if (!mapa[chave]) {
+    mapa[chave] = {
+  uid: item.uid || "",
+  email: item.email || "",
+  nome: item.nome || item.email || "Motorista",
+  valor: 0,
+  corridas: 0,
+  historico: []
+};
     }
 
     mapa[chave].valor += Number(item.valor);
@@ -3080,7 +3082,10 @@ function atualizarHallFama() {
   corridasBase.forEach(item => {
     if (!item.data) return;
 
-    let inicio = obterInicioSemana(new Date(item.data));
+    let inicio =
+  obterInicioSemana(
+    new Date(item.data + "T00:00:00")
+  );
     let chaveSemana = inicio.toISOString().split("T")[0];
 
     if (!semanas[chaveSemana]) {
