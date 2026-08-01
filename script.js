@@ -320,6 +320,7 @@ function iniciarSincronia() {
     atualizarCampeonatoSemana();
     atualizarGrafico();
     atualizarGraficoLinha();
+    atualizarAssistenteMMS();
   });
 
 atualizarRankingMetas();
@@ -2780,19 +2781,15 @@ let necessarioPorDia =
   let falta =
     Math.abs(diferenca);
 
-  let rankingSemana =
-    montarRanking(
-      corridasFirebase.filter(item =>
-        estaNaSemanaAtual(item.data)
-      )
-    );
+  let rankingSemana = ranking;
+    
 
   let posicaoUsuario =
   rankingSemana.findIndex(item =>
     item.uid === usuarioAtual.uid ||
     item.email === usuarioAtual.email
   );
-  
+
   let textoRanking = "";
 
   if (posicaoUsuario >= 0) {
