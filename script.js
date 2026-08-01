@@ -333,7 +333,6 @@ atualizarComparativoMensal();
 
 function montarRanking(corridas) {
   let mapa = {};
-
   corridas.forEach(item => {
     let chave = item.uid || item.email || item.nome.toLowerCase();
     
@@ -2789,10 +2788,11 @@ let necessarioPorDia =
     );
 
   let posicaoUsuario =
-    rankingSemana.findIndex(item =>
-      Math.abs(Number(item.valor || 0) - totalSemana) < 0.01
-    );
-
+  rankingSemana.findIndex(item =>
+    item.uid === usuarioAtual.uid ||
+    item.email === usuarioAtual.email
+  );
+  
   let textoRanking = "";
 
   if (posicaoUsuario >= 0) {
