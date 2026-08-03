@@ -1209,8 +1209,9 @@ function abrirTela(id) {
   }
 
   if (id === "historicoTela") {
-    atualizarHistoricoMensalCards();
-  }
+  carregarGastosFirebase();
+  atualizarHistoricoMensalCards();
+}
 
   if (id === "minhasTela") {
     atualizarMinhasCorridas();
@@ -1693,16 +1694,20 @@ function atualizarHistoricoMensal() {
   let mesAtual = hoje.getMonth();
   let anoAtual = hoje.getFullYear();
 
-  let corridasMes = corridasFirebase.filter(item => {
-    if (!item.data) return false;
+let corridasMes = corridasFirebase.filter(item => {
+  if (!item.data || !usuarioAtual) return false;
 
-    let data = new Date(item.data + "T00:00:00");
+  let data = new Date(item.data + "T00:00:00");
 
-    return (
-      data.getMonth() === mesAtual &&
-      data.getFullYear() === anoAtual
-    );
-  });
+  return (
+    (
+      item.uid === usuarioAtual.uid ||
+      item.email === usuarioAtual.email
+    ) &&
+    data.getMonth() === mesAtual &&
+    data.getFullYear() === anoAtual
+  );
+});
 
   corridasMes.sort((a, b) => new Date(b.data) - new Date(a.data));
 
@@ -1726,7 +1731,7 @@ function atualizarHistoricoMensal() {
   });
 
   console.log("Total calculado:", total);
-totalEl.innerText = total;
+totalEl.innerText = formatarMoeda(total);
 }
 function atualizarComparativoMensal() {
 
@@ -3828,7 +3833,176 @@ if (porcentagemParticularEl) {
 function obterRankingParaGrafico() {
   return ranking;
 }
+async function pesquisarPeriodoHistorico() {
 
+  const dataInicialEl =
+    document.getElementById(
+      "pesquisaDataInicial"
+    );
+
+  const dataFinalEl =
+    document.getElementById(
+      "pesquisaDataFinal"
+    );
+
+  const resultado =
+    document.getElementById(
+      "resultadoPesquisaPeriodo"
+    );
+
+  if (
+    !dataInicialEl ||
+    !dataFinalEl ||
+    !resultado ||
+    !usuarioAtual
+  ) {
+    return;
+  }
+
+  const dataInicial =
+    dataInicialEl.value;
+
+  const dataFinal =
+    dataFinalEl.value;
+
+  if (!dataInicial || !dataFinal) {
+    resultado.innerHTML = `
+      <div class="card">
+        ⚠️ Escolha uma data inicial
+        e uma data final.
+      </div>
+    `;
+
+    return;
+  }
+
+  if (dataInicial > dataFinal) {
+    resultado.innerHTML = `
+      <div class="card">
+        ⚠️ A data inicial não pode ser
+        maior que a data final.
+      </div>
+    `;
+
+    return;
+  }
+
+  await carregarGastosFirebase();
+
+  const corridasPeriodo =
+    corridasFirebase.filter(item => {
+
+      if (!item.data) {
+        return false;
+      }
+
+      const pertenceAoUsuario =
+        item.uid === usuarioAtual.uid ||
+        item.email === usuarioAtual.email;
+
+      const estaNoPeriodo =
+        item.data >= dataInicial &&
+        item.data <= dataFinal;
+
+      return (
+        pertenceAoUsuario &&
+        estaNoPeriodo
+      );
+    });
+
+  const gastosPeriodo =
+    gastosFirebase.filter(item => {
+
+      if (!item.data) {
+        return false;
+      }
+
+      const pertenceAoUsuario =
+        item.uid === usuarioAtual.uid ||
+        item.email === usuarioAtual.email;
+
+      const estaNoPeriodo =
+        item.data >= dataInicial &&
+        item.data <= dataFinal;
+
+      return (
+        pertenceAoUsuario &&
+        estaNoPeriodo
+      );
+    });
+
+  const faturamento =
+    corridasPeriodo.reduce(
+      (soma, item) =>
+        soma + Number(item.valor || 0),
+      0
+    );
+
+  const quantidadeCorridas =
+    corridasPeriodo.reduce(
+      (soma, item) =>
+        soma + Number(item.corridas || 0),
+      0
+    );
+
+  const totalGastos =
+    gastosPeriodo.reduce(
+      (soma, item) =>
+        soma + Number(item.valor || 0),
+      0
+    );
+
+  const lucroLiquido =
+    faturamento - totalGastos;
+
+  const mediaPorCorrida =
+    quantidadeCorridas > 0
+      ? faturamento / quantidadeCorridas
+      : 0;
+
+  resultado.innerHTML = `
+    <div class="card">
+
+      <h3>📊 Resultado do período</h3>
+
+      <p>
+        💰 Faturamento:
+        <strong>
+          ${formatarMoeda(faturamento)}
+        </strong>
+      </p>
+
+      <p>
+        🧾 Gastos:
+        <strong>
+          ${formatarMoeda(totalGastos)}
+        </strong>
+      </p>
+
+      <p>
+        📈 Lucro líquido:
+        <strong>
+          ${formatarMoeda(lucroLiquido)}
+        </strong>
+      </p>
+
+      <p>
+        🚗 Corridas:
+        <strong>
+          ${quantidadeCorridas}
+        </strong>
+      </p>
+
+      <p>
+        🎯 Média por corrida:
+        <strong>
+          ${formatarMoeda(mediaPorCorrida)}
+        </strong>
+      </p>
+
+    </div>
+  `;
+}
 function atualizarGrafico() {
   let canvas = document.getElementById("grafico");
 
@@ -6719,3 +6893,4 @@ window.mudarPeriodoGastos = mudarPeriodoGastos;
 window.carregarGastosFirebase =carregarGastosFirebase;
 window.recuperarSenha = recuperarSenha;
 window.salvarMetaGastos = salvarMetaGastos; 
+window.pesquisarPeriodoHistorico = pesquisarPeriodoHistorico;

@@ -1213,6 +1213,49 @@ Sua coleção de medalhas e pódios conquistados no MMS.
   <p class="subtitulo">
     Evolução semanal e mensal dos seus resultados
   </p>
+  <div class="card pesquisa-periodo-card">
+
+  <h2>🔎 Pesquisar por período</h2>
+
+  <p class="subtitulo">
+    Consulte seus ganhos, gastos e lucro em qualquer intervalo.
+  </p>
+
+  <div class="pesquisa-periodo-campos">
+
+    <label>
+      Data inicial
+
+      <input
+        type="date"
+        id="pesquisaDataInicial"
+      >
+    </label>
+
+    <label>
+      Data final
+
+      <input
+        type="date"
+        id="pesquisaDataFinal"
+      >
+    </label>
+
+  </div>
+
+  <button
+    type="button"
+    onclick="pesquisarPeriodoHistorico()"
+  >
+    🔍 Pesquisar período
+  </button>
+
+  <div
+    id="resultadoPesquisaPeriodo"
+    class="resultado-pesquisa-periodo"
+  ></div>
+
+</div>
   
 
 <div class="card historico-geral">
