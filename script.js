@@ -1241,7 +1241,12 @@ function atualizarTudo() {
 let corridasHojeCorrida =
   document.getElementById("corridasHojeCorrida");
 
-let hoje = new Date().toISOString().split("T")[0];
+let agora = new Date();
+
+let hoje =
+  `${agora.getFullYear()}-` +
+  `${String(agora.getMonth() + 1).padStart(2, "0")}-` +
+  `${String(agora.getDate()).padStart(2, "0")}`;
 
 let corridasHoje = corridasFirebase.filter(item =>
   item.data === hoje &&
@@ -4368,7 +4373,12 @@ function atualizarGraficoLinha() {
 function limparCampos() {
   document.getElementById("valor").value = "";
   document.getElementById("corridas").value = "";
-  document.getElementById("data").value = "";
+  let agora = new Date();
+
+document.getElementById("data").value =
+  `${agora.getFullYear()}-` +
+  `${String(agora.getMonth() + 1).padStart(2, "0")}-` +
+  `${String(agora.getDate()).padStart(2, "0")}`;
 
   let botaoSalvarCorrida =
     document.getElementById("botaoSalvarCorrida");
