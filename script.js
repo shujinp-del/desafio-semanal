@@ -3049,23 +3049,55 @@ let rankingSemana =
       : `🔥 Faltam ${formatarMoeda(falta)} para alcançar o líder`;
 
   lider.innerHTML = `
-    <div class="card card-posicao-v2">
-      <div class="posicao-medalha">${medalha}</div>
+  <div class="mms-rk-v1">
 
-      <div>
-        <small>Meu desempenho</small>
-
-        <h2>Você está em ${posicao}º lugar</h2>
-
-        <p>${mensagem}</p>
-
-        <div class="linha-posicao">
-          <span>${formatarMoeda(totalUsuario)}</span>
-          <strong>${corridasUsuario} corridas</strong>
-        </div>
-      </div>
+    <div class="mms-rk-topo">
+      🏆 RANKING DA SEMANA
     </div>
-  `;
+
+    <div class="mms-rk-conteudo">
+
+      <div class="mms-rk-esquerda">
+
+        <div class="mms-rk-medalha">
+          ${medalha}
+        </div>
+
+        <div class="mms-rk-textos">
+
+          <div class="mms-rk-posicao">
+            ${posicao}º Lugar
+          </div>
+
+          <div class="mms-rk-status">
+            ${
+              posicao === 1
+                ? "Você está liderando!"
+                : `Faltam ${formatarMoeda(falta)} para o líder`
+            }
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="mms-rk-numeros">
+
+        <div class="mms-rk-valor">
+          ${formatarMoeda(totalUsuario)}
+        </div>
+
+        <div class="mms-rk-corridas">
+          ${corridasUsuario} corridas
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+`;
 }
 function atualizarHallFama() {
   if (!usuarioAtual) return;

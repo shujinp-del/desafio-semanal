@@ -39,167 +39,331 @@
       </div>
     </section>
 
-    <section id="home" class="tela home-v2">
+    <section id="home" class="tela home-v3">
 
-      <div class="topo-home">
-        <div>
-          <h1>🔥 MMS</h1>
-          <p class="subtitulo">◎ O Melhor da Semana!</p>
-          <p id="usuarioLogado" class="bem-vindo"></p>
-        </div>
+  <!-- TOPO -->
+  <div class="home-v3-topo">
 
-        <button class="botao-sair" onclick="sair()">☰</button>
+    <div class="home-v3-marca">
+      <div class="home-v3-logo">
+        MMS<span>!</span>
       </div>
 
-      <div class="card destaque-home card-principal-v2">
-        <small>🎯 TOTAL DA SEMANA</small>
+      <small>Melhor da Semana</small>
+    </div>
 
-        <h2 id="homeTotal" class="numero-destaque">
-          R$ 0
-        </h2>
+    <button class="home-v3-menu" onclick="abrirTela('maisTela')">
+      ☰
+    </button>
 
-        <p class="legenda-numero">
-          Meta semanal:
-          <strong id="metaHomeValor">R$ 0</strong>
-        </p>
+  </div>
 
-        <div class="barra-meta-home">
-          <div id="barraMetaHome"></div>
-        </div>
 
-        <p class="faltam-meta-home">
-          Faltam
-          <strong id="faltamMetaHome">R$ 0</strong>
-          para a meta
-        </p>
+  <!-- SAUDAÇÃO -->
+  <div class="home-v3-boas-vindas">
+    <h2 id="usuarioLogado">
+      Bem-vindo!
+    </h2>
 
-        <div class="trofeu-hero">🏆</div>
-      </div>
-
-      <div class="grid-home-v2">
-        <div class="mini-card">
-          <small>🪙 MÉDIA DIÁRIA</small>
-          <strong id="mediaDiariaHome" class="numero-medio">R$ 0</strong>
-        </div>
-
-        <div class="mini-card">
-          <small>🚗 CORRIDAS</small>
-          <strong id="totalCorridasHome" class="numero-medio">0</strong>
-        </div>
-
-        <div class="mini-card">
-          <small>🔥 META</small>
-          <strong id="statusMetaHome" class="numero-medio">0%</strong>
-        </div>
-      </div>
-
-    <div class="card assistente-mms-card">
-  <div class="assistente-avatar">🤖</div>
-  
-  <div class="assistente-conteudo">
-    <small>🤖 ASSISTENTE MMS</small>
-
-    <h3 id="assistenteTitulo">
-      Analisando seus dados...
-    </h3>
-
-    <p id="assistenteLinha1">
-      O MMS está preparando seus primeiros insights.
-    </p>
-
-    <p id="assistenteLinha2">
-      Continue registrando suas corridas.
-    </p>
-
-    <p id="assistenteInsight1" class="assistente-mini-insight">
-      📊 Resumo do dia em análise.
+    <p>
+      Transforme cada corrida em uma conquista.
     </p>
   </div>
 
-  <div class="assistente-seta">›</div>
-</div>
-<div class="xp-ranking-grid">
-  <div class="card xp-card-home">
-    <div class="xp-topo">
-      <h3>🏆 Nível <span id="nivelXp">1</span></h3>
-      <strong id="xpAtual">0 / 1000 XP</strong>
+
+  <!-- CARD PRINCIPAL -->
+  <div class="home-v3-hero">
+
+    <div class="home-v3-hero-titulo">
+      🏆 MELHOR DA SEMANA
     </div>
 
-    <div class="barra-xp">
-      <div id="barraXp"></div>
+    <h1 id="homeTotal">
+      R$ 0,00
+    </h1>
+
+    <div class="home-v3-meta-status">
+      <span id="statusMetaHome">
+        0%
+      </span>
+      da meta
     </div>
+
+    <div class="barra-meta-home home-v3-barra-meta">
+      <div id="barraMetaHome"></div>
+    </div>
+
+    <div class="home-v3-meta-info">
+
+      <span>
+        Meta semanal:
+        <strong id="metaHomeValor">
+          R$ 0,00
+        </strong>
+      </span>
+
+      <span>
+        Faltam
+        <strong id="faltamMetaHome">
+          R$ 0,00
+        </strong>
+      </span>
+
+    </div>
+
+    <div class="home-v3-trofeu">
+      🏆
+    </div>
+
   </div>
 
-  <div id="liderSemana" class="card ranking-card-home"></div>
-</div>
 
-<div class="card conquistas-home">
-  <div class="titulo-card-linha">
-    <h3>🏆 Conquistas da Semana</h3>
-    <span>Ver todas ›</span>
-  </div>
+  <!-- RESUMO RÁPIDO -->
+  <div class="home-v3-resumo">
 
-  <div class="grid-conquistas">
-    <div class="conquista-box">
-      <div class="icone-conquista">🔥</div>
-      <strong id="conquistaSequencia">0 dias</strong>
-      <small>Sequência</small>
+    <div class="home-v3-resumo-card">
+
+      <div class="home-v3-resumo-icone verde">
+        ↗
+      </div>
+
+      <small>Média diária</small>
+
+      <strong id="mediaDiariaHome">
+        R$ 0,00
+      </strong>
+
     </div>
 
-    <div class="conquista-box">
-      <div class="icone-conquista">🎯</div>
-      <strong id="conquistaMeta">0%</strong>
-      <small>Meta</small>
-    </div>
 
-    <div class="conquista-box">
-      <div class="icone-conquista">🚗</div>
-      <strong id="conquistaCorridas">0</strong>
+    <div class="home-v3-resumo-card">
+
+      <div class="home-v3-resumo-icone azul">
+        🚗
+      </div>
+
       <small>Corridas</small>
+
+      <strong id="totalCorridasHome">
+        0
+      </strong>
+
     </div>
 
-    <div class="conquista-box">
-      <div class="icone-conquista">🚀</div>
-      <strong id="conquistaFaturamento">R$ 0</strong>
-      <small>Faturamento</small>
+
+    <div class="home-v3-resumo-card">
+
+      <div class="home-v3-resumo-icone roxo">
+        🏆
+      </div>
+
+      <small>Ranking</small>
+
+      <strong>
+        Semana
+      </strong>
+
     </div>
+
   </div>
 
-  <p class="texto-xp">✅ Continue mantendo sua média alta esta semana.</p>
-  <p class="texto-xp">✅ Parabéns, motorista! Você está voando! 🚀</p>
-</div>
 
-<div class="card origem-card-v2">
-  <div class="titulo-card-linha">
-    <h3>💰 Origens dos ganhos</h3>
-    <span>Ver detalhes ›</span>
+  <!-- ASSISTENTE -->
+  <div class="assistente-mms-card home-v3-assistente">
+
+    <div class="assistente-avatar">
+      🤖
+    </div>
+
+    <div class="assistente-conteudo">
+
+      <small>
+        ASSISTENTE MMS
+      </small>
+
+      <h3 id="assistenteTitulo">
+        Analisando seus dados...
+      </h3>
+
+      <p id="assistenteLinha1">
+        O MMS está preparando seus primeiros insights.
+      </p>
+
+      <p id="assistenteLinha2">
+        Continue registrando suas corridas.
+      </p>
+
+      <p
+        id="assistenteInsight1"
+        class="assistente-mini-insight"
+      >
+        📊 Resumo do dia em análise.
+      </p>
+
+    </div>
+
   </div>
 
-  <div class="origem-grid-v2">
-    <div class="origem-box uber-box">
-      <span>Uber</span>
-      <strong id="totalUber">R$ 0,00</strong>
-      <small id="porcentagemUber">0% do total</small>
+
+    <!-- RANKING DA SEMANA -->
+  <div class="home-v3-ranking-area">
+
+    <div
+      id="liderSemana"
+      class="home-v3-ranking-card">
     </div>
 
-    <div class="origem-box app99-box">
-      <span>99</span>
-      <strong id="total99">R$ 0,00</strong>
-      <small id="porcentagem99">0% do total</small>
-    </div>
-
-    <div class="origem-box particular-box">
-      <span>Particular</span>
-      <strong id="totalParticular">R$ 0,00</strong>
-      <small id="porcentagemParticular">0% do total</small>
-    </div>
   </div>
-</div>
 
-<p class="slogan-mms">
-  “ Persistência realiza sonhos e cria conquistas. ”
-</p>
-    </section>
+
+
+
+  <!-- CONQUISTAS -->
+  <div class="home-v3-card conquistas-home">
+
+    <div class="titulo-card-linha">
+
+      <h3>
+        🏆 Conquistas da Semana
+      </h3>
+
+      <span>
+        Ver todas ›
+      </span>
+
+    </div>
+
+    <div class="grid-conquistas">
+
+      <div class="conquista-box">
+        <div class="icone-conquista">
+          🔥
+        </div>
+
+        <strong id="conquistaSequencia">
+          0 dias
+        </strong>
+
+        <small>
+          Sequência
+        </small>
+      </div>
+
+
+      <div class="conquista-box">
+        <div class="icone-conquista">
+          🎯
+        </div>
+
+        <strong id="conquistaMeta">
+          0%
+        </strong>
+
+        <small>
+          Meta
+        </small>
+      </div>
+
+
+      <div class="conquista-box">
+        <div class="icone-conquista">
+          🚗
+        </div>
+
+        <strong id="conquistaCorridas">
+          0
+        </strong>
+
+        <small>
+          Corridas
+        </small>
+      </div>
+
+
+      <div class="conquista-box">
+        <div class="icone-conquista">
+          🚀
+        </div>
+
+        <strong id="conquistaFaturamento">
+          R$ 0
+        </strong>
+
+        <small>
+          Faturamento
+        </small>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ORIGENS -->
+  <div class="home-v3-card origem-card-v2">
+
+    <div class="titulo-card-linha">
+
+      <h3>
+        💰 Origens dos ganhos
+      </h3>
+
+      <span>
+        Ver detalhes ›
+      </span>
+
+    </div>
+
+    <div class="origem-grid-v2">
+
+      <div class="origem-box uber-box">
+        <span>Uber</span>
+
+        <strong id="totalUber">
+          R$ 0,00
+        </strong>
+
+        <small id="porcentagemUber">
+          0% do total
+        </small>
+      </div>
+
+
+      <div class="origem-box app99-box">
+        <span>99</span>
+
+        <strong id="total99">
+          R$ 0,00
+        </strong>
+
+        <small id="porcentagem99">
+          0% do total
+        </small>
+      </div>
+
+
+      <div class="origem-box particular-box">
+        <span>Particular</span>
+
+        <strong id="totalParticular">
+          R$ 0,00
+        </strong>
+
+        <small id="porcentagemParticular">
+          0% do total
+        </small>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <p class="slogan-mms">
+    “Persistência realiza sonhos e cria conquistas.”
+  </p>
+
+</section>
 
     <section id="novaCorridaTela" class="tela">
       <h1>🚗 Nova Corrida</h1>

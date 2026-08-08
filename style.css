@@ -3914,3 +3914,2825 @@ background:linear-gradient(
 .filtros-corridas .filtro-corrida:active {
   transform: scale(0.96);
 }
+/* =====================================================
+   MMS HOME V3
+   Redesign visual - mantém funcionalidades existentes
+   ===================================================== */
+
+.home-v3 {
+  width: 100%;
+  max-width: 430px;
+  margin: 0 auto;
+  padding-bottom: 100px;
+  overflow-x: hidden;
+}
+
+
+/* TOPO */
+
+.home-v3-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.home-v3-marca {
+  display: flex;
+  flex-direction: column;
+}
+
+.home-v3-logo {
+  font-size: 2.1rem;
+  font-weight: 1000;
+  font-style: italic;
+  letter-spacing: -2px;
+  line-height: 1;
+}
+
+.home-v3-logo span {
+  color: #ff7a00;
+}
+
+.home-v3-marca small {
+  margin-top: 3px;
+  color: #ff9800;
+  font-weight: 800;
+  font-size: .72rem;
+}
+
+.home-v3-menu {
+  width: 46px;
+  height: 46px;
+  margin: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 16px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #1c1c1c,
+      #0e0e0e
+    );
+
+  border:
+    1px solid rgba(255,255,255,.12);
+
+  box-shadow: none;
+
+  font-size: 1.25rem;
+}
+
+
+/* SAUDAÇÃO */
+
+.home-v3-boas-vindas {
+  margin-bottom: 18px;
+}
+
+.home-v3-boas-vindas h2 {
+  margin: 0;
+
+  font-size: 1.45rem;
+  font-weight: 850;
+}
+
+.home-v3-boas-vindas p {
+  margin: 6px 0 0;
+
+  color: #9d9d9d;
+
+  font-size: .9rem;
+}
+
+
+/* HERO */
+
+.home-v3-hero {
+  position: relative;
+  overflow: hidden;
+
+  padding: 25px;
+
+  border-radius: 28px;
+
+  background:
+    radial-gradient(
+      circle at 20% 0%,
+      rgba(255,255,255,.20),
+      transparent 32%
+    ),
+    linear-gradient(
+      135deg,
+      #ff9d00,
+      #ff6700 58%,
+      #ff5200
+    );
+
+  box-shadow:
+    0 20px 45px rgba(255,106,0,.27);
+
+  margin-bottom: 16px;
+}
+
+.home-v3-hero-titulo {
+  position: relative;
+  z-index: 2;
+
+  font-size: .86rem;
+  font-weight: 900;
+  letter-spacing: .6px;
+}
+
+.home-v3-hero h1 {
+  position: relative;
+  z-index: 2;
+
+  margin: 14px 0 4px;
+
+  font-size: 2.8rem;
+
+  line-height: 1;
+
+  letter-spacing: -1.4px;
+}
+
+.home-v3-meta-status {
+  position: relative;
+  z-index: 2;
+
+  display: inline-flex;
+  gap: 4px;
+
+  margin-top: 7px;
+
+  font-size: .84rem;
+  font-weight: 700;
+}
+
+.home-v3-meta-status span {
+  font-weight: 900;
+}
+
+.home-v3-barra-meta {
+  position: relative;
+  z-index: 2;
+
+  height: 13px;
+
+  margin-top: 20px;
+
+  background:
+    rgba(80,30,0,.22);
+}
+
+.home-v3-barra-meta #barraMetaHome {
+  background: #fff;
+}
+
+.home-v3-meta-info {
+  position: relative;
+  z-index: 2;
+
+  display: flex;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  margin-top: 12px;
+
+  font-size: .78rem;
+}
+
+.home-v3-meta-info span {
+  display: block;
+}
+
+.home-v3-meta-info strong {
+  display: block;
+
+  margin-top: 3px;
+
+  font-size: .86rem;
+}
+
+.home-v3-trofeu {
+  position: absolute;
+
+  right: -5px;
+  top: 25px;
+
+  font-size: 7.4rem;
+
+  opacity: .12;
+
+  transform: rotate(-8deg);
+}
+
+
+/* RESUMO */
+
+.home-v3-resumo {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: 10px;
+
+  margin-bottom: 16px;
+}
+
+.home-v3-resumo-card {
+  min-width: 0;
+
+  padding: 14px 10px;
+
+  text-align: center;
+
+  border-radius: 20px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #191919,
+      #0c0c0c
+    );
+
+  border:
+    1px solid rgba(255,255,255,.10);
+
+  box-shadow:
+    0 12px 25px rgba(0,0,0,.20);
+}
+
+.home-v3-resumo-icone {
+  width: 38px;
+  height: 38px;
+
+  margin: 0 auto 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 13px;
+
+  font-size: 1.05rem;
+  font-weight: 900;
+}
+
+.home-v3-resumo-icone.verde {
+  background:
+    rgba(16,185,129,.18);
+
+  color: #2be39d;
+}
+
+.home-v3-resumo-icone.azul {
+  background:
+    rgba(37,99,235,.20);
+
+  color: #4b8dff;
+}
+
+.home-v3-resumo-icone.roxo {
+  background:
+    rgba(147,51,234,.20);
+
+  color: #ae67ff;
+}
+
+.home-v3-resumo-card small {
+  display: block;
+
+  color: #929292;
+
+  font-size: .67rem;
+
+  margin-bottom: 6px;
+}
+
+.home-v3-resumo-card strong {
+  display: block;
+
+  color: #fff;
+
+  font-size: .92rem;
+
+  overflow-wrap: anywhere;
+}
+
+
+/* ASSISTENTE */
+
+.home-v3 .home-v3-assistente {
+  margin: 0 0 16px;
+
+  padding: 18px;
+
+  border-radius: 24px;
+
+  background:
+    radial-gradient(
+      circle at left,
+      rgba(255,138,0,.13),
+      transparent 35%
+    ),
+    linear-gradient(
+      145deg,
+      #181818,
+      #0b0b0b
+    );
+
+  border:
+    1px solid rgba(255,156,0,.20);
+
+  box-shadow:
+    0 14px 30px rgba(0,0,0,.22);
+}
+
+.home-v3 .assistente-avatar {
+  width: 65px;
+  height: 65px;
+
+  border-radius: 20px;
+
+  font-size: 2rem;
+
+  background:
+    linear-gradient(
+      145deg,
+      #292929,
+      #111
+    );
+
+  border:
+    1px solid rgba(255,153,0,.35);
+
+  box-shadow:
+    0 0 20px rgba(255,128,0,.13);
+}
+
+.home-v3 .assistente-conteudo small {
+  color: #ff9d00;
+}
+
+.home-v3 .assistente-conteudo h3 {
+  font-size: 1rem;
+
+  margin:
+    7px 0 8px;
+}
+
+.home-v3 .assistente-conteudo p {
+  color: #bebebe;
+
+  font-size: .83rem;
+
+  line-height: 1.45;
+}
+
+
+/* CARDS DUPLOS */
+
+.home-v3-dupla {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0,1fr)
+    minmax(0,1fr);
+
+  gap: 11px;
+
+  margin-bottom: 16px;
+}
+
+.home-v3-card {
+  min-width: 0;
+
+  padding: 17px;
+
+  border-radius: 22px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #181818,
+      #0c0c0c
+    );
+
+  border:
+    1px solid rgba(255,255,255,.10);
+
+  box-shadow:
+    0 14px 28px rgba(0,0,0,.20);
+}
+
+.home-v3-card-titulo {
+  margin-bottom: 13px;
+
+  font-size: .75rem;
+
+  font-weight: 900;
+}
+
+.home-v3-card-titulo.amarelo {
+  color: #ffb000;
+}
+
+.home-v3 .xp-topo {
+  flex-direction: column;
+  align-items: flex-start;
+
+  gap: 5px;
+}
+
+.home-v3 .xp-topo h3 {
+  font-size: 1rem;
+}
+
+.home-v3 .xp-topo strong {
+  font-size: .72rem;
+
+  color: #bcbcbc;
+}
+
+.home-v3 .barra-xp {
+  margin-bottom: 0;
+
+  background: #292929;
+}
+
+.home-v3 #barraXp {
+  background:
+    linear-gradient(
+      90deg,
+      #ff6b00,
+      #ffb000
+    );
+}
+
+
+/* LÍDER */
+
+.home-v3 .home-v3-lider {
+  margin: 0;
+
+  overflow: hidden;
+}
+
+.home-v3 .home-v3-lider .lider-card {
+  margin: 0;
+  padding: 0;
+
+  background: transparent;
+
+  box-shadow: none;
+}
+
+
+/* CONQUISTAS */
+
+.home-v3 .conquistas-home {
+  margin: 0 0 16px;
+}
+
+.home-v3 .titulo-card-linha h3 {
+  font-size: .95rem;
+}
+
+.home-v3 .titulo-card-linha span {
+  color: #ff9800;
+
+  font-size: .72rem;
+}
+
+.home-v3 .grid-conquistas {
+  grid-template-columns:
+    repeat(4, minmax(0,1fr));
+
+  gap: 8px;
+}
+
+.home-v3 .conquista-box {
+  min-width: 0;
+
+  padding: 11px 5px;
+
+  text-align: center;
+
+  border-radius: 16px;
+
+  background:
+    rgba(255,255,255,.035);
+
+  border:
+    1px solid rgba(255,255,255,.08);
+}
+
+.home-v3 .icone-conquista {
+  font-size: 1.45rem;
+}
+
+.home-v3 .conquista-box strong {
+  font-size: .68rem;
+
+  overflow-wrap: anywhere;
+}
+
+.home-v3 .conquista-box small {
+  font-size: .61rem;
+}
+
+
+/* ORIGENS */
+
+.home-v3 .origem-card-v2 {
+  margin: 0 0 16px;
+}
+
+.home-v3 .origem-grid-v2 {
+  display: grid !important;
+
+  grid-template-columns:
+    repeat(3, minmax(0,1fr)) !important;
+
+  gap: 9px;
+}
+
+.home-v3 .origem-box {
+  min-width: 0;
+
+  padding: 12px;
+
+  border-radius: 16px;
+
+  background:
+    #101010;
+}
+
+.home-v3 .origem-box span {
+  font-size: .72rem;
+}
+
+.home-v3 .origem-box strong {
+  font-size: .9rem;
+
+  margin: 5px 0;
+
+  overflow-wrap: anywhere;
+}
+
+.home-v3 .origem-box small {
+  font-size: .58rem;
+}
+
+
+/* SLOGAN */
+
+.home-v3 .slogan-mms {
+  margin: 24px 0 10px;
+
+  color: #ff9d00;
+
+  font-size: .72rem;
+
+  opacity: .75;
+}
+
+
+/* TELAS MENORES */
+
+@media (max-width: 370px) {
+
+  .home-v3-hero {
+    padding: 20px;
+  }
+
+  .home-v3-hero h1 {
+    font-size: 2.3rem;
+  }
+
+  .home-v3-meta-info {
+    flex-direction: column;
+  }
+
+  .home-v3-dupla {
+    grid-template-columns: 1fr;
+  }
+
+  .home-v3 .grid-conquistas {
+    grid-template-columns:
+      repeat(2,1fr);
+  }
+
+}
+/* =====================================================
+   MMS HOME V3 - AJUSTE FINO 02
+   ===================================================== */
+
+
+/* MINI CARDS MAIS FORTES */
+
+.home-v3-resumo {
+  gap: 12px;
+}
+
+.home-v3-resumo-card {
+  min-height: 112px;
+
+  padding: 16px 10px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.home-v3-resumo-card small {
+  font-size: .72rem;
+  margin-bottom: 7px;
+}
+
+.home-v3-resumo-card strong {
+  font-size: 1rem;
+  font-weight: 850;
+}
+
+.home-v3-resumo-icone {
+  width: 42px;
+  height: 42px;
+
+  margin-bottom: 11px;
+
+  font-size: 1.15rem;
+}
+
+
+/* =====================================================
+   ASSISTENTE MAIS PREMIUM
+   ===================================================== */
+
+.home-v3 .home-v3-assistente {
+  position: relative;
+
+  padding: 20px;
+
+  border:
+    1px solid rgba(255, 153, 0, .28);
+
+  background:
+    radial-gradient(
+      circle at 0% 50%,
+      rgba(255, 140, 0, .12),
+      transparent 38%
+    ),
+    linear-gradient(
+      145deg,
+      #171717,
+      #090909
+    );
+
+  box-shadow:
+    0 16px 35px rgba(0,0,0,.26);
+}
+
+.home-v3 .assistente-avatar {
+  width: 68px;
+  height: 68px;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle at 35% 30%,
+      #353535,
+      #101010
+    );
+
+  border:
+    2px solid rgba(255,153,0,.42);
+}
+
+.home-v3 .assistente-conteudo small {
+  letter-spacing: .5px;
+}
+
+.home-v3 .assistente-mini-insight {
+  margin-top: 10px !important;
+
+  padding: 9px 11px;
+
+  border-radius: 12px;
+
+  background:
+    rgba(255,153,0,.07);
+
+  border:
+    1px solid rgba(255,153,0,.10);
+}
+
+
+/* =====================================================
+   XP + LÍDER
+   ===================================================== */
+
+.home-v3-dupla {
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(0, 1fr);
+
+  gap: 12px;
+
+  align-items: stretch;
+}
+
+.home-v3-dupla > .home-v3-card {
+  min-height: 145px;
+}
+
+
+/* XP */
+
+.home-v3-dupla .xp-topo {
+  gap: 7px;
+}
+
+.home-v3-dupla .xp-topo h3 {
+  font-size: 1.15rem;
+}
+
+.home-v3-dupla .xp-topo strong {
+  font-size: .78rem;
+}
+
+.home-v3-dupla .barra-xp {
+  height: 9px;
+  margin-top: 15px;
+}
+
+
+/* LÍDER */
+
+.home-v3 .home-v3-lider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 14px !important;
+
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(124, 58, 237, .18),
+      transparent 50%
+    ),
+    linear-gradient(
+      145deg,
+      #17131d,
+      #0d0b10
+    );
+
+  border:
+    1px solid rgba(145, 90, 255, .22);
+}
+
+.home-v3 .home-v3-lider * {
+  max-width: 100%;
+}
+
+.home-v3 .home-v3-lider h2,
+.home-v3 .home-v3-lider h3 {
+  font-size: .95rem;
+}
+
+.home-v3 .home-v3-lider p {
+  font-size: .72rem;
+  line-height: 1.35;
+}
+
+.home-v3 .home-v3-lider .lider-card {
+  width: 100%;
+}
+
+
+/* =====================================================
+   CONQUISTAS - TIRAR O NEON
+   ===================================================== */
+
+.home-v3 .conquistas-home {
+  background:
+    linear-gradient(
+      145deg,
+      #171717,
+      #0b0b0b
+    ) !important;
+
+  border:
+    1px solid rgba(255,255,255,.09) !important;
+
+  box-shadow:
+    0 14px 30px rgba(0,0,0,.20) !important;
+}
+
+.home-v3 .conquista-box {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.045),
+      rgba(255,255,255,.018)
+    ) !important;
+
+  border:
+    1px solid rgba(255,255,255,.08) !important;
+
+  box-shadow: none !important;
+
+  transition:
+    transform .2s ease,
+    border-color .2s ease;
+}
+
+.home-v3 .conquista-box:hover {
+  transform: translateY(-2px);
+
+  border-color:
+    rgba(255,153,0,.25) !important;
+}
+
+.home-v3 .icone-conquista {
+  filter: none !important;
+  text-shadow: none !important;
+}
+
+.home-v3 .conquista-box strong {
+  color: #f5f5f5 !important;
+  text-shadow: none !important;
+}
+
+.home-v3 .conquista-box small {
+  color: #8f8f8f !important;
+}
+
+
+/* =====================================================
+   ORIGENS DOS GANHOS - MAIS SÓBRIO
+   ===================================================== */
+
+.home-v3 .origem-card-v2 {
+  background:
+    linear-gradient(
+      145deg,
+      #171717,
+      #0b0b0b
+    ) !important;
+
+  border:
+    1px solid rgba(255,255,255,.09) !important;
+}
+
+.home-v3 .origem-box {
+  background:
+    linear-gradient(
+      145deg,
+      #141414,
+      #0c0c0c
+    ) !important;
+
+  border:
+    1px solid rgba(255,255,255,.08) !important;
+
+  box-shadow: none !important;
+}
+
+
+/* só uma pequena linha indicando a origem */
+
+.home-v3 .uber-box {
+  border-top:
+    2px solid rgba(34,197,94,.75) !important;
+}
+
+.home-v3 .app99-box {
+  border-top:
+    2px solid rgba(59,130,246,.75) !important;
+}
+
+.home-v3 .particular-box {
+  border-top:
+    2px solid rgba(168,85,247,.75) !important;
+}
+
+.home-v3 .origem-box strong {
+  color: #fff !important;
+  text-shadow: none !important;
+}
+
+.home-v3 .origem-box small {
+  color: #858585;
+}
+
+
+/* =====================================================
+   ESPAÇAMENTO GERAL
+   ===================================================== */
+
+.home-v3 > * {
+  scroll-margin-top: 15px;
+}
+
+.home-v3-card,
+.home-v3-resumo-card,
+.home-v3-assistente,
+.home-v3-hero {
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease;
+}
+
+
+/* CELULAR MENOR */
+
+@media (max-width: 380px) {
+
+  .home-v3-resumo-card {
+    min-height: 100px;
+  }
+
+  .home-v3-resumo-card strong {
+    font-size: .87rem;
+  }
+
+  .home-v3-dupla {
+    grid-template-columns: 1fr;
+  }
+
+  .home-v3-dupla > .home-v3-card {
+    min-height: auto;
+  }
+
+}
+/* =====================================================
+   MMS HOME V3 - ACABAMENTO FINAL 03
+   ===================================================== */
+
+
+/* MAIS RESPIRO ENTRE AS SEÇÕES */
+
+.home-v3 > * {
+  margin-bottom: 18px;
+}
+
+.home-v3-topo,
+.home-v3-boas-vindas {
+  margin-bottom: 14px;
+}
+
+
+/* HERO UM POUCO MAIS IMPONENTE */
+
+.home-v3-hero {
+  padding: 28px 24px;
+}
+
+.home-v3-hero h1 {
+  font-size: 3rem;
+}
+
+.home-v3-meta-info {
+  font-size: .82rem;
+}
+
+
+/* MINI CARDS MAIS LEGÍVEIS */
+
+.home-v3-resumo-card {
+  min-height: 118px;
+}
+
+.home-v3-resumo-card small {
+  font-size: .74rem;
+}
+
+.home-v3-resumo-card strong {
+  font-size: 1.05rem;
+}
+
+
+/* ASSISTENTE MAIS COMPACTO */
+
+.home-v3 .home-v3-assistente {
+  gap: 14px;
+
+  padding: 16px 17px;
+
+  align-items: flex-start;
+}
+
+.home-v3 .assistente-avatar {
+  width: 56px;
+  height: 56px;
+
+  font-size: 1.7rem;
+
+  flex-shrink: 0;
+}
+
+.home-v3 .assistente-conteudo h3 {
+  margin: 5px 0 6px;
+
+  font-size: .95rem;
+}
+
+.home-v3 .assistente-conteudo p {
+  margin: 4px 0;
+
+  font-size: .78rem;
+
+  line-height: 1.38;
+}
+
+.home-v3 .assistente-mini-insight {
+  margin-top: 7px !important;
+
+  padding: 7px 9px;
+
+  font-size: .72rem !important;
+}
+
+
+/* XP + LÍDER MAIS EQUILIBRADOS */
+
+.home-v3-dupla {
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.home-v3-dupla > .home-v3-card {
+  min-height: auto;
+}
+
+.home-v3-dupla .home-v3-card {
+  padding: 16px 18px;
+}
+
+
+/* XP EM FORMATO HORIZONTAL */
+
+.home-v3-dupla .xp-topo {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.home-v3-dupla .xp-topo h3 {
+  font-size: 1rem;
+}
+
+.home-v3-dupla .xp-topo strong {
+  font-size: .78rem;
+}
+
+.home-v3-dupla .barra-xp {
+  height: 9px;
+  margin: 12px 0 0;
+}
+
+
+/* LÍDER OCUPANDO A LARGURA TODA */
+
+.home-v3 .home-v3-lider {
+  min-height: 105px;
+
+  justify-content: flex-start;
+
+  padding: 16px 18px !important;
+}
+
+.home-v3 .home-v3-lider .lider-card {
+  width: 100%;
+}
+
+
+/* CONQUISTAS MAIS LIMPAS */
+
+.home-v3 .conquistas-home {
+  padding: 17px;
+}
+
+.home-v3 .grid-conquistas {
+  gap: 10px;
+}
+
+.home-v3 .conquista-box {
+  padding: 12px 6px;
+}
+
+.home-v3 .conquista-box strong {
+  font-size: .72rem;
+}
+
+.home-v3 .conquista-box small {
+  font-size: .62rem;
+}
+
+
+/* ORIGENS MAIS ELEGANTES */
+
+.home-v3 .origem-card-v2 {
+  padding: 17px;
+}
+
+.home-v3 .origem-box {
+  padding: 13px 10px;
+}
+
+.home-v3 .origem-box strong {
+  font-size: .95rem;
+}
+
+
+/* TÍTULOS DOS BLOCOS */
+
+.home-v3 .titulo-card-linha h3 {
+  font-size: 1rem;
+  letter-spacing: -.2px;
+}
+
+
+/* CELULARES MENORES */
+
+@media (max-width: 370px) {
+
+  .home-v3-hero h1 {
+    font-size: 2.45rem;
+  }
+
+  .home-v3-resumo {
+    grid-template-columns: 1fr;
+  }
+
+  .home-v3-resumo-card {
+    min-height: 92px;
+  }
+
+}
+/* =====================================================
+   MMS HOME V3 - ALINHAMENTO DOS CARDS
+   ===================================================== */
+
+
+/* GARANTE MEDIDAS CORRETAS EM TODA HOME */
+
+.home-v3,
+.home-v3 * {
+  box-sizing: border-box;
+}
+
+
+/* =========================================
+   3 CARDS: MÉDIA / CORRIDAS / RANKING
+   ========================================= */
+
+.home-v3-resumo {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  align-items: stretch;
+}
+
+.home-v3-resumo-card {
+  width: 100%;
+  height: 118px;
+  min-height: 118px;
+
+  margin: 0;
+
+  padding: 14px 8px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+
+  border-radius: 20px;
+}
+
+.home-v3-resumo-card small {
+  min-height: 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0 0 6px;
+}
+
+.home-v3-resumo-card strong {
+  min-height: 22px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0;
+}
+
+
+/* =========================================
+   PROGRESSO + DESEMPENHO
+   ========================================= */
+
+/*
+   Voltamos os dois para lado a lado.
+   Agora com altura realmente controlada.
+*/
+
+.home-v3-dupla {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(0, 1fr);
+
+  gap: 12px;
+
+  align-items: stretch;
+
+  width: 100%;
+}
+
+.home-v3-dupla > .home-v3-card {
+  width: 100%;
+
+  min-width: 0;
+
+  min-height: 132px;
+  height: 100%;
+
+  margin: 0;
+
+  padding: 16px;
+
+  border-radius: 20px;
+}
+
+
+/* PROGRESSO */
+
+.home-v3-dupla .xp-topo {
+  width: 100%;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: flex-start;
+
+  justify-content: flex-start;
+
+  gap: 5px;
+}
+
+.home-v3-dupla .xp-topo h3 {
+  margin: 0;
+}
+
+.home-v3-dupla .barra-xp {
+  width: 100%;
+
+  margin: 14px 0 0;
+}
+
+
+/* DESEMPENHO */
+
+.home-v3 .home-v3-lider {
+  width: 100%;
+
+  min-width: 0;
+
+  min-height: 132px;
+
+  margin: 0;
+
+  padding: 16px !important;
+
+  display: flex;
+
+  align-items: center;
+
+  overflow: hidden;
+}
+
+.home-v3 .home-v3-lider > * {
+  width: 100%;
+  max-width: 100%;
+}
+
+.home-v3 .home-v3-lider .lider-card {
+  width: 100%;
+
+  margin: 0 !important;
+
+  padding: 0 !important;
+
+  box-shadow: none !important;
+
+  background: transparent !important;
+}
+
+
+/* Evita textos estourando o card */
+
+.home-v3 .home-v3-lider h2,
+.home-v3 .home-v3-lider h3,
+.home-v3 .home-v3-lider p,
+.home-v3 .home-v3-lider strong,
+.home-v3 .home-v3-lider span {
+  max-width: 100%;
+
+  overflow-wrap: break-word;
+
+  word-break: normal;
+}
+
+
+/* =========================================
+   CONQUISTAS
+   ========================================= */
+
+.home-v3 .grid-conquistas {
+  display: grid !important;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr)) !important;
+
+  gap: 9px;
+
+  align-items: stretch;
+}
+
+.home-v3 .conquista-box {
+  width: 100%;
+
+  min-width: 0;
+
+  height: 112px;
+  min-height: 112px;
+
+  margin: 0;
+
+  padding: 10px 5px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  text-align: center;
+
+  border-radius: 16px;
+}
+
+.home-v3 .icone-conquista {
+  height: 32px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  margin: 0 0 6px;
+}
+
+.home-v3 .conquista-box strong {
+  min-height: 30px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  margin: 0 0 3px;
+
+  line-height: 1.15;
+}
+
+.home-v3 .conquista-box small {
+  min-height: 15px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  margin: 0;
+}
+
+
+/* =========================================
+   ORIGENS DOS GANHOS
+   ========================================= */
+
+.home-v3 .origem-grid-v2 {
+  display: grid !important;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr)) !important;
+
+  gap: 10px;
+
+  align-items: stretch;
+}
+
+.home-v3 .origem-box {
+  width: 100%;
+
+  min-width: 0;
+
+  min-height: 88px;
+
+  margin: 0;
+
+  padding: 12px 10px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  border-radius: 15px;
+}
+
+.home-v3 .origem-box span,
+.home-v3 .origem-box strong,
+.home-v3 .origem-box small {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+
+/* =========================================
+   CELULAR PEQUENO
+   ========================================= */
+
+@media (max-width: 350px) {
+
+  .home-v3-dupla {
+    grid-template-columns: 1fr;
+  }
+
+  .home-v3 .grid-conquistas {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr)) !important;
+  }
+
+}
+/* =====================================================
+   HOME V3 - PROGRESSO + DESEMPENHO DEFINITIVO
+   ===================================================== */
+
+
+/* CONTAINER DOS DOIS CARDS */
+
+.home-v3-dupla {
+  display: grid !important;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(0, 1fr) !important;
+
+  gap: 12px !important;
+
+  width: 100%;
+
+  align-items: stretch !important;
+}
+
+
+/* OS DOIS DEVEM TER EXATAMENTE O MESMO FORMATO */
+
+.home-v3-dupla > .home-v3-card {
+  width: 100% !important;
+  min-width: 0 !important;
+
+  height: 145px !important;
+  min-height: 145px !important;
+
+  margin: 0 !important;
+
+  padding: 17px !important;
+
+  border-radius: 22px !important;
+
+  box-sizing: border-box !important;
+
+  overflow: hidden;
+}
+
+
+/* =====================================================
+   SEU PROGRESSO
+   ===================================================== */
+
+.home-v3-dupla > .home-v3-card:first-child {
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+}
+
+
+.home-v3-card-titulo {
+  margin: 0 0 14px !important;
+
+  font-size: .78rem !important;
+
+  line-height: 1;
+}
+
+
+.home-v3-dupla .xp-topo {
+  display: flex !important;
+
+  flex-direction: row !important;
+
+  justify-content: space-between !important;
+
+  align-items: center !important;
+
+  width: 100%;
+
+  gap: 8px !important;
+}
+
+
+.home-v3-dupla .xp-topo h3 {
+  margin: 0 !important;
+
+  font-size: 1.05rem !important;
+
+  white-space: nowrap;
+}
+
+
+.home-v3-dupla .xp-topo strong {
+  margin: 0 !important;
+
+  font-size: .72rem !important;
+
+  color: #b8b8b8;
+
+  white-space: nowrap;
+}
+
+
+.home-v3-dupla .barra-xp {
+  width: 100% !important;
+
+  height: 10px !important;
+
+  margin: 17px 0 0 !important;
+
+  border-radius: 999px;
+
+  background: #292929;
+}
+
+
+/* =====================================================
+   MEU DESEMPENHO
+   ===================================================== */
+
+.home-v3 #liderSemana {
+  display: flex !important;
+
+  align-items: center !important;
+
+  justify-content: center !important;
+
+  width: 100% !important;
+
+  height: 145px !important;
+  min-height: 145px !important;
+
+  padding: 17px !important;
+
+  margin: 0 !important;
+
+  border-radius: 22px !important;
+
+  background:
+    radial-gradient(
+      circle at 20% 30%,
+      rgba(126, 58, 242, .15),
+      transparent 48%
+    ),
+    linear-gradient(
+      145deg,
+      #17141c,
+      #0d0b10
+    ) !important;
+
+  border:
+    1px solid rgba(153, 76, 255, .55) !important;
+
+  box-shadow: none !important;
+
+  overflow: hidden !important;
+}
+
+
+/*
+   REMOVE O "CARD DENTRO DO CARD"
+*/
+
+.home-v3 #liderSemana .lider-card,
+.home-v3 #liderSemana .card,
+.home-v3 #liderSemana > div {
+  width: 100% !important;
+
+  max-width: 100% !important;
+
+  margin: 0 !important;
+
+  padding: 0 !important;
+
+  background: transparent !important;
+
+  border: 0 !important;
+
+  border-radius: 0 !important;
+
+  box-shadow: none !important;
+}
+
+
+/* TODOS OS TEXTOS DEVEM CABER */
+
+.home-v3 #liderSemana * {
+  box-sizing: border-box;
+
+  max-width: 100%;
+
+  margin-left: 0;
+
+  margin-right: 0;
+}
+
+
+/* TÍTULO */
+
+.home-v3 #liderSemana small {
+  display: block;
+
+  color: #b46cff !important;
+
+  font-size: .68rem !important;
+
+  font-weight: 900;
+
+  margin-bottom: 6px !important;
+}
+
+
+.home-v3 #liderSemana h2,
+.home-v3 #liderSemana h3 {
+  margin: 0 0 7px !important;
+
+  font-size: .72rem !important;
+
+  line-height: 1.1 !important;
+
+  color: #fff !important;
+}
+
+
+/* TEXTO */
+
+.home-v3 #liderSemana p {
+  margin: 4px 0 !important;
+
+  font-size: .68rem !important;
+
+  line-height: 1.25 !important;
+
+  color: #d2d2d2 !important;
+}
+
+
+/* VALOR / CORRIDAS */
+
+.home-v3 #liderSemana strong {
+  font-size: .74rem !important;
+
+  line-height: 1.2;
+}
+
+
+/* CASO TENHA MEDALHA GRANDE */
+
+.home-v3 #liderSemana .posicao-medalha,
+.home-v3 #liderSemana .ranking-medalha {
+  font-size: 1.4rem !important;
+
+  min-width: 28px !important;
+
+  margin-right: 8px !important;
+}
+
+
+/* REMOVE MARGENS DE ESTILOS ANTIGOS */
+
+.home-v3 #liderSemana .linha-posicao {
+  margin-top: 7px !important;
+
+  padding-top: 7px !important;
+
+  gap: 8px !important;
+}
+
+
+/* =====================================================
+   CELULAR MUITO PEQUENO
+   ===================================================== */
+
+@media (max-width: 350px) {
+
+  .home-v3-dupla {
+    grid-template-columns: 1fr !important;
+  }
+
+  .home-v3-dupla > .home-v3-card,
+  .home-v3 #liderSemana {
+    height: auto !important;
+    min-height: 130px !important;
+  }
+
+}
+/* =====================================================
+   HOME V3 - BRILHO CONQUISTAS + DESEMPENHO COMPACTO
+   ===================================================== */
+
+
+/* MEU DESEMPENHO - TEXTO MAIS COMPACTO */
+
+.home-v3 #liderSemana small {
+  font-size: .58rem !important;
+}
+
+.home-v3 #liderSemana h2,
+.home-v3 #liderSemana h3 {
+  font-size: .78rem !important;
+  line-height: 1.1 !important;
+  margin-bottom: 5px !important;
+}
+
+.home-v3 #liderSemana p {
+  font-size: .59rem !important;
+  line-height: 1.2 !important;
+  margin: 3px 0 !important;
+}
+
+.home-v3 #liderSemana strong {
+  font-size: .65rem !important;
+}
+
+.home-v3 #liderSemana .linha-posicao {
+  padding-top: 5px !important;
+  margin-top: 5px !important;
+}
+
+.home-v3 #liderSemana .posicao-medalha,
+.home-v3 #liderSemana .ranking-medalha {
+  font-size: 1.4rem !important;
+  min-width: 155px !important;
+}
+
+
+/* =====================================================
+   CONQUISTAS - NEON FORTE
+   ===================================================== */
+
+.home-v3 .conquista-box {
+  position: relative;
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      145deg,
+      #151515,
+      #090909
+    ) !important;
+
+  transition:
+    transform .25s ease,
+    box-shadow .25s ease;
+}
+
+
+/* 1 - VERDE */
+
+.home-v3 .conquista-box:nth-child(1) {
+  border:
+    1px solid #20ff63 !important;
+
+  box-shadow:
+    0 0 7px rgba(32,255,99,.9),
+    0 0 17px rgba(32,255,99,.65),
+    0 0 30px rgba(32,255,99,.28),
+    inset 0 0 15px rgba(32,255,99,.10) !important;
+}
+
+
+/* 2 - AZUL */
+
+.home-v3 .conquista-box:nth-child(2) {
+  border:
+    1px solid #2196ff !important;
+
+  box-shadow:
+    0 0 7px rgba(33,150,255,.95),
+    0 0 17px rgba(33,150,255,.65),
+    0 0 30px rgba(33,150,255,.30),
+    inset 0 0 15px rgba(33,150,255,.10) !important;
+}
+
+
+/* 3 - DOURADO */
+
+.home-v3 .conquista-box:nth-child(3) {
+  border:
+    1px solid #ffb800 !important;
+
+  box-shadow:
+    0 0 7px rgba(255,184,0,.95),
+    0 0 18px rgba(255,184,0,.68),
+    0 0 32px rgba(255,140,0,.30),
+    inset 0 0 15px rgba(255,184,0,.10) !important;
+}
+
+
+/* 4 - CIANO */
+
+.home-v3 .conquista-box:nth-child(4) {
+  border:
+    1px solid #00eaff !important;
+
+  box-shadow:
+    0 0 7px rgba(0,234,255,.95),
+    0 0 18px rgba(0,234,255,.65),
+    0 0 32px rgba(0,234,255,.28),
+    inset 0 0 15px rgba(0,234,255,.10) !important;
+}
+
+
+/* LEVE AUMENTO AO TOCAR/PASSAR MOUSE */
+
+.home-v3 .conquista-box:hover {
+  transform: translateY(-3px) scale(1.015);
+}
+
+
+/* mantém texto limpo */
+
+.home-v3 .conquista-box strong {
+  color: #fff !important;
+  text-shadow: none !important;
+}
+
+.home-v3 .conquista-box small {
+  color: #aaa !important;
+}
+/* =====================================================
+   MEU DESEMPENHO - CORREÇÃO FINAL
+   ===================================================== */
+
+.home-v3 #liderSemana {
+  width: 100% !important;
+  height: 145px !important;
+  min-height: 145px !important;
+
+  margin: 0 !important;
+  padding: 16px !important;
+
+  display: block !important;
+
+  overflow: hidden !important;
+
+  border-radius: 22px !important;
+
+  background:
+    radial-gradient(
+      circle at 20% 30%,
+      rgba(140, 55, 255, .16),
+      transparent 45%
+    ),
+    linear-gradient(
+      145deg,
+      #17131d,
+      #0b0a0e
+    ) !important;
+
+  border:
+    1px solid rgba(168, 85, 247, .70) !important;
+
+  box-shadow:
+    inset 0 0 20px rgba(168,85,247,.05) !important;
+}
+
+
+/* conteúdo que o JS cria */
+
+.home-v3 #liderSemana > div,
+.home-v3 #liderSemana .lider-card,
+.home-v3 #liderSemana .card {
+  width: 100% !important;
+  height: 100% !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+
+  display: grid !important;
+
+  grid-template-columns: 42px 1fr !important;
+  grid-template-rows: auto auto 1fr !important;
+
+  column-gap: 10px !important;
+
+  align-items: center !important;
+}
+
+
+/* TÍTULO ROXO */
+
+.home-v3 #liderSemana small {
+  grid-column: 1 / 3 !important;
+
+  display: block !important;
+
+  margin: 0 0 5px !important;
+
+  color: #b96cff !important;
+
+  font-size: .63rem !important;
+  font-weight: 900 !important;
+
+  text-transform: uppercase;
+}
+
+
+/* MEDALHA */
+
+.home-v3 #liderSemana .posicao-medalha,
+.home-v3 #liderSemana .ranking-medalha {
+  grid-column: 1 !important;
+  grid-row: 2 / 4 !important;
+
+  align-self: center !important;
+
+  width: 42px !important;
+  min-width: 42px !important;
+
+  margin: 0 !important;
+
+  font-size: 2.3rem !important;
+
+  text-align: center !important;
+}
+
+
+/* 1º LUGAR */
+
+.home-v3 #liderSemana h2,
+.home-v3 #liderSemana h3 {
+  grid-column: 2 !important;
+
+  margin: 0 0 3px !important;
+
+  color: #fff !important;
+
+  font-size: .82rem !important;
+  font-weight: 850 !important;
+
+  line-height: 1.1 !important;
+
+  white-space: normal !important;
+}
+
+
+/* TEXTO DE LIDERANÇA */
+
+.home-v3 #liderSemana p {
+  grid-column: 2 !important;
+
+  margin: 2px 0 !important;
+
+  color: #bdbdbd !important;
+
+  font-size: .60rem !important;
+
+  line-height: 1.2 !important;
+
+  white-space: normal !important;
+}
+
+
+/* LINHA INFERIOR */
+
+.home-v3 #liderSemana .linha-posicao {
+  grid-column: 2 !important;
+
+  width: 100% !important;
+
+  margin: 5px 0 0 !important;
+  padding: 6px 0 0 !important;
+
+  display: flex !important;
+
+  justify-content: flex-start !important;
+  align-items: center !important;
+
+  gap: 8px !important;
+
+  border-top:
+    1px solid rgba(255,255,255,.13) !important;
+}
+
+
+/* VALOR + CORRIDAS */
+
+.home-v3 #liderSemana .linha-posicao strong,
+.home-v3 #liderSemana .linha-posicao span {
+  display: inline !important;
+
+  margin: 0 !important;
+
+  font-size: .63rem !important;
+
+  white-space: nowrap !important;
+}
+/* HOME V3 - PROGRESSO SEM BARRA */
+
+.home-v3-dupla > .home-v3-card:first-child {
+  justify-content: center !important;
+}
+
+.home-v3-dupla .xp-topo {
+  margin-top: 4px;
+}
+
+.home-v3-dupla .xp-topo h3 {
+  font-size: 1.15rem !important;
+}
+
+.home-v3-dupla .xp-topo strong {
+  font-size: .78rem !important;
+  color: #c5c5c5 !important;
+}
+/* =====================================================
+   HOME V3 - RANKING COMPACTO
+   ===================================================== */
+
+.home-v3 #liderSemana {
+  width: 100% !important;
+  height: 145px !important;
+  min-height: 145px !important;
+
+  margin: 0 !important;
+  padding: 16px !important;
+
+  border-radius: 22px !important;
+
+  overflow: hidden !important;
+
+  background:
+    radial-gradient(
+      circle at 20% 30%,
+      rgba(145, 70, 255, .16),
+      transparent 48%
+    ),
+    linear-gradient(
+      145deg,
+      #17131d,
+      #0b0a0e
+    ) !important;
+
+  border:
+    1px solid rgba(168,85,247,.68) !important;
+
+  box-shadow:
+    inset 0 0 22px rgba(168,85,247,.05) !important;
+}
+
+
+/* NOVO CONTEÚDO */
+
+.home-v3 .ranking-home-v3 {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  justify-content: space-between;
+
+  min-width: 0;
+}
+
+
+/* TÍTULO */
+
+.home-v3 .ranking-home-titulo {
+  color: #b96cff;
+
+  font-size: .68rem;
+
+  font-weight: 900;
+
+  letter-spacing: .4px;
+}
+
+
+/* CORPO */
+
+.home-v3 .ranking-home-corpo {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  min-width: 0;
+}
+
+
+/* MEDALHA */
+
+.home-v3 .ranking-home-medalha {
+  flex-shrink: 0;
+
+  width: 36px;
+
+  font-size: 2rem;
+
+  line-height: 1;
+
+  text-align: center;
+}
+
+
+/* BLOCO DO TEXTO */
+
+.home-v3 .ranking-home-info {
+  min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 2px;
+}
+
+
+/* POSIÇÃO */
+
+.home-v3 .ranking-home-posicao {
+  color: #fff;
+
+  font-size: .9rem;
+
+  font-weight: 900;
+
+  line-height: 1.1;
+
+  white-space: nowrap;
+}
+
+
+/* QUANTIDADE DE MOTORISTAS */
+
+.home-v3 .ranking-home-participantes {
+  color: #a7a7a7;
+
+  font-size: .61rem;
+
+  white-space: nowrap;
+}
+
+
+/* RODAPÉ */
+
+.home-v3 .ranking-home-rodape {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 8px;
+
+  padding-top: 7px;
+
+  border-top:
+    1px solid rgba(255,255,255,.12);
+}
+
+
+.home-v3 .ranking-home-rodape strong {
+  color: #fff;
+
+  font-size: .72rem;
+
+  white-space: nowrap;
+}
+
+
+.home-v3 .ranking-home-rodape span {
+  color: #bdbdbd;
+
+  font-size: .61rem;
+
+  white-space: nowrap;
+}
+/* =====================================================
+   HOME V3 - PROGRESSO + RANKING MAIS COMPACTOS
+   ===================================================== */
+
+.home-v3-dupla {
+  align-items: stretch !important;
+}
+
+
+/* MESMA ALTURA PARA OS DOIS */
+
+.home-v3-dupla > .home-v3-card,
+.home-v3 #liderSemana {
+  height: 112px !important;
+  min-height: 112px !important;
+}
+
+
+/* SEU PROGRESSO */
+
+.home-v3-dupla > .home-v3-card:first-child {
+  padding: 16px !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+
+  justify-content: center !important;
+}
+
+
+/* título */
+
+.home-v3-dupla > .home-v3-card:first-child
+.home-v3-card-titulo {
+  margin: 0 0 12px !important;
+}
+
+
+/* linha Nível + XP */
+
+.home-v3-dupla .xp-topo {
+  width: 100% !important;
+
+  display: flex !important;
+  flex-direction: row !important;
+
+  align-items: center !important;
+  justify-content: space-between !important;
+
+  gap: 8px !important;
+
+  margin: 0 !important;
+}
+
+
+.home-v3-dupla .xp-topo h3 {
+  margin: 0 !important;
+
+  font-size: 1rem !important;
+}
+
+
+.home-v3-dupla .xp-topo strong {
+  margin: 0 !important;
+
+  font-size: .68rem !important;
+
+  color: #c7c7c7 !important;
+}
+
+
+/* RANKING COM A MESMA ALTURA */
+
+.home-v3 #liderSemana {
+  padding: 13px !important;
+}
+
+
+/* deixa o conteúdo usar melhor o espaço */
+
+.home-v3 .ranking-home-v3 {
+  height: 100% !important;
+
+  justify-content: center !important;
+
+  gap: 6px !important;
+}
+
+
+.home-v3 .ranking-home-titulo {
+  margin: 0 !important;
+}
+
+
+.home-v3 .ranking-home-corpo {
+  gap: 7px !important;
+}
+
+
+.home-v3 .ranking-home-rodape {
+  margin-top: 1px !important;
+  padding-top: 5px !important;
+}
+/* HOME V3 - RANKING EM LARGURA TOTAL */
+
+.home-v3-dupla {
+  display: block !important;
+  width: 100%;
+}
+
+.home-v3 #liderSemana {
+  width: 100% !important;
+
+  height: 118px !important;
+  min-height: 118px !important;
+
+  padding: 16px 18px !important;
+}
+
+.home-v3 .ranking-home-v3 {
+  width: 100% !important;
+}
+
+.home-v3 .ranking-home-corpo {
+  width: 100%;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+}
+
+.home-v3 .ranking-home-medalha {
+  width: 44px;
+
+  font-size: 2.4rem;
+}
+
+.home-v3 .ranking-home-posicao {
+  font-size: .95rem;
+}
+
+.home-v3 .ranking-home-participantes {
+  font-size: .67rem;
+}
+
+.home-v3 .ranking-home-rodape {
+  width: 100%;
+
+  margin-top: 6px !important;
+
+  display: flex;
+
+  justify-content: flex-start;
+
+  gap: 18px;
+}
+
+.home-v3 .ranking-home-rodape strong {
+  font-size: .78rem;
+}
+
+.home-v3 .ranking-home-rodape span {
+  font-size: .7rem;
+}
+.home-v3 .ranking-home-titulo{
+  font-size:.85rem;
+}
+
+.home-v3 .ranking-home-medalha{
+  font-size:1.8rem;
+  width:34px;
+}
+
+.home-v3 .ranking-home-posicao{
+  font-size:1rem;
+}
+
+.home-v3 .ranking-home-participantes{
+  font-size:.68rem;
+  color:#b8b8b8;
+}
+
+.home-v3 .ranking-home-rodape{
+  justify-content:flex-start;
+  gap:14px;
+}
+
+.home-v3 .ranking-home-rodape strong{
+  font-size:.82rem;
+}
+
+.home-v3 .ranking-home-rodape span{
+  font-size:.72rem;
+}
+/* =========================================
+   HOME V3 - RANKING NOVO
+   ========================================= */
+
+.home-v3-ranking-card {
+  min-height: 0 !important;
+  height: auto !important;
+
+  padding: 15px 17px !important;
+
+  border-radius: 20px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #17131d,
+      #0d0b10
+    ) !important;
+
+  border:
+    1px solid rgba(168,85,247,.65) !important;
+
+  box-shadow:
+    inset 0 0 18px rgba(168,85,247,.07) !important;
+}
+
+.home-v3 .ranking-home-v3 {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 11px;
+}
+
+
+/* TÍTULO */
+
+.home-v3 .ranking-home-topo span {
+  color: #b568ff;
+
+  font-size: .72rem;
+
+  font-weight: 900;
+
+  letter-spacing: .4px;
+}
+
+
+/* LINHA PRINCIPAL */
+
+.home-v3 .ranking-home-linha {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 12px;
+}
+
+
+/* MEDALHA + POSIÇÃO */
+
+.home-v3 .ranking-home-posicao-area {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  min-width: 0;
+}
+
+.home-v3 .ranking-home-medalha {
+  width: auto !important;
+
+  font-size: 2rem !important;
+
+  line-height: 1;
+
+  flex-shrink: 0;
+}
+
+.home-v3 .ranking-home-posicao {
+  display: block;
+
+  color: #fff;
+
+  font-size: .92rem;
+
+  font-weight: 900;
+}
+
+.home-v3 .ranking-home-status {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #aaa;
+
+  font-size: .61rem;
+
+  line-height: 1.2;
+}
+
+
+/* VALORES À DIREITA */
+
+.home-v3 .ranking-home-numeros {
+  flex-shrink: 0;
+
+  text-align: right;
+}
+
+.home-v3 .ranking-home-numeros strong {
+  display: block;
+
+  color: #fff;
+
+  font-size: .78rem;
+}
+
+.home-v3 .ranking-home-numeros span {
+  display: block;
+
+  margin-top: 4px;
+
+  color: #aaa;
+
+  font-size: .61rem;
+}
+/* =====================================================
+   MMS HOME V3 - RANKING ISOLADO
+   NÃO USA AS CLASSES ANTIGAS
+   ===================================================== */
+
+.home-v3 .home-v3-ranking-area {
+  width: 100% !important;
+  margin: 0 0 18px !important;
+}
+
+
+/* CARD EXTERNO */
+
+.home-v3 #liderSemana.home-v3-ranking-card {
+  display: block !important;
+
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+
+  overflow: hidden !important;
+
+  border-radius: 20px !important;
+
+  background:
+    radial-gradient(
+      circle at 15% 50%,
+      rgba(153, 70, 255, .15),
+      transparent 42%
+    ),
+    linear-gradient(
+      145deg,
+      #17131d,
+      #0c0a0f
+    ) !important;
+
+  border:
+    1px solid rgba(168, 85, 247, .65) !important;
+
+  box-shadow:
+    inset 0 0 20px rgba(168,85,247,.06) !important;
+}
+
+
+/* =========================================
+   NOVO CONTEÚDO
+   ========================================= */
+
+.home-v3 #liderSemana .mms-rk-v1 {
+  display: block !important;
+
+  width: 100% !important;
+
+  margin: 0 !important;
+  padding: 15px 17px !important;
+
+  box-sizing: border-box !important;
+}
+
+
+/* TÍTULO */
+
+.home-v3 #liderSemana .mms-rk-topo {
+  display: block !important;
+
+  width: 100% !important;
+
+  margin: 0 0 11px !important;
+
+  color: #bd6cff !important;
+
+  font-size: .72rem !important;
+  font-weight: 900 !important;
+
+  line-height: 1 !important;
+
+  white-space: nowrap !important;
+
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+}
+
+
+/* LINHA PRINCIPAL */
+
+.home-v3 #liderSemana .mms-rk-conteudo {
+  display: flex !important;
+
+  width: 100% !important;
+
+  align-items: center !important;
+  justify-content: space-between !important;
+
+  gap: 12px !important;
+
+  margin: 0 !important;
+}
+
+
+/* ESQUERDA */
+
+.home-v3 #liderSemana .mms-rk-esquerda {
+  display: flex !important;
+
+  align-items: center !important;
+
+  gap: 10px !important;
+
+  flex: 1 1 auto !important;
+
+  min-width: 0 !important;
+}
+
+
+/* MEDALHA */
+
+.home-v3 #liderSemana .mms-rk-medalha {
+  display: block !important;
+
+  width: 38px !important;
+  min-width: 38px !important;
+
+  margin: 0 !important;
+
+  font-size: 2rem !important;
+
+  line-height: 1 !important;
+
+  text-align: center !important;
+}
+
+
+/* TEXTOS */
+
+.home-v3 #liderSemana .mms-rk-textos {
+  display: block !important;
+
+  min-width: 0 !important;
+
+  margin: 0 !important;
+}
+
+
+/* POSIÇÃO */
+
+.home-v3 #liderSemana .mms-rk-posicao {
+  display: block !important;
+
+  margin: 0 !important;
+
+  color: #fff !important;
+
+  font-size: .88rem !important;
+  font-weight: 900 !important;
+
+  line-height: 1.1 !important;
+
+  white-space: nowrap !important;
+
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+}
+
+
+/* STATUS */
+
+.home-v3 #liderSemana .mms-rk-status {
+  display: block !important;
+
+  margin: 4px 0 0 !important;
+
+  color: #aaa !important;
+
+  font-size: .60rem !important;
+
+  line-height: 1.15 !important;
+
+  white-space: nowrap !important;
+
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+}
+
+
+/* DIREITA */
+
+.home-v3 #liderSemana .mms-rk-numeros {
+  display: block !important;
+
+  flex: 0 0 auto !important;
+
+  min-width: 75px !important;
+
+  margin: 0 !important;
+
+  text-align: right !important;
+}
+
+
+/* VALOR */
+
+.home-v3 #liderSemana .mms-rk-valor {
+  display: block !important;
+
+  margin: 0 !important;
+
+  color: #fff !important;
+
+  font-size: .76rem !important;
+  font-weight: 900 !important;
+
+  line-height: 1.1 !important;
+
+  white-space: nowrap !important;
+}
+
+
+/* CORRIDAS */
+
+.home-v3 #liderSemana .mms-rk-corridas {
+  display: block !important;
+
+  margin: 5px 0 0 !important;
+
+  color: #aaa !important;
+
+  font-size: .61rem !important;
+
+  line-height: 1 !important;
+
+  white-space: nowrap !important;
+}
