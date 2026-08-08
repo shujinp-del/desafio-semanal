@@ -6736,3 +6736,148 @@ background:linear-gradient(
 
   white-space: nowrap !important;
 }
+/* =====================================================
+   HISTÓRICO DE GASTOS V2
+   ===================================================== */
+
+.gasto-dia-card {
+  background:
+    linear-gradient(
+      145deg,
+      #191919,
+      #101010
+    );
+
+  border:
+    1px solid rgba(255, 140, 0, .22);
+
+  border-radius: 18px;
+
+  padding: 14px;
+
+  margin-bottom: 12px;
+}
+
+
+/* CABEÇALHO DO DIA */
+
+.gasto-dia-topo {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 12px;
+
+  padding-bottom: 10px;
+
+  margin-bottom: 8px;
+
+  border-bottom:
+    1px solid rgba(255,255,255,.08);
+}
+
+
+.gasto-dia-topo > div:first-child {
+  display: flex;
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+
+.gasto-dia-topo small {
+  color: #999;
+
+  font-size: .65rem;
+}
+
+
+.gasto-dia-topo strong {
+  color: #fff;
+
+  font-size: .9rem;
+}
+
+
+/* TOTAL DO DIA */
+
+.gasto-dia-total {
+  text-align: right;
+}
+
+
+.gasto-dia-total strong {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #ff9d2e;
+
+  font-size: .95rem;
+}
+
+
+/* ITENS DO DIA */
+
+.gasto-dia-lista {
+  display: flex;
+
+  flex-direction: column;
+}
+
+
+.gasto-dia-item {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 10px;
+
+  padding: 9px 2px;
+
+  border-bottom:
+    1px solid rgba(255,255,255,.05);
+}
+
+
+.gasto-dia-item:last-child {
+  border-bottom: 0;
+}
+
+
+.gasto-dia-item > div {
+  display: flex;
+
+  flex-direction: column;
+
+  min-width: 0;
+}
+
+
+.gasto-dia-item strong {
+  color: #eee;
+
+  font-size: .76rem;
+}
+
+
+.gasto-dia-item small {
+  margin-top: 2px;
+
+  color: #888;
+
+  font-size: .62rem;
+}
+
+
+.gasto-dia-item > span {
+  color: #38db83;
+
+  font-size: .78rem;
+
+  font-weight: 800;
+
+  white-space: nowrap;
+}

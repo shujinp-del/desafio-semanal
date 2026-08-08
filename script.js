@@ -6709,34 +6709,140 @@ if (comparacaoGastoVariacao) {
       : "Sem mês anterior";
 }
 if (listaGastos) {
+
   if (gastosFiltrados.length === 0) {
+
     listaGastos.innerHTML =
       "<p>Nenhum gasto registrado neste período.</p>";
-  } else {
-    listaGastos.innerHTML = gastosFiltrados
-      .sort((a, b) => new Date(b.data) - new Date(a.data))
-      .map(gasto => {
-        let nomeCategoria = gasto.categoria;
 
-        if (gasto.categoria === "combustivel") nomeCategoria = "⛽ Combustível";
-        if (gasto.categoria === "manutencao") nomeCategoria = "🔧 Manutenção";
-        if (gasto.categoria === "alimentacao") nomeCategoria = "🍔 Alimentação";
-        if (gasto.categoria === "lavagem") nomeCategoria = "🧽 Lavagem";
-        if (gasto.categoria === "outros") nomeCategoria = "📦 Outros";
+  } else {
+
+    // AGRUPA OS GASTOS POR DIA
+    let gastosPorDia = {};
+
+    gastosFiltrados.forEach(gasto => {
+
+      if (!gasto.data) return;
+
+      if (!gastosPorDia[gasto.data]) {
+        gastosPorDia[gasto.data] = [];
+      }
+
+      gastosPorDia[gasto.data].push(gasto);
+
+    });
+
+
+    // ORDENA AS DATAS DA MAIS RECENTE PARA A MAIS ANTIGA
+    let datasOrdenadas =
+      Object.keys(gastosPorDia)
+        .sort((a, b) =>
+          new Date(b + "T00:00:00") -
+          new Date(a + "T00:00:00")
+        );
+
+
+    listaGastos.innerHTML =
+      datasOrdenadas.map(data => {
+
+        let gastosDia =
+          gastosPorDia[data];
+
+
+        let totalDia =
+          gastosDia.reduce(
+            (soma, gasto) =>
+              soma + Number(gasto.valor || 0),
+            0
+          );
+
+
+        let itensDia =
+          gastosDia.map(gasto => {
+
+            let nomeCategoria =
+              gasto.categoria;
+
+            if (gasto.categoria === "combustivel")
+              nomeCategoria = "⛽ Combustível";
+
+            if (gasto.categoria === "manutencao")
+              nomeCategoria = "🔧 Manutenção";
+
+            if (gasto.categoria === "alimentacao")
+              nomeCategoria = "🍔 Alimentação";
+
+            if (gasto.categoria === "lavagem")
+              nomeCategoria = "🧽 Lavagem";
+
+            if (gasto.categoria === "outros")
+              nomeCategoria = "📦 Outros";
+
+
+            return `
+              <div class="gasto-dia-item">
+
+                <div>
+                  <strong>
+                    ${nomeCategoria}
+                  </strong>
+
+                  ${
+                    gasto.descricao
+                      ? `<small>${gasto.descricao}</small>`
+                      : ""
+                  }
+                </div>
+
+                <span>
+                  ${formatarMoeda(gasto.valor || 0)}
+                </span>
+
+              </div>
+            `;
+
+          })
+          .join("");
+
 
         return `
-          <div class="gasto-historico-item">
-            <div>
-              <strong>${nomeCategoria}</strong>
-              <small>${formatarData(gasto.data)}</small>
+          <div class="gasto-dia-card">
+
+            <div class="gasto-dia-topo">
+
+              <div>
+                <small>📅 DIA</small>
+
+                <strong>
+                  ${formatarData(data)}
+                </strong>
+              </div>
+
+              <div class="gasto-dia-total">
+
+                <small>Total do dia</small>
+
+                <strong>
+                  ${formatarMoeda(totalDia)}
+                </strong>
+
+              </div>
+
             </div>
 
-            <span>${formatarMoeda(gasto.valor || 0)}</span>
+
+            <div class="gasto-dia-lista">
+              ${itensDia}
+            </div>
+
           </div>
         `;
+
       })
       .join("");
+
   }
+
 }
 }
 function salvarMetaGastos() {
