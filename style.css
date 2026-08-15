@@ -6881,3 +6881,196 @@ background:linear-gradient(
 
   white-space: nowrap;
 }
+/* =====================================================
+   HALL DA FAMA - SEQUÊNCIA DE CAMPEÃO
+   ===================================================== */
+
+.sequencia-campeao-card {
+  position: relative;
+
+  overflow: hidden;
+
+  padding: 20px;
+
+  border-radius: 22px;
+
+  border:
+    1px solid rgba(255, 190, 40, .48);
+
+  background:
+    radial-gradient(
+      circle at 15% 10%,
+      rgba(255, 185, 35, .20),
+      transparent 45%
+    ),
+    linear-gradient(
+      145deg,
+      #211a0e,
+      #15110b 55%,
+      #0d0c0a
+    );
+
+  box-shadow:
+    0 0 22px rgba(255, 170, 20, .10),
+    inset 0 0 24px rgba(255, 190, 40, .04);
+}
+
+
+/* brilho decorativo */
+
+.sequencia-campeao-card::after {
+  content: "";
+
+  position: absolute;
+
+  width: 130px;
+  height: 130px;
+
+  right: -55px;
+  top: -65px;
+
+  border-radius: 50%;
+
+  background:
+    rgba(255, 190, 40, .12);
+
+  filter: blur(20px);
+
+  pointer-events: none;
+}
+
+
+/* TOPO */
+
+.sequencia-campeao-topo {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  margin-bottom: 16px;
+}
+
+
+.sequencia-campeao-coroa {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  width: 48px;
+  height: 48px;
+
+  flex-shrink: 0;
+
+  border-radius: 15px;
+
+  font-size: 1.7rem;
+
+  background:
+    rgba(255, 184, 35, .12);
+
+  border:
+    1px solid rgba(255, 190, 50, .30);
+}
+
+
+.sequencia-campeao-topo small {
+  display: block;
+
+  margin-bottom: 4px;
+
+  color: #d8a63a;
+
+  font-size: .64rem;
+
+  font-weight: 900;
+
+  letter-spacing: .7px;
+}
+
+
+.sequencia-campeao-topo h2 {
+  margin: 0;
+
+  color: #ffd369;
+
+  font-size: 1.15rem;
+
+  line-height: 1.2;
+}
+
+
+/* MEDALHAS */
+
+.sequencia-campeao-ouros {
+  min-height: 34px;
+
+  margin: 6px 0 10px;
+
+  font-size: 1.65rem;
+
+  letter-spacing: 3px;
+
+  line-height: 1.3;
+
+  word-break: normal;
+}
+
+
+/* TEXTO */
+
+.sequencia-campeao-card > p {
+  margin: 0 0 17px;
+
+  color: #bdb8aa;
+
+  font-size: .76rem;
+
+  line-height: 1.5;
+}
+
+
+/* RODAPÉ */
+
+.sequencia-campeao-rodape {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 10px;
+
+  padding-top: 14px;
+
+  border-top:
+    1px solid rgba(255,255,255,.08);
+}
+
+
+.sequencia-campeao-rodape > div {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+
+.sequencia-campeao-rodape small {
+  color: #888;
+
+  font-size: .62rem;
+}
+
+
+.sequencia-campeao-rodape strong {
+  color: #fff;
+
+  font-size: .82rem;
+}
+
+
+.sequencia-campeao-rodape > div:last-child {
+  text-align: right;
+}

@@ -3191,6 +3191,226 @@ function atualizarHallFama() {
   });
 
   medalhas.sort((a, b) => new Date(b.semana) - new Date(a.semana));
+  /* =====================================================
+   SEQUÊNCIA DE CAMPEÃO
+   ===================================================== */
+
+/*
+  Para calcular sequência precisamos trabalhar
+  da semana mais antiga para a mais nova.
+*/
+let medalhasCronologicas = [...medalhas]
+  .sort(
+    (a, b) =>
+      new Date(a.semana + "T00:00:00") -
+      new Date(b.semana + "T00:00:00")
+  );
+
+
+let sequenciaAtualOuro = 0;
+let recordeSequenciaOuro = 0;
+
+let semanaOuroAnterior = null;
+
+
+/*
+  Verifica se duas semanas são realmente consecutivas.
+*/
+function semanasSaoConsecutivas(semanaAnterior, semanaAtual) {
+
+  if (!semanaAnterior || !semanaAtual) {
+    return false;
+  }
+
+  let anterior =
+    new Date(semanaAnterior + "T00:00:00");
+
+  let atual =
+    new Date(semanaAtual + "T00:00:00");
+
+  let diferencaDias =
+    Math.round(
+      (atual - anterior) /
+      (1000 * 60 * 60 * 24)
+    );
+
+  return diferencaDias === 7;
+}
+
+
+/*
+  Percorre o histórico.
+*/
+medalhasCronologicas.forEach(item => {
+
+  if (item.posicao === 1) {
+
+    if (
+      semanaOuroAnterior &&
+      semanasSaoConsecutivas(
+        semanaOuroAnterior,
+        item.semana
+      )
+    ) {
+
+      sequenciaAtualOuro++;
+
+    } else {
+
+      sequenciaAtualOuro = 1;
+
+    }
+
+
+    semanaOuroAnterior = item.semana;
+
+
+    if (sequenciaAtualOuro > recordeSequenciaOuro) {
+      recordeSequenciaOuro = sequenciaAtualOuro;
+    }
+
+  } else {
+
+    /*
+      Prata ou bronze quebra a sequência.
+    */
+    sequenciaAtualOuro = 0;
+    semanaOuroAnterior = null;
+
+  }
+
+});
+function obterTituloCampeao(sequencia) {
+
+  const titulos = {
+    2: "Bicampeão",
+    3: "Tricampeão",
+    4: "Tetracampeão",
+    5: "Pentacampeão",
+    6: "Hexacampeão",
+    7: "Heptacampeão",
+    8: "Octacampeão",
+    9: "Eneacampeão",
+    10: "Decacampeão"
+  };
+
+  if (sequencia < 2) {
+    return null;
+  }
+
+  return (
+    titulos[sequencia] ||
+    `${sequencia}x Campeão`
+  );
+}
+
+
+let tituloAtual =
+  obterTituloCampeao(sequenciaAtualOuro);
+
+let tituloRecorde =
+  obterTituloCampeao(recordeSequenciaOuro);
+
+  /* =====================================================
+   CARD DE SEQUÊNCIA DE CAMPEÃO
+   ===================================================== */
+
+let tituloSequenciaCampeao =
+  document.getElementById("tituloSequenciaCampeao");
+
+let textoSequenciaCampeao =
+  document.getElementById("textoSequenciaCampeao");
+
+let sequenciaCampeaoAtual =
+  document.getElementById("sequenciaCampeaoAtual");
+
+let recordeSequenciaCampeao =
+  document.getElementById("recordeSequenciaCampeao");
+
+let iconesSequenciaCampeao =
+  document.getElementById("iconesSequenciaCampeao");
+
+
+if (sequenciaCampeaoAtual) {
+  sequenciaCampeaoAtual.innerText =
+    sequenciaAtualOuro;
+}
+
+
+if (recordeSequenciaCampeao) {
+  recordeSequenciaCampeao.innerText =
+    recordeSequenciaOuro;
+}
+
+
+/* ÍCONES DE OURO */
+
+if (iconesSequenciaCampeao) {
+
+  if (sequenciaAtualOuro >= 2) {
+
+    iconesSequenciaCampeao.innerText =
+      "🥇".repeat(
+        Math.min(sequenciaAtualOuro, 10)
+      );
+
+  } else {
+
+    iconesSequenciaCampeao.innerText = "🏆";
+
+  }
+
+}
+
+
+/* TÍTULO E TEXTO */
+
+if (
+  tituloSequenciaCampeao &&
+  textoSequenciaCampeao
+) {
+
+  if (sequenciaAtualOuro >= 2) {
+
+    tituloSequenciaCampeao.innerText =
+      `👑 ${tituloAtual}`;
+
+    textoSequenciaCampeao.innerText =
+      `${sequenciaAtualOuro} semanas consecutivas em 1º lugar.`;
+
+  } else if (sequenciaAtualOuro === 1) {
+
+    tituloSequenciaCampeao.innerText =
+      "🏆 Campeão da última semana";
+
+    textoSequenciaCampeao.innerText =
+      "Conquiste o próximo ouro para se tornar Bicampeão.";
+
+  } else {
+
+    tituloSequenciaCampeao.innerText =
+      "Em busca do Bicampeonato";
+
+    textoSequenciaCampeao.innerText =
+      "Conquiste dois primeiros lugares em semanas seguidas.";
+
+  }
+
+}
+
+
+/* MOSTRA O RECORDE HISTÓRICO */
+
+if (
+  recordeSequenciaCampeao &&
+  tituloRecorde &&
+  recordeSequenciaOuro >= 2
+) {
+
+  recordeSequenciaCampeao.innerText =
+    `${recordeSequenciaOuro} • ${tituloRecorde}`;
+
+}
 
   let ouro = medalhas.filter(item => item.posicao === 1).length;
   let prata = medalhas.filter(item => item.posicao === 2).length;
