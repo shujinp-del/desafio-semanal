@@ -7074,3 +7074,173 @@ background:linear-gradient(
 .sequencia-campeao-rodape > div:last-child {
   text-align: right;
 }
+/* =====================================================
+   GRÁFICOS - NAVEGAÇÃO SEMANAL
+   ===================================================== */
+
+.navegador-semana-grafico {
+  display: grid;
+
+  grid-template-columns:
+    46px 1fr 46px;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 12px 14px;
+}
+
+
+.botao-semana-grafico {
+  width: 42px;
+  height: 42px;
+
+  padding: 0;
+
+  border-radius: 14px;
+
+  font-size: 1.5rem;
+
+  font-weight: 900;
+}
+
+
+.botao-semana-grafico:disabled {
+  opacity: .25;
+
+  cursor: default;
+}
+
+
+.semana-grafico-info {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  gap: 4px;
+
+  text-align: center;
+}
+
+
+.semana-grafico-info small {
+  color: #ff9d2e;
+
+  font-size: .65rem;
+
+  font-weight: 900;
+
+  letter-spacing: .7px;
+}
+
+
+.semana-grafico-info strong {
+  color: #fff;
+
+  font-size: .88rem;
+}
+
+
+/* RESULTADO */
+
+.resultado-semana-grafico {
+  padding: 17px;
+}
+
+
+.resultado-semana-topo small {
+  color: #ff9d2e;
+
+  font-size: .63rem;
+
+  font-weight: 900;
+}
+
+
+.resultado-semana-topo h3 {
+  margin:
+    4px 0 14px;
+}
+
+
+.resultado-semana-ranking {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+
+.resultado-semana-item {
+  display: grid;
+
+  grid-template-columns:
+    35px 1fr auto;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 10px;
+
+  border-radius: 14px;
+
+  background:
+    rgba(255,255,255,.035);
+
+  border:
+    1px solid
+    rgba(255,255,255,.06);
+}
+
+
+.resultado-semana-item.usuario-atual {
+  border-color:
+    rgba(255, 145, 35, .55);
+
+  background:
+    rgba(255, 130, 20, .07);
+}
+
+
+.resultado-medalha {
+  font-size: 1.5rem;
+}
+
+
+.resultado-motorista {
+  display: flex;
+
+  flex-direction: column;
+
+  min-width: 0;
+}
+
+
+.resultado-motorista strong {
+  color: #fff;
+
+  font-size: .77rem;
+}
+
+
+.resultado-motorista small {
+  margin-top: 2px;
+
+  color: #888;
+
+  font-size: .61rem;
+}
+
+
+.resultado-valor {
+  color: #38db83;
+
+  font-size: .72rem;
+
+  white-space: nowrap;
+}

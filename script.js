@@ -52,6 +52,18 @@ let metaDesafioAtual = 0;
 let grafico;
 let graficoLinha;
 
+/* =====================================================
+   HISTÓRICO SEMANAL DOS GRÁFICOS
+   ===================================================== */
+
+let offsetSemanaGrafico = 0;
+
+let rankingGraficoSemana = [];
+
+let corridasGraficoSemana = [];
+
+let semanaGraficoCarregada = false;
+
 let editandoId = null;
 let pararSincronia = null;
 let editandoGastoId = null;
@@ -1167,7 +1179,6 @@ function formatarData(data) {
 }
 
 function abrirTela(id) {
-  
 
   if (id === "adminTela" && !usuarioEhAdmin()) {
     alert("Acesso restrito ao admin.");
@@ -1186,15 +1197,15 @@ function abrirTela(id) {
   }
 
   if (id === "metasTela") {
-  carregarGastosFirebase();
-  atualizarMetas();
-  atualizarMetaReal();
-  atualizarRankingMetas();
-  atualizarMelhorDia();
-  atualizarPiorDia();
-  atualizarFechamentoMensal();
-  atualizarMetaInteligente();
-}
+    carregarGastosFirebase();
+    atualizarMetas();
+    atualizarMetaReal();
+    atualizarRankingMetas();
+    atualizarMelhorDia();
+    atualizarPiorDia();
+    atualizarFechamentoMensal();
+    atualizarMetaInteligente();
+  }
 
   if (id === "adminTela") {
     atualizarAdmin();
@@ -1202,16 +1213,16 @@ function abrirTela(id) {
 
   if (id === "graficoTela") {
     atualizarHistoricoMensalCards();
-    atualizarInsightSemana();
-    atualizarComparativoSemanal();
-    atualizarGrafico();
-    atualizarGraficoLinha();
+
+    offsetSemanaGrafico = 0;
+
+    carregarSemanaGrafico();
   }
 
   if (id === "historicoTela") {
-  carregarGastosFirebase();
-  atualizarHistoricoMensalCards();
-}
+    carregarGastosFirebase();
+    atualizarHistoricoMensalCards();
+  }
 
   if (id === "minhasTela") {
     atualizarMinhasCorridas();
@@ -1224,15 +1235,21 @@ function abrirTela(id) {
   if (id === "grupoTela") {
     carregarGrupo();
   }
+
   if (id === "gastosTela") {
-  carregarGastosFirebase();
-}
+    carregarGastosFirebase();
+  }
 
   if (id === "desafiosTela") {
     atualizarMetricas();
   }
- 
+
 }
+
+window.abrirTela = abrirTela;
+
+
+
 function atualizarTudo() {
   aplicarPrivacidadeMenus();
   let totalHojeCorrida =
@@ -4088,7 +4105,508 @@ if (porcentagemParticularEl) {
 }
 
 function obterRankingParaGrafico() {
+
+  if (semanaGraficoCarregada) {
+
+    return rankingGraficoSemana;
+
+  }
+
   return ranking;
+
+}
+function atualizarInsightSemanaGrafico() {
+
+  if (!usuarioAtual) return;
+
+
+  let melhorDiaEl =
+    document.getElementById(
+      "insightMelhorDia"
+    );
+
+  let valorEl =
+    document.getElementById(
+      "insightValor"
+    );
+
+  let corridasEl =
+    document.getElementById(
+      "insightCorridas"
+    );
+
+  let msgEl =
+    document.querySelector(
+      "#graficoTela .insight-msg"
+    );
+
+
+  if (
+    !melhorDiaEl ||
+    !valorEl ||
+    !corridasEl
+  ) {
+    return;
+  }
+
+
+  let minhasSemana =
+    corridasGraficoSemana.filter(item =>
+      item.uid === usuarioAtual.uid ||
+      item.email === usuarioAtual.email
+    );
+
+
+  let mapaDias = {};
+
+  let totalSemana = 0;
+
+
+  minhasSemana.forEach(item => {
+
+    if (!item.data) return;
+
+
+    if (!mapaDias[item.data]) {
+
+      mapaDias[item.data] = {
+        valor: 0,
+        corridas: 0
+      };
+
+    }
+
+
+    mapaDias[item.data].valor +=
+      Number(item.valor || 0);
+
+
+    mapaDias[item.data].corridas +=
+      Number(item.corridas || 0);
+
+
+    totalSemana +=
+      Number(item.valor || 0);
+
+  });
+
+
+  let melhorData = null;
+
+
+  Object.keys(
+    mapaDias
+  ).forEach(data => {
+
+    if (
+      !melhorData ||
+      mapaDias[data].valor >
+      mapaDias[melhorData].valor
+    ) {
+
+      melhorData = data;
+
+    }
+
+  });
+
+
+  if (!melhorData) {
+
+    melhorDiaEl.innerText = "--";
+
+    valorEl.innerText =
+      formatarMoeda(0);
+
+    corridasEl.innerText = 0;
+
+
+    if (msgEl) {
+
+      msgEl.innerText =
+        "Nenhum registro nesta semana.";
+
+    }
+
+    return;
+
+  }
+
+
+  let dadosMelhorDia =
+    mapaDias[melhorData];
+
+
+  melhorDiaEl.innerText =
+    formatarData(melhorData);
+
+
+  valorEl.innerText =
+    formatarMoeda(
+      dadosMelhorDia.valor
+    );
+
+
+  corridasEl.innerText =
+    dadosMelhorDia.corridas;
+
+
+  let percentual =
+    totalSemana > 0
+      ? Math.round(
+          (
+            dadosMelhorDia.valor /
+            totalSemana
+          ) * 100
+        )
+      : 0;
+
+
+  if (msgEl) {
+
+    msgEl.innerText =
+      `🚀 Seu melhor dia representou ${percentual}% desta semana.`;
+
+  }
+
+}
+
+function atualizarResumoSemanaGrafico() {
+
+  if (!usuarioAtual) return;
+
+
+  let minhas =
+    corridasGraficoSemana.filter(item =>
+      item.uid === usuarioAtual.uid ||
+      item.email === usuarioAtual.email
+    );
+
+
+  let total =
+    minhas.reduce(
+      (soma, item) =>
+        soma + Number(item.valor || 0),
+      0
+    );
+
+
+  let corridas =
+    minhas.reduce(
+      (soma, item) =>
+        soma + Number(item.corridas || 0),
+      0
+    );
+
+
+  let media =
+    corridas > 0
+      ? total / corridas
+      : 0;
+
+
+  let mapaDias = {};
+
+
+  minhas.forEach(item => {
+
+    if (!item.data) return;
+
+    if (!mapaDias[item.data]) {
+      mapaDias[item.data] = 0;
+    }
+
+    mapaDias[item.data] +=
+      Number(item.valor || 0);
+
+  });
+
+
+  let melhorData = null;
+
+
+  Object.keys(mapaDias).forEach(data => {
+
+    if (
+      !melhorData ||
+      mapaDias[data] > mapaDias[melhorData]
+    ) {
+      melhorData = data;
+    }
+
+  });
+
+
+  let totalSemanaEl =
+    document.getElementById("totalSemana");
+
+  let totalCorridasEl =
+    document.getElementById("totalCorridas");
+
+  let mediaEl =
+    document.getElementById("mediaCorridaGrafico");
+
+  let melhorEl =
+    document.getElementById("melhorDiaGrafico");
+
+
+  if (totalSemanaEl) {
+    totalSemanaEl.innerText =
+      formatarMoeda(total);
+  }
+
+
+  if (totalCorridasEl) {
+    totalCorridasEl.innerText =
+      corridas;
+  }
+
+
+  if (mediaEl) {
+    mediaEl.innerText =
+      formatarMoeda(media);
+  }
+
+
+  if (melhorEl) {
+    melhorEl.innerText =
+      melhorData
+        ? formatarData(melhorData)
+        : "-";
+  }
+
+}
+
+function atualizarResultadoSemanaGrafico() {
+
+  let card =
+    document.getElementById(
+      "resultadoSemanaGrafico"
+    );
+
+  if (!card) return;
+
+
+  if (
+    !rankingGraficoSemana ||
+    rankingGraficoSemana.length === 0
+  ) {
+
+    card.innerHTML = `
+      <h3>🏆 Resultado da Semana</h3>
+
+      <p>
+        Nenhum resultado encontrado
+        nesta semana.
+      </p>
+    `;
+
+    return;
+
+  }
+
+
+  let medalhas =
+    ["🥇", "🥈", "🥉"];
+
+
+  let html = `
+    <div class="resultado-semana-topo">
+
+      <div>
+        <small>🏆 CAMPEONATO</small>
+        <h3>Resultado da Semana</h3>
+      </div>
+
+    </div>
+
+    <div class="resultado-semana-ranking">
+  `;
+
+
+  rankingGraficoSemana
+    .slice(0, 3)
+    .forEach((item, index) => {
+
+      let ehUsuario =
+        item.uid === usuarioAtual?.uid ||
+        item.email === usuarioAtual?.email;
+
+
+      html += `
+        <div
+          class="resultado-semana-item
+          ${ehUsuario ? "usuario-atual" : ""}"
+        >
+
+          <span class="resultado-medalha">
+            ${medalhas[index]}
+          </span>
+
+          <div class="resultado-motorista">
+
+            <strong>
+              ${item.nome}
+            </strong>
+
+            <small>
+              ${item.corridas} corridas
+            </small>
+
+          </div>
+
+          <strong class="resultado-valor">
+            ${formatarMoeda(item.valor)}
+          </strong>
+
+        </div>
+      `;
+
+    });
+
+
+  html += `
+    </div>
+  `;
+
+
+  card.innerHTML = html;
+
+}
+function atualizarComparativoSemanaGrafico() {
+
+  let card =
+    document.getElementById(
+      "comparativoSemanalCard"
+    );
+
+  if (
+    !card ||
+    !usuarioAtual
+  ) {
+    return;
+  }
+
+
+  let periodo =
+    obterPeriodoSemanaGrafico();
+
+
+  let inicioSelecionada =
+    periodo.inicio;
+
+
+  let inicioAnterior =
+    new Date(
+      inicioSelecionada
+    );
+
+  inicioAnterior.setDate(
+    inicioAnterior.getDate() - 7
+  );
+
+
+  let totalSelecionada = 0;
+  let totalAnterior = 0;
+
+
+  corridasFirebase.forEach(item => {
+
+    if (
+      item.uid !== usuarioAtual.uid &&
+      item.email !== usuarioAtual.email
+    ) {
+      return;
+    }
+
+
+    if (!item.data) return;
+
+
+    let data =
+      new Date(
+        item.data + "T00:00:00"
+      );
+
+
+    if (
+      data >= inicioSelecionada &&
+      data < new Date(
+        inicioSelecionada.getTime() +
+        7 * 24 * 60 * 60 * 1000
+      )
+    ) {
+
+      totalSelecionada +=
+        Number(item.valor || 0);
+
+    } else if (
+      data >= inicioAnterior &&
+      data < inicioSelecionada
+    ) {
+
+      totalAnterior +=
+        Number(item.valor || 0);
+
+    }
+
+  });
+
+
+  let percentual = 0;
+
+
+  if (totalAnterior > 0) {
+
+    percentual =
+      (
+        (
+          totalSelecionada -
+          totalAnterior
+        ) /
+        totalAnterior
+      ) * 100;
+
+  }
+
+
+  let emoji =
+    percentual >= 0
+      ? "🔥"
+      : "📉";
+
+
+  let sinal =
+    percentual >= 0
+      ? "+"
+      : "";
+
+
+  card.innerHTML = `
+    <div class="card destaque-home">
+
+      <small>
+        Comparação com a semana anterior
+      </small>
+
+      <h2>
+        ${emoji}
+        ${sinal}${percentual.toFixed(1)}%
+      </h2>
+
+      <p>
+        Semana selecionada:
+        ${formatarMoeda(totalSelecionada)}
+      </p>
+
+      <p>
+        Semana anterior:
+        ${formatarMoeda(totalAnterior)}
+      </p>
+
+    </div>
+  `;
+
 }
 async function pesquisarPeriodoHistorico() {
 
@@ -5088,6 +5606,282 @@ function obterInicioSemana(dataBase) {
   data.setHours(0, 0, 0, 0);
 
   return data;
+}
+function formatarDataCurtaGrafico(data) {
+
+  return data.toLocaleDateString(
+    "pt-BR",
+    {
+      day: "2-digit",
+      month: "2-digit"
+    }
+  );
+
+}
+
+
+function obterPeriodoSemanaGrafico() {
+
+  let hoje = new Date();
+
+  let inicio =
+    obterInicioSemana(hoje);
+
+  inicio.setDate(
+    inicio.getDate() +
+    (offsetSemanaGrafico * 7)
+  );
+
+  inicio.setHours(0, 0, 0, 0);
+
+
+  let fim =
+    new Date(inicio);
+
+  fim.setDate(
+    inicio.getDate() + 6
+  );
+
+  fim.setHours(
+    23,
+    59,
+    59,
+    999
+  );
+
+
+  return {
+    inicio,
+    fim
+  };
+
+}
+async function carregarSemanaGrafico() {
+
+  if (!usuarioAtual) return;
+
+
+  let periodo =
+    obterPeriodoSemanaGrafico();
+
+  let inicio =
+    periodo.inicio;
+
+  let fim =
+    periodo.fim;
+
+
+  /*
+    Atualiza o texto no topo
+  */
+
+  let periodoEl =
+    document.getElementById(
+      "periodoSemanaGrafico"
+    );
+
+  let tipoEl =
+    document.getElementById(
+      "tipoSemanaGrafico"
+    );
+
+  let btnProxima =
+    document.getElementById(
+      "btnProximaSemanaGrafico"
+    );
+
+
+  if (periodoEl) {
+
+    periodoEl.innerText =
+      `${formatarDataCurtaGrafico(inicio)} — ${formatarDataCurtaGrafico(fim)}`;
+
+  }
+
+
+  if (tipoEl) {
+
+    if (offsetSemanaGrafico === 0) {
+
+      tipoEl.innerText =
+        "ESTA SEMANA";
+
+    } else if (offsetSemanaGrafico === -1) {
+
+      tipoEl.innerText =
+        "SEMANA PASSADA";
+
+    } else {
+
+      tipoEl.innerText =
+        `${Math.abs(offsetSemanaGrafico)} SEMANAS ATRÁS`;
+
+    }
+
+  }
+
+
+  /*
+    Não deixa avançar além
+    da semana atual.
+  */
+
+  if (btnProxima) {
+
+    btnProxima.disabled =
+      offsetSemanaGrafico >= 0;
+
+  }
+
+
+  /*
+    Descobre os membros
+    que devem aparecer.
+  */
+
+  let idsPermitidos = [];
+  let emailsPermitidos = [];
+
+
+  if (
+    dadosUsuario &&
+    dadosUsuario.grupoId
+  ) {
+
+    try {
+
+      let grupoSnap =
+        await getDoc(
+          doc(
+            db,
+            "grupos",
+            dadosUsuario.grupoId
+          )
+        );
+
+
+      if (grupoSnap.exists()) {
+
+        let membros =
+          grupoSnap.data().membros || [];
+
+
+        idsPermitidos =
+          membros
+            .map(item => item.uid)
+            .filter(Boolean);
+
+
+        emailsPermitidos =
+          membros
+            .map(item => item.email)
+            .filter(Boolean);
+
+      }
+
+    } catch (erro) {
+
+      console.error(
+        "Erro ao carregar grupo para gráfico:",
+        erro
+      );
+
+    }
+
+  }
+
+
+  /*
+    Filtra todas as corridas
+    para a semana selecionada.
+  */
+
+  corridasGraficoSemana =
+    corridasFirebase.filter(item => {
+
+      if (!item.data) {
+        return false;
+      }
+
+
+      let dataCorrida =
+        new Date(
+          item.data + "T00:00:00"
+        );
+
+
+      let estaNaSemana =
+        dataCorrida >= inicio &&
+        dataCorrida <= fim;
+
+
+      if (!estaNaSemana) {
+        return false;
+      }
+
+
+      /*
+        Com grupo:
+        mostra os membros do grupo.
+      */
+
+      if (
+        dadosUsuario &&
+        dadosUsuario.grupoId
+      ) {
+
+        return (
+          idsPermitidos.includes(item.uid) ||
+          emailsPermitidos.includes(item.email)
+        );
+
+      }
+
+
+      /*
+        Sem grupo:
+        somente o próprio usuário.
+      */
+
+      return (
+        item.uid === usuarioAtual.uid ||
+        item.email === usuarioAtual.email
+      );
+
+    });
+
+
+  /*
+    Cria um ranking daquela
+    semana específica.
+  */
+
+  rankingGraficoSemana =
+    montarRanking(
+      corridasGraficoSemana
+    );
+
+
+  semanaGraficoCarregada = true;
+
+
+  /*
+    Atualiza somente elementos
+    da tela Gráficos.
+  */
+
+  atualizarGrafico();
+
+  atualizarGraficoLinha();
+
+  atualizarInsightSemanaGrafico();
+
+  atualizarResumoSemanaGrafico();
+
+  atualizarResultadoSemanaGrafico();
+
+  atualizarComparativoSemanaGrafico();
+
 }
 
 
@@ -7262,3 +8056,23 @@ window.carregarGastosFirebase =carregarGastosFirebase;
 window.recuperarSenha = recuperarSenha;
 window.salvarMetaGastos = salvarMetaGastos; 
 window.pesquisarPeriodoHistorico = pesquisarPeriodoHistorico;
+window.mudarSemanaGrafico =
+  function(direcao) {
+
+    offsetSemanaGrafico +=
+      direcao;
+
+
+    /*
+      Nunca permite ir
+      para uma semana futura.
+    */
+
+    if (offsetSemanaGrafico > 0) {
+      offsetSemanaGrafico = 0;
+    }
+
+
+    carregarSemanaGrafico();
+
+  };

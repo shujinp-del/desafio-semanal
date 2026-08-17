@@ -1621,6 +1621,42 @@ Sua coleção de medalhas e pódios conquistados no MMS.
   <p class="subtitulo">
     Acompanhe sua evolução semanal
   </p>
+  <!-- NAVEGAÇÃO ENTRE SEMANAS -->
+<div class="card navegador-semana-grafico">
+
+  <button
+    class="botao-semana-grafico"
+    onclick="mudarSemanaGrafico(-1)">
+    ‹
+  </button>
+
+  <div class="semana-grafico-info">
+
+    <small id="tipoSemanaGrafico">
+      ESTA SEMANA
+    </small>
+
+    <strong id="periodoSemanaGrafico">
+      Carregando...
+    </strong>
+
+  </div>
+
+  <button
+    id="btnProximaSemanaGrafico"
+    class="botao-semana-grafico"
+    onclick="mudarSemanaGrafico(1)">
+    ›
+  </button>
+
+</div>
+
+
+<!-- RESULTADO FINAL DA SEMANA -->
+<div
+  id="resultadoSemanaGrafico"
+  class="card resultado-semana-grafico">
+</div>
 
   <div class="card resumo-grafico-v2">
     <h2>📊 Resumo dos Gráficos</h2>
