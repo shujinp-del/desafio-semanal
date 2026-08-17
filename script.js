@@ -5052,92 +5052,310 @@ function atualizarInsightSemana() {
   }
 }
 function atualizarGraficoLinha() {
-  let canvas = document.getElementById("graficoLinha");
+
+  let canvas =
+    document.getElementById("graficoLinha");
 
   if (!canvas) return;
 
-  let dadosGrafico = obterRankingParaGrafico();
-  let totais = {};
 
-  dadosGrafico.forEach(motorista => {
-    motorista.historico.forEach(item => {
-      if (!totais[item.data]) {
-        totais[item.data] = 0;
-      }
+  let dadosGrafico =
+    obterRankingParaGrafico();
 
-      totais[item.data] += Number(item.valor);
+
+  /*
+    Segunda até domingo
+  */
+  const diasSemana = [
+    "Seg",
+    "Ter",
+    "Qua",
+    "Qui",
+    "Sex",
+    "Sáb",
+    "Dom"
+  ];
+
+
+  /*
+    Descobre o início da semana
+    atualmente selecionada
+  */
+  let periodo =
+    obterPeriodoSemanaGrafico();
+
+  let inicioSemana =
+    periodo.inicio;
+
+
+  /*
+    Cada motorista vira
+    um dataset separado
+  */
+  let datasets =
+    dadosGrafico.map((motorista, index) => {
+
+      /*
+        Valores feitos em cada dia
+      */
+      let valoresPorDia =
+        [0, 0, 0, 0, 0, 0, 0];
+
+
+      motorista.historico.forEach(item => {
+
+        if (!item.data) return;
+
+        let data =
+          new Date(
+            item.data + "T00:00:00"
+          );
+
+
+        let diferencaDias =
+          Math.floor(
+            (
+              data.getTime() -
+              inicioSemana.getTime()
+            ) /
+            (1000 * 60 * 60 * 24)
+          );
+
+
+        if (
+          diferencaDias >= 0 &&
+          diferencaDias <= 6
+        ) {
+
+          valoresPorDia[diferencaDias] +=
+            Number(item.valor || 0);
+
+        }
+
+      });
+
+
+      /*
+        Transforma em acumulado.
+
+        Ex:
+        Seg 300
+        Ter +400 = 700
+        Qua +250 = 950
+      */
+      let acumulado = 0;
+
+      let valoresAcumulados =
+        valoresPorDia.map(valor => {
+
+          acumulado += valor;
+
+          return acumulado;
+
+        });
+
+
+      return {
+
+        label: motorista.nome,
+
+        data: valoresAcumulados,
+
+        borderWidth: 3,
+
+        tension: 0.35,
+
+        fill: false,
+
+        pointRadius: 4,
+
+        pointHoverRadius: 7,
+
+        /*
+          Não precisamos definir cor manualmente.
+          O Chart.js pode usar a paleta
+          que configuraremos logo abaixo.
+        */
+      };
+
     });
-  });
 
-  let datas = Object.keys(totais).sort();
-  let valores = datas.map(data => totais[data]);
+
+  /*
+    Paleta para diferenciar os motoristas
+  */
+  const coresCorrida = [
+    "#22c55e",
+    "#3b82f6",
+    "#f97316",
+    "#a855f7",
+    "#ef4444",
+    "#eab308",
+    "#06b6d4",
+    "#ec4899"
+  ];
+
+
+  datasets.forEach(
+    (dataset, index) => {
+
+      let cor =
+        coresCorrida[
+          index % coresCorrida.length
+        ];
+
+      dataset.borderColor = cor;
+
+      dataset.backgroundColor = cor;
+
+      dataset.pointBackgroundColor = cor;
+
+      dataset.pointBorderColor = "#ffffff";
+
+      dataset.pointBorderWidth = 2;
+
+    }
+  );
+
 
   if (graficoLinha) {
     graficoLinha.destroy();
   }
 
-  graficoLinha = new Chart(canvas.getContext("2d"), {
-    type: "line",
 
-    data: {
-      labels: datas,
+  graficoLinha =
+    new Chart(
+      canvas.getContext("2d"),
+      {
 
-      datasets: [{
-       label: dadosUsuario && dadosUsuario.grupoId
-  ? "Evolução do grupo"
-  : "Minha evolução",
+        type: "line",
 
-        data: valores,
-        borderColor: "#22c55e",
-        backgroundColor: "rgba(34, 197, 94, 0.18)",
-        pointBackgroundColor: "#22c55e",
-        pointBorderColor: "#ffffff",
-        pointBorderWidth: 2,
-        pointRadius: 5,
-        pointHoverRadius: 8,
-        borderWidth: 4,
-        fill: true,
-        tension: 0.35
-      }]
-    },
+        data: {
 
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
+          labels: diasSemana,
 
-      plugins: {
-        legend: {
-          labels: {
-            color: "#ffffff",
-            font: {
-              size: 12,
-              weight: "bold"
-            }
-          }
-        }
-      },
+          datasets
 
-      scales: {
-        x: {
-          ticks: {
-            color: "#d1d5db"
-          },
-          grid: {
-            color: "rgba(255,255,255,0.08)"
-          }
         },
 
-        y: {
-          ticks: {
-            color: "#d1d5db"
+
+        options: {
+
+          responsive: true,
+
+          maintainAspectRatio: false,
+
+
+          interaction: {
+
+            mode: "index",
+
+            intersect: false
+
           },
-          grid: {
-            color: "rgba(255,255,255,0.08)"
+
+
+          plugins: {
+
+            legend: {
+
+              position: "bottom",
+
+              labels: {
+
+                color: "#ffffff",
+
+                padding: 14,
+
+                boxWidth: 14,
+
+                boxHeight: 14,
+
+                font: {
+
+                  size: 11,
+
+                  weight: "bold"
+
+                }
+
+              }
+
+            },
+
+
+            tooltip: {
+
+              callbacks: {
+
+                label: function(context) {
+
+                  return (
+                    `${context.dataset.label}: ` +
+                    `${formatarMoeda(context.raw)}`
+                  );
+
+                }
+
+              }
+
+            }
+
+          },
+
+
+          scales: {
+
+            x: {
+
+              ticks: {
+                color: "#d1d5db"
+              },
+
+              grid: {
+                color:
+                  "rgba(255,255,255,0.08)"
+              }
+
+            },
+
+
+            y: {
+
+              beginAtZero: true,
+
+              ticks: {
+
+                color: "#d1d5db",
+
+                callback: function(valor) {
+
+                  return (
+                    "R$ " +
+                    Number(valor)
+                      .toLocaleString("pt-BR")
+                  );
+
+                }
+
+              },
+
+              grid: {
+
+                color:
+                  "rgba(255,255,255,0.08)"
+
+              }
+
+            }
+
           }
+
         }
+
       }
-    }
-  });
+    );
+
 }
 
 function limparCampos() {
