@@ -167,6 +167,48 @@
 
   </div>
 
+  <!-- JORNADA MMS -->
+<div class="home-v3-card jornada-mms-card">
+
+  <div class="titulo-card-linha">
+    <h3>⏱ Jornada MMS</h3>
+
+    <span id="jornadaStatus">
+      Parada
+    </span>
+  </div>
+
+  <div id="jornadaInfo">
+
+    <p id="jornadaTexto">
+      Inicie sua jornada para acompanhar seu tempo de trabalho.
+    </p>
+
+    <div id="jornadaDados" style="display:none;">
+
+      <small>Início</small>
+      <strong id="jornadaHoraInicio">
+        --:--
+      </strong>
+
+      <small>Tempo atual</small>
+      <strong id="jornadaTempoAtual">
+        00h 00min
+      </strong>
+
+    </div>
+
+  </div>
+
+  <button
+    id="botaoJornada"
+    onclick="alternarJornadaMMS()"
+  >
+    ▶ Iniciar jornada
+  </button>
+
+</div>
+
 
   <!-- ASSISTENTE -->
   <div class="assistente-mms-card home-v3-assistente">
@@ -1476,7 +1518,73 @@ Sua coleção de medalhas e pódios conquistados no MMS.
     id="resultadoPesquisaPeriodo"
     class="resultado-pesquisa-periodo"
   ></div>
+  <div
 
+<div class="card jornada-manual-historico">
+
+  <details class="jornada-adicionar-detalhes">
+
+    <summary>
+      ➕ Adicionar período manual
+    </summary>
+
+    <div class="jornada-form-manual">
+
+      <p>
+        Use caso tenha esquecido de iniciar
+        ou encerrar sua jornada.
+      </p>
+
+      <label for="jornadaManualData">
+        Data
+      </label>
+
+      <input
+        type="date"
+        id="jornadaManualData"
+      >
+
+      <label for="jornadaManualInicio">
+        Início
+      </label>
+
+      <input
+        type="time"
+        id="jornadaManualInicio"
+      >
+
+      <label for="jornadaManualFim">
+        Fim
+      </label>
+
+      <input
+        type="time"
+        id="jornadaManualFim"
+      >
+
+      <button
+        type="button"
+        onclick="salvarJornadaManualHistorico()"
+      >
+        💾 Salvar período
+      </button>
+
+    </div>
+
+  </details>
+
+</div>
+
+
+<div
+  id="historicoJornadas"
+  class="card"
+>
+  <h3>⏱ Períodos registrados</h3>
+
+  <div id="listaJornadasHistorico">
+    Nenhum período registrado.
+  </div>
 </div>
   
 

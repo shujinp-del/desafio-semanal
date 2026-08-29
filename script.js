@@ -69,6 +69,15 @@ let pararSincronia = null;
 let editandoGastoId = null;
 let periodoGastosAtual = "mes";
 
+/* =====================================================
+   JORNADA MMS
+   ===================================================== */
+
+let jornadaAtiva = null;
+let intervaloJornada = null;
+let jornadasFirebase = [];
+let jornadaEditandoId = null;
+
 function formatarMoeda(valor) {
   return Number(valor || 0).toLocaleString("pt-BR", {
     style: "currency",
@@ -1178,6 +1187,1116 @@ function formatarData(data) {
   return `${partes[2]}/${partes[1]}/${partes[0]}`;
 }
 
+/* =====================================================
+   JORNADA MMS
+   ===================================================== */
+
+function obterDataLocalJornada() {
+
+  const agora = new Date();
+
+  return (
+    `${agora.getFullYear()}-` +
+    `${String(agora.getMonth() + 1).padStart(2, "0")}-` +
+    `${String(agora.getDate()).padStart(2, "0")}`
+  );
+
+}
+
+
+function formatarTempoJornada(milisegundos) {
+
+  const totalSegundos =
+    Math.max(
+      0,
+      Math.floor(milisegundos / 1000)
+    );
+
+  const horas =
+    Math.floor(totalSegundos / 3600);
+
+  const minutos =
+    Math.floor(
+      (totalSegundos % 3600) / 60
+    );
+
+  const segundos =
+    totalSegundos % 60;
+
+  return (
+    `${String(horas).padStart(2, "0")}h ` +
+    `${String(minutos).padStart(2, "0")}min ` +
+    `${String(segundos).padStart(2, "0")}s`
+  );
+
+}
+
+
+function atualizarCardJornadaMMS() {
+
+  const status =
+    document.getElementById("jornadaStatus");
+
+  const texto =
+    document.getElementById("jornadaTexto");
+
+  const dados =
+    document.getElementById("jornadaDados");
+
+  const horaInicio =
+    document.getElementById("jornadaHoraInicio");
+
+  const tempoAtual =
+    document.getElementById("jornadaTempoAtual");
+
+  const botao =
+    document.getElementById("botaoJornada");
+
+
+  if (
+    !status ||
+    !texto ||
+    !dados ||
+    !horaInicio ||
+    !tempoAtual ||
+    !botao
+  ) {
+    return;
+  }
+
+
+  if (!jornadaAtiva) {
+
+    status.innerText =
+      "⚪ Parada";
+
+    texto.innerText =
+      "Inicie sua jornada para acompanhar seu tempo de trabalho.";
+
+    dados.style.display =
+      "none";
+
+    botao.innerText =
+      "▶ Iniciar jornada";
+
+    return;
+  }
+
+
+  status.innerText =
+    "🟢 Em andamento";
+
+  texto.innerText =
+    "Sua jornada está sendo registrada.";
+
+  dados.style.display =
+    "grid";
+
+  const inicio =
+    new Date(jornadaAtiva.inicioMs);
+
+  horaInicio.innerText =
+    inicio.toLocaleTimeString(
+      "pt-BR",
+      {
+        hour: "2-digit",
+        minute: "2-digit"
+      }
+    );
+
+
+  const tempoDecorrido =
+    Date.now() -
+    Number(jornadaAtiva.inicioMs);
+
+  tempoAtual.innerText =
+    formatarTempoJornada(
+      tempoDecorrido
+    );
+
+
+  botao.innerText =
+    "■ Encerrar jornada";
+
+}
+
+
+function iniciarCronometroJornada() {
+
+  if (intervaloJornada) {
+
+    clearInterval(
+      intervaloJornada
+    );
+
+  }
+
+
+  atualizarCardJornadaMMS();
+
+
+  if (!jornadaAtiva) {
+    return;
+  }
+
+
+  intervaloJornada =
+    setInterval(() => {
+
+      atualizarCardJornadaMMS();
+
+    }, 1000);
+
+}
+
+
+function pararCronometroJornada() {
+
+  if (intervaloJornada) {
+
+    clearInterval(
+      intervaloJornada
+    );
+
+    intervaloJornada = null;
+
+  }
+
+}
+
+
+async function carregarJornadaMMS() {
+
+  if (!usuarioAtual) {
+    return;
+  }
+
+
+  try {
+
+    const snapshot =
+      await getDocs(
+        collection(db, "jornadas")
+      );
+
+
+    jornadasFirebase = [];
+
+
+    snapshot.forEach(docSnap => {
+
+      const dados =
+        docSnap.data();
+
+
+      if (
+        dados.uid === usuarioAtual.uid ||
+        dados.email === usuarioAtual.email
+      ) {
+
+        jornadasFirebase.push({
+          id: docSnap.id,
+          ...dados
+        });
+
+      }
+
+    });
+
+
+    const jornadasAtivas =
+      jornadasFirebase
+        .filter(item =>
+          item.status === "ativa"
+        )
+        .sort(
+          (a, b) =>
+            Number(b.inicioMs || 0) -
+            Number(a.inicioMs || 0)
+        );
+
+
+    jornadaAtiva =
+      jornadasAtivas.length > 0
+        ? jornadasAtivas[0]
+        : null;
+
+
+    iniciarCronometroJornada();
+    atualizarHistoricoJornadas();
+
+
+  } catch (erro) {
+
+    console.error(
+      "Erro ao carregar Jornada MMS:",
+      erro
+    );
+
+  }
+
+}
+
+
+async function iniciarJornadaMMS() {
+
+  if (!usuarioAtual) {
+
+    alert("Faça login primeiro.");
+
+    return;
+
+  }
+
+
+  if (jornadaAtiva) {
+
+    alert(
+      "⏱ Você já possui uma jornada em andamento."
+    );
+
+    return;
+
+  }
+
+
+  const botao =
+    document.getElementById(
+      "botaoJornada"
+    );
+
+
+  if (botao) {
+    botao.disabled = true;
+  }
+
+
+  try {
+
+    /*
+      Confere novamente no Firebase
+      antes de iniciar outra jornada.
+    */
+
+    await carregarJornadaMMS();
+
+
+    if (jornadaAtiva) {
+
+      alert(
+        "⏱ Você já possui uma jornada em andamento."
+      );
+
+      return;
+
+    }
+
+
+    const agora =
+      new Date();
+
+
+    const novaJornada = {
+
+      uid:
+        usuarioAtual.uid,
+
+      email:
+        usuarioAtual.email,
+
+      data:
+        obterDataLocalJornada(),
+
+      inicioISO:
+        agora.toISOString(),
+
+      inicioMs:
+        agora.getTime(),
+
+      fimISO:
+        null,
+
+      fimMs:
+        null,
+
+      duracaoSegundos:
+        null,
+
+      duracaoMinutos:
+        null,
+
+      status:
+        "ativa",
+
+      criadoEm:
+        serverTimestamp()
+
+    };
+
+
+    const documento =
+      await addDoc(
+        collection(db, "jornadas"),
+        novaJornada
+      );
+
+
+    jornadaAtiva = {
+
+      id:
+        documento.id,
+
+      ...novaJornada
+
+    };
+
+
+    iniciarCronometroJornada();
+
+
+  } catch (erro) {
+
+    console.error(
+      "Erro ao iniciar jornada:",
+      erro
+    );
+
+    alert(
+      "Não foi possível iniciar a jornada."
+    );
+
+  } finally {
+
+    if (botao) {
+      botao.disabled = false;
+    }
+
+  }
+
+}
+
+
+async function encerrarJornadaMMS() {
+
+  if (!jornadaAtiva) {
+
+    alert(
+      "Nenhuma jornada está em andamento."
+    );
+
+    return;
+
+  }
+
+
+  const botao =
+    document.getElementById(
+      "botaoJornada"
+    );
+
+
+  if (botao) {
+    botao.disabled = true;
+  }
+
+
+  try {
+
+    const agora =
+      new Date();
+
+
+    const inicioMs =
+      Number(
+        jornadaAtiva.inicioMs
+      );
+
+
+    const fimMs =
+      agora.getTime();
+
+
+    const duracaoSegundos =
+      Math.max(
+        0,
+        Math.floor(
+          (fimMs - inicioMs) / 1000
+        )
+      );
+
+
+    const duracaoMinutos =
+      Math.round(
+        duracaoSegundos / 60
+      );
+
+
+    await updateDoc(
+      doc(
+        db,
+        "jornadas",
+        jornadaAtiva.id
+      ),
+      {
+
+        fimISO:
+          agora.toISOString(),
+
+        fimMs:
+          fimMs,
+
+        duracaoSegundos:
+          duracaoSegundos,
+
+        duracaoMinutos:
+          duracaoMinutos,
+
+        status:
+          "finalizada",
+
+        atualizadoEm:
+          serverTimestamp()
+
+      }
+    );
+
+
+    pararCronometroJornada();
+
+    jornadaAtiva = null;
+
+    await carregarJornadaMMS();
+
+
+    alert(
+      "✅ Jornada encerrada!"
+    );
+
+
+  } catch (erro) {
+
+    console.error(
+      "Erro ao encerrar jornada:",
+      erro
+    );
+
+    alert(
+      "Não foi possível encerrar a jornada."
+    );
+
+  } finally {
+
+    if (botao) {
+      botao.disabled = false;
+    }
+
+  }
+
+}
+
+
+async function alternarJornadaMMS() {
+
+  if (jornadaAtiva) {
+
+    await encerrarJornadaMMS();
+
+  } else {
+
+    await iniciarJornadaMMS();
+
+  }
+
+}
+
+async function adicionarJornadaManual(data, horaInicio, horaFim) {
+
+  if (!usuarioAtual) {
+    alert("Faça login primeiro.");
+    return;
+  }
+
+  if (!data || !horaInicio || !horaFim) {
+    alert("Preencha a data, o horário de início e o horário de fim.");
+    return;
+  }
+
+  try {
+
+    const inicio = new Date(`${data}T${horaInicio}:00`);
+    const fim = new Date(`${data}T${horaFim}:00`);
+
+    if (fim <= inicio) {
+      alert("O horário de fim precisa ser maior que o horário de início.");
+      return;
+    }
+
+    const inicioMs = inicio.getTime();
+    const fimMs = fim.getTime();
+
+    const duracaoSegundos =
+      Math.floor((fimMs - inicioMs) / 1000);
+
+    const duracaoMinutos =
+      Math.round(duracaoSegundos / 60);
+
+    await addDoc(
+      collection(db, "jornadas"),
+      {
+        uid: usuarioAtual.uid,
+        email: usuarioAtual.email,
+
+        data: data,
+
+        inicioISO: inicio.toISOString(),
+        inicioMs: inicioMs,
+
+        fimISO: fim.toISOString(),
+        fimMs: fimMs,
+
+        duracaoSegundos: duracaoSegundos,
+        duracaoMinutos: duracaoMinutos,
+
+        status: "finalizada",
+
+        origem: "manual",
+
+        criadoEm: serverTimestamp()
+      }
+    );
+
+    await carregarJornadaMMS();
+
+    alert("✅ Período adicionado!");
+
+  } catch (erro) {
+
+    console.error(
+      "Erro ao adicionar jornada manual:",
+      erro
+    );
+
+    alert("Não foi possível adicionar o período.");
+  }
+}
+async function salvarJornadaManualHistorico() {
+
+  const data =
+    document.getElementById(
+      "jornadaManualData"
+    )?.value;
+
+  const inicio =
+    document.getElementById(
+      "jornadaManualInicio"
+    )?.value;
+
+  const fim =
+    document.getElementById(
+      "jornadaManualFim"
+    )?.value;
+
+  if (!data || !inicio || !fim) {
+    alert("Preencha data, início e fim.");
+    return;
+  }
+
+  /*
+    Se NÃO estamos editando,
+    cria normalmente.
+  */
+  if (!jornadaEditandoId) {
+
+    await adicionarJornadaManual(
+      data,
+      inicio,
+      fim
+    );
+
+    return;
+  }
+
+  /*
+    Se estamos editando,
+    atualiza o registro existente.
+  */
+
+  try {
+
+    const inicioData =
+      new Date(
+        `${data}T${inicio}:00`
+      );
+
+    const fimData =
+      new Date(
+        `${data}T${fim}:00`
+      );
+
+    if (fimData <= inicioData) {
+
+      alert(
+        "O horário final precisa ser maior que o inicial."
+      );
+
+      return;
+    }
+
+    const inicioMs =
+      inicioData.getTime();
+
+    const fimMs =
+      fimData.getTime();
+
+    const duracaoSegundos =
+      Math.floor(
+        (fimMs - inicioMs) / 1000
+      );
+
+    const duracaoMinutos =
+      Math.round(
+        duracaoSegundos / 60
+      );
+
+    await updateDoc(
+      doc(
+        db,
+        "jornadas",
+        jornadaEditandoId
+      ),
+      {
+        data: data,
+
+        inicioISO:
+          inicioData.toISOString(),
+
+        inicioMs: inicioMs,
+
+        fimISO:
+          fimData.toISOString(),
+
+        fimMs: fimMs,
+
+        duracaoSegundos:
+          duracaoSegundos,
+
+        duracaoMinutos:
+          duracaoMinutos,
+
+        atualizadoEm:
+          serverTimestamp()
+      }
+    );
+
+    jornadaEditandoId = null;
+
+    await carregarJornadaMMS();
+
+    alert(
+      "✅ Período atualizado!"
+    );
+
+  } catch (erro) {
+
+    console.error(
+      "Erro ao editar jornada:",
+      erro
+    );
+
+    alert(
+      "Não foi possível atualizar o período."
+    );
+
+  }
+}
+
+function atualizarHistoricoJornadas() {
+
+  const container =
+    document.getElementById(
+      "listaJornadasHistorico"
+    );
+
+  if (!container) {
+    return;
+  }
+
+  const jornadasFinalizadas =
+    jornadasFirebase
+      .filter(item =>
+        item.status === "finalizada"
+      )
+      .sort(
+        (a, b) =>
+          Number(b.inicioMs || 0) -
+          Number(a.inicioMs || 0)
+      );
+
+  if (jornadasFinalizadas.length === 0) {
+
+    container.innerHTML = `
+      <p>
+        Nenhum período registrado.
+      </p>
+    `;
+
+    return;
+  }
+
+  /* =============================
+     AGRUPA JORNADAS POR DIA
+     ============================= */
+
+  const dias = {};
+
+  jornadasFinalizadas.forEach(jornada => {
+
+    const data =
+      jornada.data ||
+      obterDataLocalJornada();
+
+    if (!dias[data]) {
+
+      dias[data] = {
+        duracaoSegundos: 0,
+        periodos: []
+      };
+
+    }
+
+    dias[data].duracaoSegundos +=
+      Number(
+        jornada.duracaoSegundos || 0
+      );
+
+    dias[data].periodos.push(
+      jornada
+    );
+
+  });
+
+  const listaDias =
+    Object.entries(dias)
+      .sort(
+        (a, b) =>
+          b[0].localeCompare(a[0])
+      )
+      .slice(0, 3);
+
+  container.innerHTML =
+    listaDias
+      .map(([data, dados]) => {
+
+        const dataObj =
+          new Date(
+            `${data}T00:00:00`
+          );
+
+        const dataTexto =
+          dataObj.toLocaleDateString(
+            "pt-BR"
+          );
+
+        const totalMinutos =
+  Math.floor(
+    dados.duracaoSegundos / 60
+  );
+
+const horas =
+  Math.floor(
+    totalMinutos / 60
+  );
+
+const minutos =
+  totalMinutos % 60;
+
+const duracaoTotal =
+  `${horas}h ${String(minutos).padStart(2, "0")}min`;
+
+  const faturamentoDia =
+  corridasFirebase
+    .filter(item =>
+      (
+        item.uid === usuarioAtual.uid ||
+        item.email === usuarioAtual.email
+      ) &&
+      item.data === data
+    )
+    .reduce(
+      (soma, item) =>
+        soma + Number(item.valor || 0),
+      0
+    );
+
+const horasTrabalhadas =
+  dados.duracaoSegundos / 3600;
+
+const mediaHora =
+  horasTrabalhadas > 0
+    ? faturamentoDia / horasTrabalhadas
+    : 0;
+
+        const periodosHTML =
+  dados.periodos
+    .map(jornada => {
+
+      const inicio =
+        new Date(
+          Number(
+            jornada.inicioMs
+          )
+        );
+
+      const fim =
+        new Date(
+          Number(
+            jornada.fimMs
+          )
+        );
+
+      const inicioTexto =
+        inicio.toLocaleTimeString(
+          "pt-BR",
+          {
+            hour: "2-digit",
+            minute: "2-digit"
+          }
+        );
+
+      const fimTexto =
+        fim.toLocaleTimeString(
+          "pt-BR",
+          {
+            hour: "2-digit",
+            minute: "2-digit"
+          }
+        );
+
+      const totalMinutosPeriodo =
+        Math.max(
+          0,
+          Math.floor(
+            Number(
+              jornada.duracaoSegundos || 0
+            ) / 60
+          )
+        );
+
+      const horasPeriodo =
+        Math.floor(
+          totalMinutosPeriodo / 60
+        );
+
+      const minutosPeriodo =
+        totalMinutosPeriodo % 60;
+
+      const duracao =
+        horasPeriodo > 0
+          ? `${horasPeriodo}h ${String(minutosPeriodo).padStart(2, "0")}min`
+          : `${Math.max(1, minutosPeriodo)}min`;
+
+      return `
+        <div class="jornada-periodo-linha">
+
+          <div class="jornada-periodo-info">
+
+            <span>
+              🕒 ${inicioTexto}
+              →
+              ${fimTexto}
+            </span>
+
+            <small>
+              ${duracao}
+            </small>
+
+          </div>
+
+          <div class="jornada-periodo-acoes">
+
+            <button
+              type="button"
+              class="jornada-btn-editar"
+              onclick="editarJornadaMMS('${jornada.id}')"
+              title="Editar período"
+            >
+              ✏️
+            </button>
+
+            <button
+              type="button"
+              class="jornada-btn-excluir"
+              onclick="excluirJornadaMMS('${jornada.id}')"
+              title="Excluir período"
+            >
+              🗑️
+            </button>
+
+          </div>
+
+        </div>
+      `;
+
+      })
+    .join("");
+
+  return `
+
+    <details class="jornada-dia-historico">
+
+      <summary>
+
+        <div>
+
+          <strong>
+            📅 ${dataTexto}
+          </strong>
+
+          <small>
+            ⏱ ${duracaoTotal}
+          </small>
+
+        </div>
+
+        <div>
+
+          <strong>
+            ⚡ ${formatarMoeda(mediaHora)}/h
+          </strong>
+
+          <small>
+            💰 ${formatarMoeda(faturamentoDia)}
+          </small>
+
+        </div>
+
+      </summary>
+
+      <div class="jornada-periodos-dia">
+
+        ${periodosHTML}
+
+      </div>
+
+    </details>
+
+  `;
+
+})
+.join("");
+
+}
+
+async function excluirJornadaMMS(id) {
+
+  const confirmar =
+    confirm(
+      "Deseja excluir este período da jornada?"
+    );
+
+  if (!confirmar) {
+    return;
+  }
+
+  try {
+
+    await deleteDoc(
+      doc(db, "jornadas", id)
+    );
+
+    await carregarJornadaMMS();
+
+  } catch (erro) {
+
+    console.error(
+      "Erro ao excluir jornada:",
+      erro
+    );
+
+    alert(
+      "Não foi possível excluir o período."
+    );
+
+  }
+}
+
+function editarJornadaMMS(id) {
+
+  jornadaEditandoId = id;
+
+  const jornada =
+    jornadasFirebase.find(
+      item => item.id === id
+    );
+
+  if (!jornada) {
+    return;
+  }
+
+  const data =
+    jornada.data;
+
+  const inicio =
+    new Date(
+      Number(jornada.inicioMs)
+    );
+
+  const fim =
+    new Date(
+      Number(jornada.fimMs)
+    );
+
+  const horaInicio =
+    `${String(inicio.getHours()).padStart(2, "0")}:` +
+    `${String(inicio.getMinutes()).padStart(2, "0")}`;
+
+  const horaFim =
+    `${String(fim.getHours()).padStart(2, "0")}:` +
+    `${String(fim.getMinutes()).padStart(2, "0")}`;
+
+  const campoData =
+    document.getElementById(
+      "jornadaManualData"
+    );
+
+  const campoInicio =
+    document.getElementById(
+      "jornadaManualInicio"
+    );
+
+  const campoFim =
+    document.getElementById(
+      "jornadaManualFim"
+    );
+
+  if (campoData) {
+    campoData.value = data;
+  }
+
+  if (campoInicio) {
+    campoInicio.value = horaInicio;
+  }
+
+  if (campoFim) {
+    campoFim.value = horaFim;
+  }
+  const detalhesFormulario =
+  document.querySelector(
+    ".jornada-adicionar-detalhes"
+  );
+
+if (detalhesFormulario) {
+  detalhesFormulario.open = true;
+
+  detalhesFormulario.scrollIntoView({
+    behavior: "smooth",
+    block: "center"
+  });
+}
+
+ 
+}
+
 function abrirTela(id) {
 
   if (id === "adminTela" && !usuarioEhAdmin()) {
@@ -1195,6 +2314,18 @@ function abrirTela(id) {
   if (tela) {
     tela.classList.add("ativa");
   }
+
+  /* =========================
+     HOME
+     ========================= */
+
+  if (id === "home") {
+    carregarJornadaMMS();
+  }
+
+  /* =========================
+     METAS
+     ========================= */
 
   if (id === "metasTela") {
     carregarGastosFirebase();
@@ -1220,29 +2351,30 @@ function abrirTela(id) {
   }
 
   if (id === "historicoTela") {
-    carregarGastosFirebase();
-    atualizarHistoricoMensalCards();
-  }
+  carregarGastosFirebase();
+  atualizarHistoricoMensalCards();
+  carregarJornadaMMS();
+}
 
-  if (id === "minhasTela") {
-    atualizarMinhasCorridas();
-  }
+if (id === "minhasTela") {
+  atualizarMinhasCorridas();
+}
 
-  if (id === "rankingTela") {
-    atualizarRankingMetas();
-  }
+if (id === "rankingTela") {
+  atualizarRankingMetas();
+}
 
-  if (id === "grupoTela") {
-    carregarGrupo();
-  }
+if (id === "grupoTela") {
+  carregarGrupo();
+}
 
-  if (id === "gastosTela") {
-    carregarGastosFirebase();
-  }
+if (id === "gastosTela") {
+  carregarGastosFirebase();
+}
 
-  if (id === "desafiosTela") {
-    atualizarMetricas();
-  }
+if (id === "desafiosTela") {
+  atualizarMetricas();
+}
 
 }
 
@@ -8274,12 +9406,16 @@ window.carregarGastosFirebase =carregarGastosFirebase;
 window.recuperarSenha = recuperarSenha;
 window.salvarMetaGastos = salvarMetaGastos; 
 window.pesquisarPeriodoHistorico = pesquisarPeriodoHistorico;
+window.alternarJornadaMMS = alternarJornadaMMS;
+window.alternarJornadaMMS = alternarJornadaMMS;
+window.adicionarJornadaManual = adicionarJornadaManual;
+window.salvarJornadaManualHistorico =
+  salvarJornadaManualHistorico;
+
 window.mudarSemanaGrafico =
   function(direcao) {
 
-    offsetSemanaGrafico +=
-      direcao;
-
+    offsetSemanaGrafico += direcao;
 
     /*
       Nunca permite ir
@@ -8290,7 +9426,10 @@ window.mudarSemanaGrafico =
       offsetSemanaGrafico = 0;
     }
 
-
     carregarSemanaGrafico();
-
   };
+  window.editarJornadaMMS =
+  editarJornadaMMS;
+
+window.excluirJornadaMMS =
+  excluirJornadaMMS;
