@@ -68,6 +68,7 @@ let editandoId = null;
 let pararSincronia = null;
 let editandoGastoId = null;
 let periodoGastosAtual = "mes";
+let historicoGastosExpandido = false;
 
 /* =====================================================
    JORNADA MMS
@@ -9099,15 +9100,22 @@ if (listaGastos) {
 
     // ORDENA AS DATAS DA MAIS RECENTE PARA A MAIS ANTIGA
     let datasOrdenadas =
-      Object.keys(gastosPorDia)
-        .sort((a, b) =>
-          new Date(b + "T00:00:00") -
-          new Date(a + "T00:00:00")
-        );
+  Object.keys(gastosPorDia)
+    .sort((a, b) =>
+      new Date(b + "T00:00:00") -
+      new Date(a + "T00:00:00")
+    );
 
 
-    listaGastos.innerHTML =
-      datasOrdenadas.map(data => {
+// MOSTRA 3 DIAS OU O HISTÓRICO COMPLETO
+let datasVisiveis =
+  historicoGastosExpandido
+    ? datasOrdenadas
+    : datasOrdenadas.slice(0, 3);
+
+
+listaGastos.innerHTML =
+  datasVisiveis.map(data => {
 
         let gastosDia =
           gastosPorDia[data];
@@ -9165,8 +9173,8 @@ if (listaGastos) {
               </div>
             `;
 
-          })
-          .join("");
+               })
+      .join("");
 
 
         return `
@@ -9194,7 +9202,6 @@ if (listaGastos) {
 
             </div>
 
-
             <div class="gasto-dia-lista">
               ${itensDia}
             </div>
@@ -9205,9 +9212,37 @@ if (listaGastos) {
       })
       .join("");
 
-  }
 
+    // BOTÃO PARA EXPANDIR O HISTÓRICO
+    if (datasOrdenadas.length > 3) {
+
+      listaGastos.innerHTML += `
+        <button
+          type="button"
+          class="btn-historico-gastos"
+          onclick="alternarHistoricoGastos()"
+        >
+          ${
+            historicoGastosExpandido
+              ? "▲ Mostrar somente recentes"
+              : "▼ Ver histórico completo"
+          }
+        </button>
+      `;
+
+    }
+
+  }
 }
+}
+
+function alternarHistoricoGastos() {
+
+  historicoGastosExpandido =
+    !historicoGastosExpandido;
+
+  atualizarGastos();
+
 }
 function salvarMetaGastos() {
 
@@ -9433,3 +9468,5 @@ window.mudarSemanaGrafico =
 
 window.excluirJornadaMMS =
   excluirJornadaMMS;
+  window.alternarHistoricoGastos =
+  alternarHistoricoGastos;
