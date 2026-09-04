@@ -7332,3 +7332,45 @@ background:linear-gradient(
   border-radius: 6px;
   font-size: 11px;
 }
+.gasto-dia-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.gasto-dia-info small {
+  margin-top: 2px;
+}
+
+.gasto-dia-direita {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.gasto-dia-valor {
+  white-space: nowrap;
+}
+
+.gasto-dia-acoes {
+  display: flex;
+  gap: 4px;
+}
+
+.gasto-btn-editar,
+.gasto-btn-excluir {
+  width: 26px;
+  height: 26px;
+  min-width: 26px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.gasto-btn-editar:hover,
+.gasto-btn-excluir:hover {
+  background: rgba(255, 255, 255, 0.10);
+}

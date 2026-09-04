@@ -20,7 +20,9 @@ import {
   updateDoc,
   setDoc,
   getDoc,
-  serverTimestamp
+  serverTimestamp,
+  query,
+  where
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 const firebaseConfig = {
   apiKey: "AIzaSyBrfxwL7BCUQSInVnP7Mx4jnmhNFazABfE",
@@ -8519,33 +8521,29 @@ async function carregarGastosFirebase() {
 
   try {
 
-    let snapshot = await getDocs(
-      collection(db, "gastos")
+    const consultaGastos = query(
+      collection(db, "gastos"),
+      where("uid", "==", usuarioAtual.uid)
+    );
+
+    const snapshot = await getDocs(
+      consultaGastos
     );
 
     gastosFirebase = [];
 
     snapshot.forEach(docSnap => {
 
-      let gasto = docSnap.data();
-
-      if (
-        gasto.uid === usuarioAtual.uid ||
-        gasto.email === usuarioAtual.email
-      ) {
+      const gasto = docSnap.data();
 
       gastosFirebase.push({
-  id: docSnap.id,
-  ...gasto
-});
-
-      }
+        id: docSnap.id,
+        ...gasto
+      });
 
     });
 
     atualizarGastos();
-    atualizarMetaReal();
-atualizarMetaInteligente();
 
   } catch (erro) {
 
@@ -9151,27 +9149,53 @@ listaGastos.innerHTML =
               nomeCategoria = "📦 Outros";
 
 
-            return `
-              <div class="gasto-dia-item">
+      return `
+  <div class="gasto-dia-item">
 
-                <div>
-                  <strong>
-                    ${nomeCategoria}
-                  </strong>
+    <div class="gasto-dia-info">
+      <strong>
+        ${nomeCategoria}
+      </strong>
 
-                  ${
-                    gasto.descricao
-                      ? `<small>${gasto.descricao}</small>`
-                      : ""
-                  }
-                </div>
+      ${
+        gasto.descricao
+          ? `<small>${gasto.descricao}</small>`
+          : ""
+      }
+    </div>
 
-                <span>
-                  ${formatarMoeda(gasto.valor || 0)}
-                </span>
+    <div class="gasto-dia-direita">
 
-              </div>
-            `;
+      <span class="gasto-dia-valor">
+        ${formatarMoeda(gasto.valor || 0)}
+      </span>
+
+      <div class="gasto-dia-acoes">
+
+        <button
+          type="button"
+          class="gasto-btn-editar"
+          onclick="editarGasto('${gasto.id}')"
+          title="Editar gasto"
+        >
+          ✏️
+        </button>
+
+        <button
+          type="button"
+          class="gasto-btn-excluir"
+          onclick="excluirGasto('${gasto.id}')"
+          title="Excluir gasto"
+        >
+          🗑️
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+`;
 
                })
       .join("");
