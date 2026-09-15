@@ -8518,6 +8518,7 @@ async function excluirGasto(id) {
 }
 async function carregarGastosFirebase() {
   if (!usuarioAtual) return;
+  
 
   try {
 
@@ -8585,13 +8586,29 @@ function atualizarGastos() {
   });
  
 
-  let totais = {
-    combustivel: 0,
-    manutencao: 0,
-    alimentacao: 0,
-    lavagem: 0,
-    outros: 0
-  };
+let totais = {
+  combustivel: 0,
+  manutencao: 0,
+  alimentacao: 0,
+  lavagem: 0,
+  parcela: 0,
+  aluguel: 0,
+  ipva: 0,
+  seguro: 0,
+  outros: 0
+};
+
+const nomesCategoriasGastos = {
+  combustivel: "⛽ Combustível",
+  manutencao: "🔧 Manutenção",
+  alimentacao: "🍔 Alimentação",
+  lavagem: "🧽 Lavagem",
+  parcela: "🚗 Parcela do carro",
+  aluguel: "🔑 Aluguel do carro",
+  ipva: "🧾 IPVA / Licenciamento",
+  seguro: "🛡️ Seguro",
+  outros: "📦 Outros"
+};
 
   gastosFiltrados.forEach(gasto => {
     if (totais[gasto.categoria] !== undefined) {
@@ -8599,23 +8616,17 @@ function atualizarGastos() {
     }
   });
 
-  let totalGastos =
-    totais.combustivel +
-    totais.manutencao +
-    totais.alimentacao +
-    totais.lavagem +
-    totais.outros;
+ let totalGastos =
+  Object.values(totais).reduce(
+    (soma, valor) => soma + valor,
+    0
+  );
 
     let rankingCategorias = Object.entries(totais)
   .map(([categoria, valor]) => {
-    let nome = categoria;
-
-    if (categoria === "combustivel") nome = "⛽ Combustível";
-    if (categoria === "manutencao") nome = "🔧 Manutenção";
-    if (categoria === "alimentacao") nome = "🍔 Alimentação";
-    if (categoria === "lavagem") nome = "🧽 Lavagem";
-    if (categoria === "outros") nome = "📦 Outros";
-
+    let nome =
+  nomesCategoriasGastos[categoria] ||
+  categoria;
     let percentual =
       totalGastos > 0
         ? Math.round((valor / totalGastos) * 100)
@@ -8628,33 +8639,24 @@ function atualizarGastos() {
     };
   })
   .sort((a, b) => b.valor - a.valor);
+let maiorValor = 0;
+let maiorCategoria = "Nenhum";
+  Object.entries(totais).forEach(
+  ([categoria, valor]) => {
 
-  let maiorValor = 0;
-  let maiorCategoria = "Nenhum";
-
-  Object.entries(totais).forEach(([categoria, valor]) => {
     if (valor > maiorValor) {
+
       maiorValor = valor;
 
-      switch (categoria) {
-        case "combustivel":
-          maiorCategoria = "⛽ Combustível";
-          break;
-        case "manutencao":
-          maiorCategoria = "🔧 Manutenção";
-          break;
-        case "alimentacao":
-          maiorCategoria = "🍔 Alimentação";
-          break;
-        case "lavagem":
-          maiorCategoria = "🧽 Lavagem";
-          break;
-        case "outros":
-          maiorCategoria = "📦 Outros";
-          break;
-      }
+      maiorCategoria =
+        nomesCategoriasGastos[categoria] ||
+        categoria;
     }
-  });
+
+  }
+);
+
+ 
 
 
   let gastoCombustivel = document.getElementById("gastoCombustivel");
@@ -9131,22 +9133,8 @@ listaGastos.innerHTML =
           gastosDia.map(gasto => {
 
             let nomeCategoria =
-              gasto.categoria;
-
-            if (gasto.categoria === "combustivel")
-              nomeCategoria = "⛽ Combustível";
-
-            if (gasto.categoria === "manutencao")
-              nomeCategoria = "🔧 Manutenção";
-
-            if (gasto.categoria === "alimentacao")
-              nomeCategoria = "🍔 Alimentação";
-
-            if (gasto.categoria === "lavagem")
-              nomeCategoria = "🧽 Lavagem";
-
-            if (gasto.categoria === "outros")
-              nomeCategoria = "📦 Outros";
+  nomesCategoriasGastos[gasto.categoria] ||
+  gasto.categoria;
 
 
       return `
