@@ -7374,3 +7374,348 @@ background:linear-gradient(
 .gasto-btn-excluir:hover {
   background: rgba(255, 255, 255, 0.10);
 }
+/* ==================================================
+   CUSTOS FIXOS DO VEÍCULO
+================================================== */
+
+.custos-fixos-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 145, 35, 0.22);
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(255, 133, 27, 0.10),
+      transparent 38%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(34, 30, 27, 0.98),
+      rgba(18, 17, 16, 0.98)
+    );
+}
+
+/* Cabeçalho */
+
+.custos-fixos-topo {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.custos-fixos-topo > div {
+  min-width: 0;
+}
+
+.custos-fixos-topo small {
+  display: block;
+  margin-bottom: 4px;
+  color: #ff9b3d;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.7px;
+}
+
+.custos-fixos-topo h2 {
+  margin: 0;
+  font-size: 19px;
+  line-height: 1.2;
+  color: #ffffff;
+}
+
+.custos-fixos-selo {
+  flex-shrink: 0;
+  padding: 5px 9px;
+  border: 1px solid rgba(255, 145, 35, 0.30);
+  border-radius: 20px;
+  background: rgba(255, 132, 25, 0.10);
+  color: #ffad5c;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+/* Descrição */
+
+.custos-fixos-descricao {
+  margin: 0 0 14px;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+/* Estado vazio */
+
+.custos-fixos-vazio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  min-height: 105px;
+  margin-bottom: 14px;
+  padding: 15px;
+
+  border: 1px dashed rgba(255, 145, 35, 0.22);
+  border-radius: 13px;
+
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.custos-fixos-vazio > span {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 23px;
+}
+
+.custos-fixos-vazio strong {
+  margin-bottom: 4px;
+  color: rgba(255, 255, 255, 0.90);
+  font-size: 12px;
+}
+
+.custos-fixos-vazio small {
+  max-width: 260px;
+  color: rgba(255, 255, 255, 0.48);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+/* Botão adicionar */
+
+.btn-adicionar-custo-fixo {
+  width: 100%;
+  min-height: 43px;
+  border: 0;
+  border-radius: 12px;
+
+  background: linear-gradient(
+    90deg,
+    #ff7a18,
+    #ffad42
+  );
+
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 6px 18px rgba(255, 122, 24, 0.16);
+}
+
+.btn-adicionar-custo-fixo:active {
+  transform: scale(0.98);
+}
+
+
+/* ==================================================
+   FORMULÁRIO DE CUSTO FIXO
+================================================== */
+
+.formulario-custo-fixo-card {
+  border: 1px solid rgba(255, 145, 35, 0.22);
+  background: linear-gradient(
+    145deg,
+    rgba(35, 31, 28, 0.99),
+    rgba(18, 17, 16, 0.99)
+  );
+}
+
+.form-custo-fixo-titulo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding-bottom: 10px;
+  margin-bottom: 14px;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.form-custo-fixo-titulo h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.btn-fechar-custo-fixo {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 8px;
+
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.65);
+
+  cursor: pointer;
+}
+
+.formulario-custo-fixo-card label {
+  display: block;
+  margin: 12px 0 5px;
+
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.formulario-custo-fixo-card input,
+.formulario-custo-fixo-card select {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 42px;
+
+  padding: 9px 11px;
+
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 10px;
+
+  background: rgba(0, 0, 0, 0.24);
+  color: #ffffff;
+
+  outline: none;
+}
+
+.formulario-custo-fixo-card input:focus,
+.formulario-custo-fixo-card select:focus {
+  border-color: rgba(255, 145, 35, 0.65);
+  box-shadow: 0 0 0 2px rgba(255, 145, 35, 0.08);
+}
+
+/* Parcela atual / total */
+
+.custo-fixo-parcelas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+}
+
+.custo-fixo-ajuda {
+  display: block;
+  margin: 8px 0 14px;
+
+  color: rgba(255, 255, 255, 0.42);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.btn-salvar-custo-fixo {
+  width: 100%;
+  min-height: 43px;
+
+  border: 0;
+  border-radius: 11px;
+
+  background: linear-gradient(
+    90deg,
+    #ff7a18,
+    #ffad42
+  );
+
+  color: #ffffff;
+  font-weight: 800;
+
+  cursor: pointer;
+}
+/* =========================================
+   CUSTOS FIXOS - ITENS E AÇÕES
+========================================= */
+
+.custo-fixo-item {
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.custo-fixo-item:last-child {
+  border-bottom: none;
+}
+
+.custo-fixo-item-topo {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.custo-fixo-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.custo-fixo-item-info strong {
+  font-size: 14px;
+  color: #fff;
+}
+
+.custo-fixo-item-info small {
+  font-size: 11px;
+  color: #aaa;
+}
+
+.custo-fixo-item-acoes {
+  display: flex;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+/* Sobrescreve o estilo global dos botões */
+.custo-fixo-item-acoes .custo-fixo-btn-editar,
+.custo-fixo-item-acoes .custo-fixo-btn-excluir {
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  max-width: 28px;
+
+  padding: 0;
+  margin: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 7px;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+
+  background: rgba(255, 255, 255, 0.05);
+
+  font-size: 12px;
+  line-height: 1;
+
+  cursor: pointer;
+  box-shadow: none;
+}
+
+.custo-fixo-item-acoes .custo-fixo-btn-editar:hover,
+.custo-fixo-item-acoes .custo-fixo-btn-excluir:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: none;
+}
+
+.custo-fixo-item-dados {
+  margin-top: 8px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.custo-fixo-item-dados strong {
+  color: #ff9b2f;
+  font-size: 14px;
+}
+
+.custo-fixo-item-dados span {
+  color: #bbb;
+  font-size: 11px;
+  white-space: nowrap;
+}

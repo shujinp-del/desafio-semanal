@@ -856,6 +856,175 @@
     </div>
   </div>
 </div>
+<!-- CUSTOS FIXOS DO VEÍCULO -->
+<div class="card custos-fixos-card">
+
+  <div class="custos-fixos-topo">
+    <div>
+      <small>🚘 FINANCEIRO DO VEÍCULO</small>
+      <h2>📌 Custos Fixos</h2>
+    </div>
+
+    <span class="custos-fixos-selo">
+      Mensal
+    </span>
+  </div>
+
+  <p class="custos-fixos-descricao">
+    Acompanhe parcelas, aluguel, seguro,
+    impostos e outros compromissos do veículo.
+  </p>
+
+  <div id="listaCustosFixos">
+
+    <div class="custos-fixos-vazio">
+      <span>📋</span>
+
+      <strong>
+        Nenhum custo fixo cadastrado
+      </strong>
+
+      <small>
+        Cadastre seus compromissos para
+        acompanhar o custo real do veículo.
+      </small>
+    </div>
+
+  </div>
+
+  <button
+    type="button"
+    class="btn-adicionar-custo-fixo"
+    onclick="abrirFormularioCustoFixo()"
+  >
+    ＋ Adicionar custo fixo
+  </button>
+
+</div>
+
+
+<!-- FORMULÁRIO DE CUSTO FIXO -->
+<div
+  class="card formulario-custo-fixo-card"
+  id="formularioCustoFixo"
+  style="display:none;"
+>
+
+  <div class="form-custo-fixo-titulo">
+    <h2>📌 Novo Custo Fixo</h2>
+
+    <button
+      type="button"
+      class="btn-fechar-custo-fixo"
+      onclick="fecharFormularioCustoFixo()"
+    >
+      ✕
+    </button>
+  </div>
+
+  <label for="tipoCustoFixo">
+    Tipo de custo
+  </label>
+
+  <select id="tipoCustoFixo">
+    <option value="parcela">
+      🚗 Parcela do carro
+    </option>
+
+    <option value="aluguel">
+      🔑 Aluguel do carro
+    </option>
+
+    <option value="seguro">
+      🛡️ Seguro
+    </option>
+
+    <option value="ipva">
+      🧾 IPVA / Licenciamento
+    </option>
+
+    <option value="outro">
+      📦 Outro custo fixo
+    </option>
+  </select>
+
+  <label for="nomeCustoFixo">
+    Nome / descrição
+  </label>
+
+  <input
+    id="nomeCustoFixo"
+    type="text"
+    placeholder="Ex: Financiamento do Onix"
+  >
+
+  <label for="valorCustoFixo">
+    Valor padrão
+  </label>
+
+  <input
+    id="valorCustoFixo"
+    type="number"
+    step="0.01"
+    placeholder="R$ 0,00"
+  >
+
+  <label for="vencimentoCustoFixo">
+    Dia do vencimento
+  </label>
+
+  <input
+    id="vencimentoCustoFixo"
+    type="number"
+    min="1"
+    max="31"
+    placeholder="Ex: 10"
+  >
+
+  <div class="custo-fixo-parcelas">
+
+    <div>
+      <label for="parcelaAtualCustoFixo">
+        Parcela atual
+      </label>
+
+      <input
+        id="parcelaAtualCustoFixo"
+        type="number"
+        min="1"
+        placeholder="Ex: 18"
+      >
+    </div>
+
+    <div>
+      <label for="totalParcelasCustoFixo">
+        Total de parcelas
+      </label>
+
+      <input
+        id="totalParcelasCustoFixo"
+        type="number"
+        min="1"
+        placeholder="Ex: 48"
+      >
+    </div>
+
+  </div>
+
+  <small class="custo-fixo-ajuda">
+    Para custos sem parcelas, deixe os campos
+    de parcelas em branco.
+  </small>
+
+  <button
+    type="button"
+    class="btn-salvar-custo-fixo"
+    onclick="salvarCustoFixo()"
+  >
+    💾 Salvar custo fixo
+  </button>
+
+</div>
 
   <div class="card adicionar-gasto-card">
   <button onclick="abrirFormularioGasto()">

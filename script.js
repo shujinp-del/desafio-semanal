@@ -2373,6 +2373,7 @@ if (id === "grupoTela") {
 
 if (id === "gastosTela") {
   carregarGastosFirebase();
+  carregarCustosFixos();
 }
 
 if (id === "desafiosTela") {
@@ -8555,6 +8556,416 @@ async function carregarGastosFirebase() {
 
   }
 }
+
+function abrirFormularioCustoFixo() {
+  const formulario =
+    document.getElementById("formularioCustoFixo");
+
+  if (!formulario) return;
+
+  formulario.style.display = "block";
+
+  formulario.scrollIntoView({
+    behavior: "smooth",
+    block: "center"
+  });
+}
+
+
+function fecharFormularioCustoFixo() {
+  const formulario =
+    document.getElementById("formularioCustoFixo");
+
+  if (!formulario) return;
+
+  formulario.style.display = "none";
+}
+
+
+window.abrirFormularioCustoFixo =
+  abrirFormularioCustoFixo;
+
+window.fecharFormularioCustoFixo =
+  fecharFormularioCustoFixo;
+
+  let custosFixosFirebase = [];
+let custoFixoEditandoId = null;
+
+async function carregarCustosFixos() {
+
+  if (!usuarioAtual) return;
+
+  try {
+
+    const consultaCustos = query(
+      collection(db, "custosFixos"),
+      where("uid", "==", usuarioAtual.uid)
+    );
+
+    const snapshot = await getDocs(
+      consultaCustos
+    );
+
+    custosFixosFirebase = [];
+
+    snapshot.forEach(docSnap => {
+
+      const custo = docSnap.data();
+
+      custosFixosFirebase.push({
+        id: docSnap.id,
+        ...custo
+      });
+
+    });
+
+    atualizarCardCustosFixos();
+
+  } catch (erro) {
+
+    console.error(
+      "Erro ao carregar custos fixos:",
+      erro
+    );
+
+  }
+}
+
+
+function atualizarCardCustosFixos() {
+
+  const lista =
+    document.getElementById("listaCustosFixos");
+
+  if (!lista) return;
+
+  const ativos = custosFixosFirebase.filter(
+    custo => custo.ativo !== false
+  );
+
+  if (ativos.length === 0) {
+
+    lista.innerHTML = `
+      <div class="custos-fixos-vazio">
+        <span>📋</span>
+
+        <strong>
+          Nenhum custo fixo cadastrado
+        </strong>
+
+        <small>
+          Cadastre seus compromissos para
+          acompanhar o custo real do veículo.
+        </small>
+      </div>
+    `;
+
+    return;
+  }
+
+  lista.innerHTML = ativos.map(custo => {
+
+    let icone = "📦";
+
+    if (custo.tipo === "parcela") icone = "🚗";
+    if (custo.tipo === "aluguel") icone = "🔑";
+    if (custo.tipo === "seguro") icone = "🛡️";
+    if (custo.tipo === "ipva") icone = "🧾";
+
+    let textoParcela = "";
+
+    if (custo.parcelaAtual && custo.totalParcelas) {
+      textoParcela =
+        `Parcela ${custo.parcelaAtual} de ${custo.totalParcelas}`;
+    }
+
+    return `
+      <div class="custo-fixo-item">
+
+        <div class="custo-fixo-item-topo">
+
+          <div class="custo-fixo-item-info">
+
+            <strong>
+              ${icone} ${custo.nome}
+            </strong>
+
+            ${
+              textoParcela
+                ? `<small>${textoParcela}</small>`
+                : ""
+            }
+
+          </div>
+
+          <div class="custo-fixo-item-acoes">
+
+            <button
+              type="button"
+              class="custo-fixo-btn-editar"
+              onclick="editarCustoFixo('${custo.id}')"
+              title="Editar custo fixo"
+            >
+              ✏️
+            </button>
+
+            <button
+              type="button"
+              class="custo-fixo-btn-excluir"
+              onclick="excluirCustoFixo('${custo.id}')"
+              title="Excluir custo fixo"
+            >
+              🗑️
+            </button>
+
+          </div>
+
+        </div>
+
+        <div class="custo-fixo-item-dados">
+
+          <strong>
+            ${formatarMoeda(custo.valorPadrao || 0)}
+          </strong>
+
+          <span>
+            📅 Vence dia ${String(
+              custo.diaVencimento
+            ).padStart(2, "0")}
+          </span>
+
+        </div>
+
+      </div>
+    `;
+
+  }).join("");
+}
+async function excluirCustoFixo(id) {
+
+  const confirmar = confirm(
+    "Deseja excluir este custo fixo?"
+  );
+
+  if (!confirmar) return;
+
+  try {
+
+    await deleteDoc(
+      doc(db, "custosFixos", id)
+    );
+
+    await carregarCustosFixos();
+
+    alert("🗑️ Custo fixo excluído!");
+
+  } catch (erro) {
+
+    console.error(
+      "Erro ao excluir custo fixo:",
+      erro
+    );
+
+    alert(
+      "Não foi possível excluir o custo fixo."
+    );
+
+  }
+}
+
+
+function editarCustoFixo(id) {
+
+  const custo = custosFixosFirebase.find(
+  item => item.id === id
+);
+
+if (!custo) return;
+
+custoFixoEditandoId = id;
+
+document.getElementById("tipoCustoFixo").value =
+  custo.tipo || "outro";
+
+  document.getElementById("tipoCustoFixo").value =
+    custo.tipo || "outro";
+
+  document.getElementById("nomeCustoFixo").value =
+    custo.nome || "";
+
+  document.getElementById("valorCustoFixo").value =
+    custo.valorPadrao || "";
+
+  document.getElementById("vencimentoCustoFixo").value =
+    custo.diaVencimento || "";
+
+  document.getElementById("parcelaAtualCustoFixo").value =
+    custo.parcelaAtual || "";
+
+  document.getElementById("totalParcelasCustoFixo").value =
+    custo.totalParcelas || "";
+
+  abrirFormularioCustoFixo();
+
+  document
+    .getElementById("formularioCustoFixo")
+    ?.scrollIntoView({
+      behavior: "smooth",
+      block: "center"
+    });
+}
+  async function salvarCustoFixo() {
+
+  if (!usuarioAtual) {
+    alert("Faça login primeiro.");
+    return;
+  }
+
+  const tipo =
+    document.getElementById("tipoCustoFixo").value;
+
+  const nome =
+    document.getElementById("nomeCustoFixo").value.trim();
+
+  const valor =
+    Number(document.getElementById("valorCustoFixo").value);
+
+  const diaVencimento =
+    Number(document.getElementById("vencimentoCustoFixo").value);
+
+  const parcelaAtualInput =
+    document.getElementById("parcelaAtualCustoFixo").value;
+
+  const totalParcelasInput =
+    document.getElementById("totalParcelasCustoFixo").value;
+
+
+  if (!nome) {
+    alert("Informe o nome ou descrição do custo.");
+    return;
+  }
+
+  if (!valor || valor <= 0) {
+    alert("Informe um valor válido.");
+    return;
+  }
+
+  if (
+    !diaVencimento ||
+    diaVencimento < 1 ||
+    diaVencimento > 31
+  ) {
+    alert("Informe um dia de vencimento entre 1 e 31.");
+    return;
+  }
+
+
+  const parcelaAtual =
+    parcelaAtualInput
+      ? Number(parcelaAtualInput)
+      : null;
+
+  const totalParcelas =
+    totalParcelasInput
+      ? Number(totalParcelasInput)
+      : null;
+
+
+  if (
+    parcelaAtual &&
+    totalParcelas &&
+    parcelaAtual > totalParcelas
+  ) {
+    alert("A parcela atual não pode ser maior que o total.");
+    return;
+  }
+
+
+  try {
+
+    const dadosCusto = {
+      uid: usuarioAtual.uid,
+      email: usuarioAtual.email,
+
+      tipo,
+      nome,
+
+      valorPadrao: valor,
+      diaVencimento,
+
+      parcelaAtual,
+      totalParcelas,
+
+      ativo: true
+    };
+
+
+    // EDITANDO UM CUSTO EXISTENTE
+    if (custoFixoEditandoId) {
+
+      await updateDoc(
+        doc(
+          db,
+          "custosFixos",
+          custoFixoEditandoId
+        ),
+        {
+          ...dadosCusto,
+          atualizadoEm: serverTimestamp()
+        }
+      );
+
+    } else {
+
+      // CRIANDO UM NOVO CUSTO
+      await addDoc(
+        collection(db, "custosFixos"),
+        {
+          ...dadosCusto,
+          criadoEm: serverTimestamp()
+        }
+      );
+
+    }
+
+
+    document.getElementById("nomeCustoFixo").value = "";
+    document.getElementById("valorCustoFixo").value = "";
+    document.getElementById("vencimentoCustoFixo").value = "";
+    document.getElementById("parcelaAtualCustoFixo").value = "";
+    document.getElementById("totalParcelasCustoFixo").value = "";
+
+
+    const estavaEditando =
+      custoFixoEditandoId !== null;
+
+    custoFixoEditandoId = null;
+
+
+    fecharFormularioCustoFixo();
+
+    await carregarCustosFixos();
+
+
+    if (estavaEditando) {
+      alert("✅ Custo fixo atualizado!");
+    } else {
+      alert("✅ Custo fixo cadastrado!");
+    }
+
+  } catch (erro) {
+
+    console.error(
+      "Erro ao salvar custo fixo:",
+      erro
+    );
+
+    alert(
+      "Não foi possível salvar o custo fixo."
+    );
+
+  }
+}
 function atualizarGastos() {
   let gastos = gastosFirebase || [];
 
@@ -9482,3 +9893,20 @@ window.excluirJornadaMMS =
   excluirJornadaMMS;
   window.alternarHistoricoGastos =
   alternarHistoricoGastos;
+  window.salvarCustoFixo = salvarCustoFixo
+  window.editarCustoFixo = editarCustoFixo;
+window.excluirCustoFixo = excluirCustoFixo;
+window.abrirFormularioCustoFixo =
+  abrirFormularioCustoFixo;
+
+window.fecharFormularioCustoFixo =
+  fecharFormularioCustoFixo;
+
+window.salvarCustoFixo =
+  salvarCustoFixo;
+
+window.editarCustoFixo =
+  editarCustoFixo;
+
+window.excluirCustoFixo =
+  excluirCustoFixo;
