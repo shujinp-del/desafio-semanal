@@ -9416,10 +9416,7 @@ let totais = {
   manutencao: 0,
   alimentacao: 0,
   lavagem: 0,
-  parcela: 0,
-  aluguel: 0,
-  ipva: 0,
-  seguro: 0,
+  pedagio: 0,
   outros: 0
 };
 
@@ -9428,10 +9425,7 @@ const nomesCategoriasGastos = {
   manutencao: "🔧 Manutenção",
   alimentacao: "🍔 Alimentação",
   lavagem: "🧽 Lavagem",
-  parcela: "🚗 Parcela do carro",
-  aluguel: "🔑 Aluguel do carro",
-  ipva: "🧾 IPVA / Licenciamento",
-  seguro: "🛡️ Seguro",
+  pedagio: "🛣️ Pedágio",
   outros: "📦 Outros"
 };
 
@@ -9489,6 +9483,7 @@ let maiorCategoria = "Nenhum";
   let gastoManutencao = document.getElementById("gastoManutencao");
   let gastoAlimentacao = document.getElementById("gastoAlimentacao");
   let gastoLavagem = document.getElementById("gastoLavagem");
+  let gastoPedagio = document.getElementById("gastoPedagio");
   let gastoOutros = document.getElementById("gastoOutros");
   let gastoTotal = document.getElementById("gastoTotal");
   let gastoFaturamento = document.getElementById("gastoFaturamento");
@@ -9503,6 +9498,7 @@ let maiorCategoria = "Nenhum";
   if (gastoManutencao) gastoManutencao.innerText = formatarMoeda(totais.manutencao);
   if (gastoAlimentacao) gastoAlimentacao.innerText = formatarMoeda(totais.alimentacao);
   if (gastoLavagem) gastoLavagem.innerText = formatarMoeda(totais.lavagem);
+  if (gastoPedagio) gastoPedagio.innerText = formatarMoeda(totais.pedagio);
   if (gastoOutros) gastoOutros.innerText = formatarMoeda(totais.outros);
   if (gastoTotal) gastoTotal.innerText = formatarMoeda(totalGastos);
   if (rankingCategoriasGastos) {
