@@ -8588,8 +8588,9 @@ window.abrirFormularioCustoFixo =
 window.fecharFormularioCustoFixo =
   fecharFormularioCustoFixo;
 
-  let custosFixosFirebase = [];
+ let custosFixosFirebase = [];
 let custoFixoEditandoId = null;
+
 
 async function carregarCustosFixos() {
 
@@ -8632,6 +8633,95 @@ async function carregarCustosFixos() {
 }
 
 
+function obterStatusVencimentoCustoFixo(proximoVencimento) {
+
+  if (!proximoVencimento) {
+    return {
+      classe: "vence-normal",
+      texto: "Data não informada"
+    };
+  }
+
+  const hoje = new Date();
+
+  hoje.setHours(0, 0, 0, 0);
+
+  const partes =
+    proximoVencimento.split("-");
+
+  const vencimento = new Date(
+    Number(partes[0]),
+    Number(partes[1]) - 1,
+    Number(partes[2])
+  );
+
+  vencimento.setHours(0, 0, 0, 0);
+
+  const diferencaMs =
+    vencimento - hoje;
+
+  const dias =
+    Math.round(
+      diferencaMs / 86400000
+    );
+
+
+  if (dias === 0) {
+    return {
+      classe: "vence-hoje",
+      texto: "🔴 Vence hoje"
+    };
+  }
+
+
+  if (dias > 0 && dias <= 3) {
+    return {
+      classe: "vence-proximo",
+      texto:
+        `🟡 Vence em ${dias} ${
+          dias === 1 ? "dia" : "dias"
+        }`
+    };
+  }
+
+
+  if (dias > 3) {
+    return {
+      classe: "vence-normal",
+      texto:
+        `🟢 Vence em ${dias} dias`
+    };
+  }
+
+
+  const diasAtrasado =
+    Math.abs(dias);
+
+  return {
+    classe: "vencido",
+    texto:
+      `⚠️ Vencido há ${diasAtrasado} ${
+        diasAtrasado === 1
+          ? "dia"
+          : "dias"
+      }`
+  };
+}
+
+function formatarDataCustoFixo(data) {
+  if (!data) return "data não informada";
+
+  const partes = data.split("-");
+
+  if (partes.length !== 3) {
+    return data;
+  }
+
+  const [ano, mes, dia] = partes;
+
+  return `${dia}/${mes}/${ano}`;
+}
+
 function atualizarCardCustosFixos() {
 
   const lista =
@@ -8639,14 +8729,18 @@ function atualizarCardCustosFixos() {
 
   if (!lista) return;
 
+
   const ativos = custosFixosFirebase.filter(
     custo => custo.ativo !== false
   );
 
+
+  // NENHUM CUSTO FIXO
   if (ativos.length === 0) {
 
     lista.innerHTML = `
       <div class="custos-fixos-vazio">
+
         <span>📋</span>
 
         <strong>
@@ -8657,28 +8751,58 @@ function atualizarCardCustosFixos() {
           Cadastre seus compromissos para
           acompanhar o custo real do veículo.
         </small>
+
       </div>
     `;
 
     return;
   }
 
+
+  // MONTA OS CUSTOS FIXOS
   lista.innerHTML = ativos.map(custo => {
 
     let icone = "📦";
 
-    if (custo.tipo === "parcela") icone = "🚗";
-    if (custo.tipo === "aluguel") icone = "🔑";
-    if (custo.tipo === "seguro") icone = "🛡️";
-    if (custo.tipo === "ipva") icone = "🧾";
-
-    let textoParcela = "";
-
-    if (custo.parcelaAtual && custo.totalParcelas) {
-      textoParcela =
-        `Parcela ${custo.parcelaAtual} de ${custo.totalParcelas}`;
+    if (custo.tipo === "parcela") {
+      icone = "🚗";
     }
 
+    if (custo.tipo === "aluguel") {
+      icone = "🔑";
+    }
+
+    if (custo.tipo === "seguro") {
+      icone = "🛡️";
+    }
+
+    if (custo.tipo === "ipva") {
+      icone = "🧾";
+    }
+
+
+    // INFORMAÇÃO DAS PARCELAS
+    let textoParcela = "";
+
+    if (
+      custo.parcelaAtual &&
+      custo.totalParcelas
+    ) {
+
+      textoParcela =
+        `Parcela ${custo.parcelaAtual} de ${custo.totalParcelas}`;
+
+    }
+
+
+    // STATUS DO VENCIMENTO
+    const statusVencimento =
+      obterStatusVencimentoCustoFixo(
+        custo.proximoVencimento
+      );
+
+
+    // CARD
     return `
       <div class="custo-fixo-item">
 
@@ -8697,6 +8821,7 @@ function atualizarCardCustosFixos() {
             }
 
           </div>
+
 
           <div class="custo-fixo-item-acoes">
 
@@ -8722,24 +8847,319 @@ function atualizarCardCustosFixos() {
 
         </div>
 
+
         <div class="custo-fixo-item-dados">
 
           <strong>
-            ${formatarMoeda(custo.valorPadrao || 0)}
+            ${formatarMoeda(
+              custo.valorPadrao || 0
+            )}
           </strong>
 
-          <span>
-            📅 Vence dia ${String(
-              custo.diaVencimento
-            ).padStart(2, "0")}
-          </span>
+
+          <div class="custo-fixo-vencimento">
+
+            <span>
+              📅 Vence ${
+                custo.proximoVencimento
+                  ? formatarDataCustoFixo(
+                      custo.proximoVencimento
+                    )
+                  : "data não informada"
+              }
+            </span>
+
+            <small class="${statusVencimento.classe}">
+              ${statusVencimento.texto}
+            </small>
+
+          </div>
 
         </div>
+
+
+        <button
+          type="button"
+          class="btn-confirmar-custo-fixo"
+          onclick="confirmarPagamentoCustoFixo('${custo.id}')"
+        >
+          ✅ Confirmar pagamento
+        </button>
 
       </div>
     `;
 
   }).join("");
+
+}
+async function confirmarPagamentoCustoFixo(id) {
+
+  if (!usuarioAtual) {
+    alert("Faça login primeiro.");
+    return;
+  }
+
+  const custo = custosFixosFirebase.find(
+    item => item.id === id
+  );
+
+  if (!custo) {
+    alert("Custo fixo não encontrado.");
+    return;
+  }
+
+  if (!custo.proximoVencimento) {
+    alert("Este custo não possui uma data de vencimento.");
+    return;
+  }
+
+
+  // ==========================================
+  // PROTEÇÃO CONTRA PAGAMENTO MUITO ANTECIPADO
+  // ==========================================
+
+  const hoje = new Date();
+  hoje.setHours(0, 0, 0, 0);
+
+  const dataVencimento = new Date(
+    custo.proximoVencimento + "T00:00:00"
+  );
+
+  const diferencaMs =
+    dataVencimento.getTime() - hoje.getTime();
+
+  const diasParaVencer =
+    Math.ceil(
+      diferencaMs / (1000 * 60 * 60 * 24)
+    );
+
+
+  if (diasParaVencer > 7) {
+
+    const confirmarAntecipado = confirm(
+      `⚠️ PAGAMENTO ANTECIPADO\n\n` +
+      `Este custo vence somente em ${diasParaVencer} dias.\n\n` +
+      `${custo.nome}\n` +
+      `Vencimento: ${formatarDataCustoFixo(custo.proximoVencimento)}\n\n` +
+      `Deseja realmente confirmar o pagamento antecipadamente?`
+    );
+
+    if (!confirmarAntecipado) {
+      return;
+    }
+  }
+
+
+  const valorPago = Number(
+    custo.valorPadrao || 0
+  );
+
+  const vencimentoPago =
+    custo.proximoVencimento;
+
+
+  const confirmar = confirm(
+    `Confirmar pagamento de ${formatarMoeda(valorPago)}?\n\n` +
+    `${custo.nome}\n` +
+    `Vencimento: ${formatarDataCustoFixo(vencimentoPago)}`
+  );
+
+  if (!confirmar) return;
+
+
+  try {
+
+    // ==============================
+    // 1. REGISTRA O PAGAMENTO
+    // ==============================
+
+    await addDoc(
+      collection(db, "pagamentosCustosFixos"),
+      {
+        uid: usuarioAtual.uid,
+        email: usuarioAtual.email,
+
+        custoFixoId: custo.id,
+
+        tipo: custo.tipo || "outro",
+        nome: custo.nome || "",
+
+        valor: valorPago,
+
+        vencimento: vencimentoPago,
+
+        parcela:
+          custo.parcelaAtual || null,
+
+        totalParcelas:
+          custo.totalParcelas || null,
+
+        pagoEm: serverTimestamp()
+      }
+    );
+
+
+    // ==============================
+    // 2. CALCULA PRÓXIMO VENCIMENTO
+    // ==============================
+
+    const partes =
+      vencimentoPago.split("-");
+
+    const ano =
+      Number(partes[0]);
+
+    const mes =
+      Number(partes[1]);
+
+    const dia =
+      Number(partes[2]);
+
+
+    // Primeiro dia do próximo mês
+    const proximoMes =
+      new Date(
+        ano,
+        mes,
+        1
+      );
+
+
+    const novoAno =
+      proximoMes.getFullYear();
+
+    const novoMes =
+      proximoMes.getMonth();
+
+
+    // Descobre último dia do próximo mês
+    const ultimoDia =
+      new Date(
+        novoAno,
+        novoMes + 1,
+        0
+      ).getDate();
+
+
+    // Evita problemas com dia 29, 30 ou 31
+    const novoDia =
+      Math.min(
+        dia,
+        ultimoDia
+      );
+
+
+    const novoVencimento =
+      [
+        novoAno,
+        String(
+          novoMes + 1
+        ).padStart(2, "0"),
+        String(
+          novoDia
+        ).padStart(2, "0")
+      ].join("-");
+
+
+    // ==============================
+    // 3. AVANÇA PARCELA
+    // ==============================
+
+    let novaParcela =
+      custo.parcelaAtual || null;
+
+    let continuaAtivo = true;
+
+
+    if (
+      custo.parcelaAtual &&
+      custo.totalParcelas
+    ) {
+
+      if (
+        custo.parcelaAtual >=
+        custo.totalParcelas
+      ) {
+
+        continuaAtivo = false;
+
+      } else {
+
+        novaParcela =
+          Number(custo.parcelaAtual) + 1;
+
+      }
+
+    }
+
+
+    // ==============================
+    // 4. ATUALIZA CUSTO FIXO
+    // ==============================
+
+    await updateDoc(
+      doc(
+        db,
+        "custosFixos",
+        id
+      ),
+      {
+        parcelaAtual: novaParcela,
+
+        proximoVencimento:
+          novoVencimento,
+
+        ativo:
+          continuaAtivo,
+
+        ultimoPagamentoEm:
+          serverTimestamp(),
+
+        atualizadoEm:
+          serverTimestamp()
+      }
+    );
+
+
+    // ==============================
+    // 5. ATUALIZA A TELA
+    // ==============================
+
+    await carregarCustosFixos();
+
+
+    if (!continuaAtivo) {
+
+      alert(
+        `✅ Pagamento confirmado!\n\n` +
+        `${custo.nome}\n` +
+        `Última parcela concluída. 🎉`
+      );
+
+    } else {
+
+      alert(
+        `✅ Pagamento confirmado!\n\n` +
+        `Próximo vencimento: ` +
+        `${formatarDataCustoFixo(novoVencimento)}`
+      );
+
+    }
+
+
+  } catch (erro) {
+
+    console.error(
+      "Erro ao confirmar pagamento:",
+      erro
+    );
+
+    alert(
+      "Não foi possível confirmar o pagamento."
+    );
+
+  }
+
 }
 async function excluirCustoFixo(id) {
 
@@ -8784,8 +9204,6 @@ if (!custo) return;
 
 custoFixoEditandoId = id;
 
-document.getElementById("tipoCustoFixo").value =
-  custo.tipo || "outro";
 
   document.getElementById("tipoCustoFixo").value =
     custo.tipo || "outro";
@@ -8797,7 +9215,7 @@ document.getElementById("tipoCustoFixo").value =
     custo.valorPadrao || "";
 
   document.getElementById("vencimentoCustoFixo").value =
-    custo.diaVencimento || "";
+  custo.proximoVencimento || "";
 
   document.getElementById("parcelaAtualCustoFixo").value =
     custo.parcelaAtual || "";
@@ -8830,8 +9248,8 @@ document.getElementById("tipoCustoFixo").value =
   const valor =
     Number(document.getElementById("valorCustoFixo").value);
 
-  const diaVencimento =
-    Number(document.getElementById("vencimentoCustoFixo").value);
+  const proximoVencimento =
+  document.getElementById("vencimentoCustoFixo").value;
 
   const parcelaAtualInput =
     document.getElementById("parcelaAtualCustoFixo").value;
@@ -8850,14 +9268,10 @@ document.getElementById("tipoCustoFixo").value =
     return;
   }
 
-  if (
-    !diaVencimento ||
-    diaVencimento < 1 ||
-    diaVencimento > 31
-  ) {
-    alert("Informe um dia de vencimento entre 1 e 31.");
-    return;
-  }
+ if (!proximoVencimento) {
+  alert("Informe a data do próximo vencimento.");
+  return;
+}
 
 
   const parcelaAtual =
@@ -8876,7 +9290,7 @@ document.getElementById("tipoCustoFixo").value =
     totalParcelas &&
     parcelaAtual > totalParcelas
   ) {
-    alert("A parcela atual não pode ser maior que o total.");
+    alert("A próxima parcela não pode ser maior que o total.");
     return;
   }
 
@@ -8890,11 +9304,11 @@ document.getElementById("tipoCustoFixo").value =
       tipo,
       nome,
 
-      valorPadrao: valor,
-      diaVencimento,
+     valorPadrao: valor,
+proximoVencimento,
 
-      parcelaAtual,
-      totalParcelas,
+parcelaAtual,
+totalParcelas,
 
       ativo: true
     };
@@ -9910,3 +10324,5 @@ window.editarCustoFixo =
 
 window.excluirCustoFixo =
   excluirCustoFixo;
+  window.confirmarPagamentoCustoFixo =
+  confirmarPagamentoCustoFixo;

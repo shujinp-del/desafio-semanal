@@ -7719,3 +7719,57 @@ background:linear-gradient(
   font-size: 11px;
   white-space: nowrap;
 }
+/* STATUS DE VENCIMENTO - CUSTOS FIXOS */
+
+.custo-fixo-vencimento {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+}
+
+.custo-fixo-vencimento small {
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.custo-fixo-vencimento .vence-normal {
+  color: #55d98b;
+}
+
+.custo-fixo-vencimento .vence-proximo {
+  color: #ffc857;
+}
+
+.custo-fixo-vencimento .vence-hoje {
+  color: #ff6b6b;
+}
+
+.custo-fixo-vencimento .vencido {
+  color: #ff6b6b;
+}
+/* Botão discreto para confirmar pagamento de custo fixo */
+.btn-confirmar-custo-fixo {
+  display: block;
+  width: fit-content;
+  margin: 8px 0 0 auto;
+  padding: 6px 10px;
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+
+  background: rgba(255, 255, 255, 0.05);
+  color: #bdbdbd;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.btn-confirmar-custo-fixo:hover {
+  background: rgba(255, 255, 255, 0.10);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.20);
+}
