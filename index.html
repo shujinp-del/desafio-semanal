@@ -784,6 +784,30 @@
     Controle seus gastos e veja seu lucro líquido
   </p>
 
+  <div class="gastos-subabas">
+
+  <button
+    type="button"
+    id="btnSubabaGastos"
+    class="gastos-subaba ativa"
+    onclick="mudarSubabaGastos('gastos')"
+  >
+    💸 Gastos
+  </button>
+
+  <button
+    type="button"
+    id="btnSubabaFixos"
+    class="gastos-subaba"
+    onclick="mudarSubabaGastos('fixos')"
+  >
+    🚗 Custos Fixos
+  </button>
+
+</div>
+
+<div id="conteudoGastosVariaveis">
+
   <div class="periodo-gastos">
     <button id="btnPeriodoMes" onclick="mudarPeriodoGastos('mes')">
       📅 Este mês
@@ -856,6 +880,11 @@
     </div>
   </div>
 </div>
+
+</div>
+
+<div id="conteudoCustosFixos" style="display:none;">
+
 <!-- CUSTOS FIXOS DO VEÍCULO -->
 <div class="card custos-fixos-card">
 
@@ -865,9 +894,6 @@
       <h2>📌 Custos Fixos</h2>
     </div>
 
-    <span class="custos-fixos-selo">
-      Mensal
-    </span>
   </div>
 
   <p class="custos-fixos-descricao">
@@ -948,6 +974,28 @@
     </option>
   </select>
 
+  <label for="frequenciaCustoFixo">
+  Frequência
+</label>
+
+<select id="frequenciaCustoFixo">
+  <option value="mensal">
+    📅 Mensal
+  </option>
+
+  <option value="semanal">
+    🗓️ Semanal
+  </option>
+
+  <option value="anual">
+    🔁 Anual
+  </option>
+
+  <option value="unico">
+    ✅ Pagamento único
+  </option>
+</select>
+
   <label for="nomeCustoFixo">
     Nome / descrição
   </label>
@@ -1022,7 +1070,9 @@
   </button>
 
 </div>
+</div>
 
+<div id="conteudoGastosVariaveisParte2">
   <div class="card adicionar-gasto-card">
   <button onclick="abrirFormularioGasto()">
     ➕ Adicionar gasto
@@ -1138,10 +1188,13 @@
     💾 Salvar meta de gastos
   </button>
 
-  <p id="metaGastosStatus">
+    <p id="metaGastosStatus">
     Defina uma meta mensal para acompanhar seus gastos.
   </p>
 </div>
+
+</div> <!-- fim conteudoGastosVariaveisParte2 -->
+
 </section>
 
 

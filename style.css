@@ -7773,3 +7773,179 @@ background:linear-gradient(
   color: #fff;
   border-color: rgba(255, 255, 255, 0.20);
 }
+/* =========================================
+   SUBABAS — GASTOS / CUSTOS FIXOS
+========================================= */
+
+.gastos-subabas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+
+  margin: 14px 0 18px;
+  padding: 5px;
+
+  border: 1px solid rgba(255, 122, 24, 0.18);
+  border-radius: 14px;
+
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.gastos-subaba {
+  min-height: 42px;
+  padding: 9px 10px;
+
+  border: 1px solid transparent;
+  border-radius: 10px;
+
+  background: transparent;
+  color: #aaa;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.gastos-subaba:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.gastos-subaba.ativa {
+  color: #fff;
+
+  border-color: rgba(255, 122, 24, 0.55);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 122, 24, 0.22),
+      rgba(255, 122, 24, 0.08)
+    );
+
+  box-shadow:
+    0 0 14px rgba(255, 122, 24, 0.10);
+}
+
+.gastos-subaba:active {
+  transform: scale(0.98);
+}
+/* FREQUÊNCIA INDIVIDUAL DOS CUSTOS FIXOS */
+
+.custo-fixo-detalhes {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin-top: 3px;
+}
+
+.custo-fixo-frequencia {
+  color: #d7a05d;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.custo-fixo-detalhes small:not(.custo-fixo-frequencia) {
+  color: #888;
+  font-size: 10px;
+}
+/* =========================================
+   RITMO — CUSTOS FIXOS
+========================================= */
+
+.custo-fixo-ritmo {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  margin: 10px 0 8px;
+  padding: 8px 10px;
+
+  border: 1px solid rgba(255, 122, 24, 0.16);
+  border-radius: 9px;
+
+  background: rgba(255, 122, 24, 0.045);
+}
+
+.custo-fixo-ritmo span {
+  color: #aaa;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.custo-fixo-ritmo strong {
+  color: #ff9a3c;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+
+/* VENCE HOJE */
+
+.custo-fixo-ritmo-hoje {
+  border-color: rgba(255, 193, 7, 0.25);
+}
+
+.custo-fixo-ritmo-hoje strong {
+  color: #ffc857;
+}
+
+
+/* ATRASADO */
+
+.custo-fixo-ritmo-atrasado {
+  border-color: rgba(255, 80, 80, 0.20);
+  background: rgba(255, 80, 80, 0.035);
+}
+
+.custo-fixo-ritmo-atrasado strong {
+  color: #ff6b6b;
+}
+.custo-fixo-media {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+
+  margin-top: 6px;
+  padding-top: 6px;
+
+  border-top:
+    1px solid rgba(255, 255, 255, 0.07);
+}
+
+.custo-fixo-media span {
+  color: #aaa;
+  font-size: 10px;
+}
+
+.custo-fixo-media b {
+  color: #fff;
+  font-weight: 700;
+}
+
+.ritmo-status {
+  font-size: 9px;
+  font-weight: 800;
+  text-align: right;
+}
+
+.ritmo-suficiente {
+  color: #43d17a;
+}
+
+.ritmo-atencao {
+  color: #f2c94c;
+}
+
+.ritmo-abaixo {
+  color: #ff6262;
+}

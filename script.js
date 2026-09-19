@@ -8708,6 +8708,79 @@ function obterStatusVencimentoCustoFixo(proximoVencimento) {
   };
 }
 
+function mudarSubabaGastos(aba) {
+
+  const gastosParte1 =
+    document.getElementById("conteudoGastosVariaveis");
+
+  const gastosParte2 =
+    document.getElementById("conteudoGastosVariaveisParte2");
+
+  const custosFixos =
+    document.getElementById("conteudoCustosFixos");
+
+  const btnGastos =
+    document.getElementById("btnSubabaGastos");
+
+  const btnFixos =
+    document.getElementById("btnSubabaFixos");
+
+
+  if (
+    !gastosParte1 ||
+    !gastosParte2 ||
+    !custosFixos
+  ) {
+    return;
+  }
+
+
+  const mostrarFixos =
+    aba === "fixos";
+
+
+  gastosParte1.style.display =
+    mostrarFixos ? "none" : "block";
+
+  gastosParte2.style.display =
+    mostrarFixos ? "none" : "block";
+
+  custosFixos.style.display =
+    mostrarFixos ? "block" : "none";
+
+
+  if (btnGastos) {
+    btnGastos.classList.toggle(
+      "ativa",
+      !mostrarFixos
+    );
+  }
+
+  if (btnFixos) {
+    btnFixos.classList.toggle(
+      "ativa",
+      mostrarFixos
+    );
+  }
+
+
+  // Fecha formulários ao trocar de aba
+  const formularioGasto =
+    document.getElementById("formularioGasto");
+
+  const formularioCusto =
+    document.getElementById("formularioCustoFixo");
+
+  if (formularioGasto) {
+    formularioGasto.style.display = "none";
+  }
+
+  if (formularioCusto) {
+    formularioCusto.style.display = "none";
+  }
+
+}
+
 function formatarDataCustoFixo(data) {
   if (!data) return "data não informada";
 
@@ -8722,12 +8795,205 @@ function formatarDataCustoFixo(data) {
   return `${dia}/${mes}/${ano}`;
 }
 
+function calcularMediaDiariaFaturamento30Dias() {
+
+  if (!Array.isArray(corridasFirebase)) {
+    return 0;
+  }
+
+  const hoje = new Date();
+  hoje.setHours(23, 59, 59, 999);
+
+  const inicioPeriodo = new Date(hoje);
+  inicioPeriodo.setDate(
+    inicioPeriodo.getDate() - 29
+  );
+  inicioPeriodo.setHours(0, 0, 0, 0);
+
+
+  const faturamentoPorDia = {};
+
+
+  corridasFirebase.forEach(corrida => {
+
+    if (
+  !usuarioAtual ||
+  corrida.uid !== usuarioAtual.uid
+) {
+  return;
+}
+
+
+
+    if (!corrida.data) return;
+
+    // Datas do MMS são tratadas localmente.
+    const partes =
+      corrida.data.split("-").map(Number);
+
+    if (partes.length !== 3) return;
+
+    const [ano, mes, dia] = partes;
+
+    const dataCorrida =
+      new Date(ano, mes - 1, dia);
+
+    dataCorrida.setHours(12, 0, 0, 0);
+
+
+    if (
+      dataCorrida < inicioPeriodo ||
+      dataCorrida > hoje
+    ) {
+      return;
+    }
+
+
+    const chaveDia =
+      `${ano}-${String(mes).padStart(2, "0")}-${String(dia).padStart(2, "0")}`;
+
+
+    if (!faturamentoPorDia[chaveDia]) {
+      faturamentoPorDia[chaveDia] = 0;
+    }
+
+
+    faturamentoPorDia[chaveDia] +=
+      Number(corrida.valor) || 0;
+
+  });
+
+
+  const valoresDias =
+    Object.values(faturamentoPorDia)
+      .filter(valor => valor > 0);
+
+
+  if (valoresDias.length === 0) {
+    return 0;
+  }
+
+
+  const faturamentoTotal =
+    valoresDias.reduce(
+      (total, valor) => total + valor,
+      0
+    );
+
+console.log(
+  "📊 DIAGNÓSTICO MÉDIA 30 DIAS",
+  {
+    inicioPeriodo:
+      inicioPeriodo.toLocaleDateString("pt-BR"),
+
+    hoje:
+      hoje.toLocaleDateString("pt-BR"),
+
+    faturamentoPorDia,
+
+    diasComFaturamento:
+      valoresDias.length,
+
+    faturamentoTotal,
+
+    media:
+      faturamentoTotal / valoresDias.length
+  }
+);
+  return (
+    faturamentoTotal /
+    valoresDias.length
+  );
+
+}
+function calcularRitmoCustoFixo(custo) {
+
+  const valor =
+    Number(custo.valorPadrao) || 0;
+
+  const vencimentoTexto =
+    custo.proximoVencimento;
+
+  if (!vencimentoTexto || valor <= 0) {
+    return null;
+  }
+
+
+  // Trabalha com data LOCAL para evitar
+  // diferença de fuso horário.
+  const [ano, mes, dia] =
+    vencimentoTexto.split("-").map(Number);
+
+  const vencimento =
+    new Date(ano, mes - 1, dia);
+
+  const hoje = new Date();
+
+  hoje.setHours(0, 0, 0, 0);
+  vencimento.setHours(0, 0, 0, 0);
+
+
+  const diferencaMs =
+    vencimento.getTime() -
+    hoje.getTime();
+
+  const diasRestantes =
+    Math.ceil(
+      diferencaMs / (1000 * 60 * 60 * 24)
+    );
+
+
+  // ATRASADO
+  if (diasRestantes < 0) {
+
+    return {
+      situacao: "atrasado",
+      diasRestantes,
+      valorDia: 0,
+      texto:
+        "Pagamento pendente após o vencimento"
+    };
+
+  }
+
+
+  // VENCE HOJE
+  if (diasRestantes === 0) {
+
+    return {
+      situacao: "hoje",
+      diasRestantes: 0,
+      valorDia: valor,
+      texto:
+        `${formatarMoeda(valor)} a cobrir hoje`
+    };
+
+  }
+
+
+  // VENCIMENTO FUTURO
+  const valorDia =
+    valor / diasRestantes;
+
+  return {
+    situacao: "futuro",
+    diasRestantes,
+    valorDia,
+    texto:
+      `${formatarMoeda(valorDia)}/dia até o vencimento`
+  };
+
+}
+
 function atualizarCardCustosFixos() {
 
   const lista =
     document.getElementById("listaCustosFixos");
 
   if (!lista) return;
+
+  const mediaDiariaFaturamento =
+  calcularMediaDiariaFaturamento30Dias();
 
 
   const ativos = custosFixosFirebase.filter(
@@ -8794,12 +9060,67 @@ function atualizarCardCustosFixos() {
 
     }
 
+    let textoFrequencia = "Mensal";
+
+if (custo.frequencia === "semanal") {
+  textoFrequencia = "Semanal";
+}
+
+if (custo.frequencia === "anual") {
+  textoFrequencia = "Anual";
+}
+
+if (custo.frequencia === "unico") {
+  textoFrequencia = "Pagamento único";
+}
+
 
     // STATUS DO VENCIMENTO
     const statusVencimento =
       obterStatusVencimentoCustoFixo(
         custo.proximoVencimento
       );
+
+      const ritmoCusto =
+  calcularRitmoCustoFixo(custo);
+
+  let comparacaoRitmo = null;
+
+if (
+  ritmoCusto &&
+  ritmoCusto.situacao === "futuro" &&
+  mediaDiariaFaturamento > 0
+) {
+
+  const proporcao =
+    mediaDiariaFaturamento /
+    ritmoCusto.valorDia;
+
+
+  if (proporcao >= 1) {
+
+    comparacaoRitmo = {
+      classe: "suficiente",
+      texto: "🟢 Ritmo suficiente"
+    };
+
+  } else if (proporcao >= 0.8) {
+
+    comparacaoRitmo = {
+      classe: "atencao",
+      texto: "🟡 Próximo do ritmo necessário"
+    };
+
+  } else {
+
+    comparacaoRitmo = {
+      classe: "abaixo",
+      texto: "🔴 Abaixo do ritmo necessário"
+    };
+
+  }
+
+}
 
 
     // CARD
@@ -8808,19 +9129,27 @@ function atualizarCardCustosFixos() {
 
         <div class="custo-fixo-item-topo">
 
-          <div class="custo-fixo-item-info">
+        <div class="custo-fixo-item-info">
 
-            <strong>
-              ${icone} ${custo.nome}
-            </strong>
+  <strong>
+    ${icone} ${custo.nome}
+  </strong>
 
-            ${
-              textoParcela
-                ? `<small>${textoParcela}</small>`
-                : ""
-            }
+  <div class="custo-fixo-detalhes">
 
-          </div>
+    <small class="custo-fixo-frequencia">
+      🔁 ${textoFrequencia}
+    </small>
+
+    ${
+      textoParcela
+        ? `<small>${textoParcela}</small>`
+        : ""
+    }
+
+  </div>
+
+</div>
 
 
           <div class="custo-fixo-item-acoes">
@@ -8877,6 +9206,56 @@ function atualizarCardCustosFixos() {
 
         </div>
 
+        ${
+  ritmoCusto
+    ? `
+      <div class="
+        custo-fixo-ritmo
+        custo-fixo-ritmo-${ritmoCusto.situacao}
+      ">
+
+       <span>
+  🎯 Ritmo de faturamento necessário
+</span>
+
+<strong>
+  ${ritmoCusto.texto}
+</strong>
+
+${
+  ritmoCusto.situacao === "futuro" &&
+  mediaDiariaFaturamento > 0
+    ? `
+      <div class="custo-fixo-media">
+        <span>
+          📊 Sua média:
+          <b>
+            ${formatarMoeda(mediaDiariaFaturamento)}/dia
+          </b>
+        </span>
+
+        ${
+          comparacaoRitmo
+            ? `
+              <small class="
+                ritmo-status
+                ritmo-${comparacaoRitmo.classe}
+              ">
+                ${comparacaoRitmo.texto}
+              </small>
+            `
+            : ""
+        }
+      </div>
+    `
+    : ""
+}
+
+      </div>
+    `
+    : ""
+}
+
 
         <button
           type="button"
@@ -8915,7 +9294,7 @@ async function confirmarPagamentoCustoFixo(id) {
 
 
   // ==========================================
-  // PROTEÇÃO CONTRA PAGAMENTO MUITO ANTECIPADO
+  // SITUAÇÃO DO VENCIMENTO
   // ==========================================
 
   const hoje = new Date();
@@ -8928,11 +9307,17 @@ async function confirmarPagamentoCustoFixo(id) {
   const diferencaMs =
     dataVencimento.getTime() - hoje.getTime();
 
-  const diasParaVencer =
-    Math.ceil(
-      diferencaMs / (1000 * 60 * 60 * 24)
-    );
+  const diasParaVencer = Math.ceil(
+    diferencaMs / (1000 * 60 * 60 * 24)
+  );
 
+  const estaVencido =
+    diasParaVencer < 0;
+
+
+  // ==========================================
+  // PROTEÇÃO CONTRA PAGAMENTO MUITO ANTECIPADO
+  // ==========================================
 
   if (diasParaVencer > 7) {
 
@@ -8950,21 +9335,103 @@ async function confirmarPagamentoCustoFixo(id) {
   }
 
 
-  const valorPago = Number(
-    custo.valorPadrao || 0
-  );
+  // ==========================================
+  // VALOR ORIGINAL / VALOR REAL PAGO
+  // ==========================================
+
+  const valorOriginal =
+    Number(custo.valorPadrao || 0);
+
+  let valorPago =
+    valorOriginal;
+
+
+  // Se estiver atrasado, pergunta o valor real
+  if (estaVencido) {
+
+    const diasAtraso =
+      Math.abs(diasParaVencer);
+
+    const valorDigitado = prompt(
+      `⚠️ PAGAMENTO ATRASADO\n\n` +
+      `${custo.nome}\n` +
+      `Vencido há ${diasAtraso} dia(s).\n\n` +
+      `Valor original: ${formatarMoeda(valorOriginal)}\n\n` +
+      `Informe o valor REAL pago, incluindo juros e multa:`,
+      valorOriginal.toFixed(2).replace(".", ",")
+    );
+
+    // Cancelou
+    if (valorDigitado === null) {
+      return;
+    }
+
+  let valorNormalizado =
+  valorDigitado
+    .trim()
+    .replace(/\s/g, "")
+    .replace("R$", "");
+
+// Se tiver vírgula, considera formato brasileiro:
+// 1.527,43 → 1527.43
+if (valorNormalizado.includes(",")) {
+
+  valorNormalizado =
+    valorNormalizado
+      .replace(/\./g, "")
+      .replace(",", ".");
+
+}
+
+valorPago =
+  Number(valorNormalizado);
+
+    if (
+      !Number.isFinite(valorPago) ||
+      valorPago <= 0
+    ) {
+      alert(
+        "Digite um valor pago válido."
+      );
+      return;
+    }
+  }
+
+
+  const jurosMulta =
+    Math.max(
+      0,
+      valorPago - valorOriginal
+    );
 
   const vencimentoPago =
     custo.proximoVencimento;
 
 
-  const confirmar = confirm(
+  // ==========================================
+  // CONFIRMAÇÃO FINAL
+  // ==========================================
+
+  let mensagemConfirmacao =
     `Confirmar pagamento de ${formatarMoeda(valorPago)}?\n\n` +
     `${custo.nome}\n` +
-    `Vencimento: ${formatarDataCustoFixo(vencimentoPago)}`
-  );
+    `Vencimento: ${formatarDataCustoFixo(vencimentoPago)}`;
 
-  if (!confirmar) return;
+
+  if (estaVencido && jurosMulta > 0) {
+
+    mensagemConfirmacao +=
+      `\n\nValor original: ${formatarMoeda(valorOriginal)}` +
+      `\nJuros / multa: +${formatarMoeda(jurosMulta)}`;
+  }
+
+
+  const confirmar =
+    confirm(mensagemConfirmacao);
+
+  if (!confirmar) {
+    return;
+  }
 
 
   try {
@@ -8981,12 +9448,34 @@ async function confirmarPagamentoCustoFixo(id) {
 
         custoFixoId: custo.id,
 
-        tipo: custo.tipo || "outro",
-        nome: custo.nome || "",
+        tipo:
+          custo.tipo || "outro",
 
+        nome:
+          custo.nome || "",
+
+        // Mantemos "valor" para compatibilidade
         valor: valorPago,
 
-        vencimento: vencimentoPago,
+        valorOriginal:
+          valorOriginal,
+
+        valorPago:
+          valorPago,
+
+        jurosMulta:
+          jurosMulta,
+
+        vencimento:
+          vencimentoPago,
+
+        estavaAtrasado:
+          estaVencido,
+
+        diasAtraso:
+          estaVencido
+            ? Math.abs(diasParaVencer)
+            : 0,
 
         parcela:
           custo.parcelaAtual || null,
@@ -8994,71 +9483,148 @@ async function confirmarPagamentoCustoFixo(id) {
         totalParcelas:
           custo.totalParcelas || null,
 
-        pagoEm: serverTimestamp()
+        pagoEm:
+          serverTimestamp()
       }
     );
 
 
-    // ==============================
-    // 2. CALCULA PRÓXIMO VENCIMENTO
-    // ==============================
+   // ==============================
+// 2. CALCULA PRÓXIMO VENCIMENTO
+// ==============================
 
-    const partes =
-      vencimentoPago.split("-");
+const frequencia =
+  custo.frequencia || "mensal";
 
-    const ano =
-      Number(partes[0]);
+let novoVencimento = null;
 
-    const mes =
-      Number(partes[1]);
+const [anoTexto, mesTexto, diaTexto] =
+  vencimentoPago.split("-");
 
-    const dia =
-      Number(partes[2]);
+const ano =
+  Number(anoTexto);
 
+const mes =
+  Number(mesTexto);
 
-    // Primeiro dia do próximo mês
-    const proximoMes =
-      new Date(
-        ano,
-        mes,
-        1
-      );
+const dia =
+  Number(diaTexto);
 
 
-    const novoAno =
-      proximoMes.getFullYear();
+// ==============================
+// SEMANAL
+// ==============================
 
-    const novoMes =
-      proximoMes.getMonth();
+if (frequencia === "semanal") {
+
+  const data = new Date(
+    ano,
+    mes - 1,
+    dia
+  );
+
+  data.setDate(
+    data.getDate() + 7
+  );
+
+  novoVencimento = [
+    data.getFullYear(),
+    String(
+      data.getMonth() + 1
+    ).padStart(2, "0"),
+    String(
+      data.getDate()
+    ).padStart(2, "0")
+  ].join("-");
+
+}
 
 
-    // Descobre último dia do próximo mês
-    const ultimoDia =
-      new Date(
-        novoAno,
-        novoMes + 1,
-        0
-      ).getDate();
+// ==============================
+// MENSAL
+// ==============================
+
+else if (frequencia === "mensal") {
+
+  const proximoMes =
+    new Date(
+      ano,
+      mes,
+      1
+    );
+
+  const novoAno =
+    proximoMes.getFullYear();
+
+  const novoMes =
+    proximoMes.getMonth();
+
+  const ultimoDia =
+    new Date(
+      novoAno,
+      novoMes + 1,
+      0
+    ).getDate();
+
+  const novoDia =
+    Math.min(
+      dia,
+      ultimoDia
+    );
+
+  novoVencimento = [
+    novoAno,
+    String(
+      novoMes + 1
+    ).padStart(2, "0"),
+    String(
+      novoDia
+    ).padStart(2, "0")
+  ].join("-");
+
+}
 
 
-    // Evita problemas com dia 29, 30 ou 31
-    const novoDia =
-      Math.min(
-        dia,
-        ultimoDia
-      );
+// ==============================
+// ANUAL
+// ==============================
+
+else if (frequencia === "anual") {
+
+  const novoAno =
+    ano + 1;
+
+  const ultimoDiaDoMes =
+    new Date(
+      novoAno,
+      mes,
+      0
+    ).getDate();
+
+  const novoDia =
+    Math.min(
+      dia,
+      ultimoDiaDoMes
+    );
+
+  novoVencimento = [
+    novoAno,
+    String(mes).padStart(2, "0"),
+    String(novoDia).padStart(2, "0")
+  ].join("-");
+
+}
 
 
-    const novoVencimento =
-      [
-        novoAno,
-        String(
-          novoMes + 1
-        ).padStart(2, "0"),
-        String(
-          novoDia
-        ).padStart(2, "0")
-      ].join("-");
+// ==============================
+// PAGAMENTO ÚNICO
+// ==============================
+
+else if (frequencia === "unico") {
+
+  novoVencimento = null;
+
+}
 
 
     // ==============================
@@ -9068,7 +9634,8 @@ async function confirmarPagamentoCustoFixo(id) {
     let novaParcela =
       custo.parcelaAtual || null;
 
-    let continuaAtivo = true;
+    let continuaAtivo =
+  frequencia !== "unico";
 
 
     if (
@@ -9104,7 +9671,8 @@ async function confirmarPagamentoCustoFixo(id) {
         id
       ),
       {
-        parcelaAtual: novaParcela,
+        parcelaAtual:
+          novaParcela,
 
         proximoVencimento:
           novoVencimento,
@@ -9133,6 +9701,12 @@ async function confirmarPagamentoCustoFixo(id) {
       alert(
         `✅ Pagamento confirmado!\n\n` +
         `${custo.nome}\n` +
+        `Valor pago: ${formatarMoeda(valorPago)}\n` +
+        (
+          jurosMulta > 0
+            ? `Juros / multa: ${formatarMoeda(jurosMulta)}\n`
+            : ""
+        ) +
         `Última parcela concluída. 🎉`
       );
 
@@ -9140,6 +9714,12 @@ async function confirmarPagamentoCustoFixo(id) {
 
       alert(
         `✅ Pagamento confirmado!\n\n` +
+        `Valor pago: ${formatarMoeda(valorPago)}\n` +
+        (
+          jurosMulta > 0
+            ? `Juros / multa: ${formatarMoeda(jurosMulta)}\n`
+            : ""
+        ) +
         `Próximo vencimento: ` +
         `${formatarDataCustoFixo(novoVencimento)}`
       );
@@ -9208,6 +9788,9 @@ custoFixoEditandoId = id;
   document.getElementById("tipoCustoFixo").value =
     custo.tipo || "outro";
 
+    document.getElementById("frequenciaCustoFixo").value =
+  custo.frequencia || "mensal";
+
   document.getElementById("nomeCustoFixo").value =
     custo.nome || "";
 
@@ -9241,6 +9824,9 @@ custoFixoEditandoId = id;
 
   const tipo =
     document.getElementById("tipoCustoFixo").value;
+
+    const frequencia =
+  document.getElementById("frequenciaCustoFixo").value;
 
   const nome =
     document.getElementById("nomeCustoFixo").value.trim();
@@ -9302,6 +9888,7 @@ custoFixoEditandoId = id;
       email: usuarioAtual.email,
 
       tipo,
+      frequencia,
       nome,
 
      valorPadrao: valor,
@@ -10322,3 +10909,5 @@ window.excluirCustoFixo =
   excluirCustoFixo;
   window.confirmarPagamentoCustoFixo =
   confirmarPagamentoCustoFixo;
+  window.mudarSubabaGastos =
+  mudarSubabaGastos;
