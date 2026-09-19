@@ -8906,6 +8906,115 @@ console.log(
   );
 
 }
+
+function calcularFrequenciaTrabalho30Dias() {
+
+  if (
+    !Array.isArray(corridasFirebase) ||
+    !usuarioAtual
+  ) {
+    return 0;
+  }
+
+  const hoje = new Date();
+  hoje.setHours(23, 59, 59, 999);
+
+  const inicioPeriodo = new Date(hoje);
+
+  inicioPeriodo.setDate(
+    inicioPeriodo.getDate() - 29
+  );
+
+  inicioPeriodo.setHours(0, 0, 0, 0);
+
+
+  const diasTrabalhados = new Set();
+
+
+  corridasFirebase.forEach(corrida => {
+
+    if (!corrida.data) return;
+
+
+    // SOMENTE CORRIDAS DO USUÁRIO LOGADO
+    if (
+      corrida.uid &&
+      corrida.uid !== usuarioAtual.uid
+    ) {
+      return;
+    }
+
+
+    const partes =
+      corrida.data
+        .split("-")
+        .map(Number);
+
+    if (partes.length !== 3) return;
+
+
+    const [ano, mes, dia] = partes;
+
+    const dataCorrida =
+      new Date(
+        ano,
+        mes - 1,
+        dia,
+        12,
+        0,
+        0
+      );
+
+
+    if (
+      dataCorrida < inicioPeriodo ||
+      dataCorrida > hoje
+    ) {
+      return;
+    }
+
+
+    const valor =
+      Number(corrida.valor) || 0;
+
+    if (valor <= 0) return;
+
+
+    const chaveDia =
+      `${ano}-${String(mes).padStart(2, "0")}-${String(dia).padStart(2, "0")}`;
+
+
+    diasTrabalhados.add(chaveDia);
+
+  });
+
+
+  const frequencia =
+    diasTrabalhados.size / 30;
+
+
+  console.log(
+    "📅 FREQUÊNCIA DE TRABALHO:",
+    {
+      diasTrabalhados:
+        diasTrabalhados.size,
+
+      periodoAnalisado:
+        30,
+
+      frequencia,
+
+      percentual:
+        `${Math.round(
+          frequencia * 100
+        )}%`
+    }
+  );
+
+
+  return frequencia;
+
+}
 function calcularRitmoCustoFixo(custo) {
 
   const valor =
@@ -8939,7 +9048,8 @@ function calcularRitmoCustoFixo(custo) {
 
   const diasRestantes =
     Math.ceil(
-      diferencaMs / (1000 * 60 * 60 * 24)
+      diferencaMs /
+      (1000 * 60 * 60 * 24)
     );
 
 
@@ -8949,6 +9059,7 @@ function calcularRitmoCustoFixo(custo) {
     return {
       situacao: "atrasado",
       diasRestantes,
+      diasTrabalhoEstimados: 0,
       valorDia: 0,
       texto:
         "Pagamento pendente após o vencimento"
@@ -8963,6 +9074,7 @@ function calcularRitmoCustoFixo(custo) {
     return {
       situacao: "hoje",
       diasRestantes: 0,
+      diasTrabalhoEstimados: 1,
       valorDia: valor,
       texto:
         `${formatarMoeda(valor)} a cobrir hoje`
@@ -8971,20 +9083,59 @@ function calcularRitmoCustoFixo(custo) {
   }
 
 
-  // VENCIMENTO FUTURO
+  // FREQUÊNCIA REAL DE TRABALHO
+  const frequenciaTrabalho =
+    calcularFrequenciaTrabalho30Dias();
+
+
+  /*
+    Estima quantos dias o motorista
+    provavelmente trabalhará até o vencimento.
+
+    Exemplo:
+    14 dias restantes × 86,7%
+    ≈ 12 dias de trabalho.
+  */
+  let diasTrabalhoEstimados =
+    Math.round(
+      diasRestantes *
+      frequenciaTrabalho
+    );
+
+
+  // Se não houver histórico suficiente,
+  // usa os dias corridos como fallback.
+  if (frequenciaTrabalho <= 0) {
+    diasTrabalhoEstimados =
+      diasRestantes;
+  }
+
+
+  // Nunca permitir divisão por zero.
+  diasTrabalhoEstimados =
+    Math.max(
+      1,
+      diasTrabalhoEstimados
+    );
+
+
   const valorDia =
-    valor / diasRestantes;
+    valor /
+    diasTrabalhoEstimados;
+
 
   return {
     situacao: "futuro",
     diasRestantes,
+    diasTrabalhoEstimados,
+    frequenciaTrabalho,
     valorDia,
+
     texto:
-      `${formatarMoeda(valorDia)}/dia até o vencimento`
+      `${formatarMoeda(valorDia)}/dia trabalhado`
   };
 
 }
-
 function atualizarCardCustosFixos() {
 
   const lista =
@@ -8992,8 +9143,9 @@ function atualizarCardCustosFixos() {
 
   if (!lista) return;
 
+
   const mediaDiariaFaturamento =
-  calcularMediaDiariaFaturamento30Dias();
+    calcularMediaDiariaFaturamento30Dias();
 
 
   const ativos = custosFixosFirebase.filter(
@@ -9025,10 +9177,172 @@ function atualizarCardCustosFixos() {
   }
 
 
-  // MONTA OS CUSTOS FIXOS
-  lista.innerHTML = ativos.map(custo => {
+  /*
+    ========================================
+    RITMO GERAL DOS COMPROMISSOS
+    ========================================
+
+    Soma o valor diário necessário de todos
+    os custos que ainda possuem vencimento
+    futuro.
+
+    Exemplo:
+    Seguro = R$ 19,27/dia
+    Parcela = R$ 162,00/dia
+
+    Total = R$ 181,27/dia trabalhado
+  */
+
+  let ritmoGeralNecessario = 0;
+
+  let quantidadeCustosNoRitmo = 0;
+
+
+  ativos.forEach(custo => {
+
+    const ritmo =
+      calcularRitmoCustoFixo(custo);
+
+
+    if (
+      ritmo &&
+      ritmo.situacao === "futuro" &&
+      ritmo.valorDia > 0
+    ) {
+
+      ritmoGeralNecessario +=
+        ritmo.valorDia;
+
+      quantidadeCustosNoRitmo++;
+
+    }
+
+  });
+
+
+  /*
+    COMPARA O RITMO GERAL NECESSÁRIO
+    COM A MÉDIA REAL DO MOTORISTA
+  */
+
+  let statusRitmoGeral = null;
+
+
+  if (
+    ritmoGeralNecessario > 0 &&
+    mediaDiariaFaturamento > 0
+  ) {
+
+    const proporcao =
+      mediaDiariaFaturamento /
+      ritmoGeralNecessario;
+
+
+    if (proporcao >= 1) {
+
+      statusRitmoGeral = {
+        classe: "suficiente",
+        texto: "🟢 Ritmo geral suficiente"
+      };
+
+    } else if (proporcao >= 0.8) {
+
+      statusRitmoGeral = {
+        classe: "atencao",
+        texto: "🟡 Próximo do ritmo necessário"
+      };
+
+    } else {
+
+      statusRitmoGeral = {
+        classe: "abaixo",
+        texto: "🔴 Abaixo do ritmo necessário"
+      };
+
+    }
+
+  }
+
+
+  /*
+    CARD DE RESUMO GERAL
+  */
+
+  let htmlRitmoGeral = "";
+
+
+  if (ritmoGeralNecessario > 0) {
+
+    htmlRitmoGeral = `
+      <div class="custo-fixo-ritmo-geral">
+
+        <span class="ritmo-geral-titulo">
+          🎯 Ritmo geral dos compromissos
+        </span>
+
+        <strong>
+          ${formatarMoeda(
+            ritmoGeralNecessario
+          )}/dia trabalhado
+        </strong>
+
+        <small>
+          ${quantidadeCustosNoRitmo}
+          ${
+            quantidadeCustosNoRitmo === 1
+              ? "compromisso considerado"
+              : "compromissos considerados"
+          }
+        </small>
+
+        ${
+          mediaDiariaFaturamento > 0
+            ? `
+              <div class="custo-fixo-media">
+
+                <span>
+                  📊 Sua média:
+                  <b>
+                    ${formatarMoeda(
+                      mediaDiariaFaturamento
+                    )}/dia
+                  </b>
+                </span>
+
+                ${
+                  statusRitmoGeral
+                    ? `
+                      <small class="
+                        ritmo-status
+                        ritmo-${statusRitmoGeral.classe}
+                      ">
+                        ${statusRitmoGeral.texto}
+                      </small>
+                    `
+                    : ""
+                }
+
+              </div>
+            `
+            : ""
+        }
+
+      </div>
+    `;
+
+  }
+
+
+  /*
+    ========================================
+    MONTA OS CUSTOS FIXOS INDIVIDUAIS
+    ========================================
+  */
+
+  const htmlCustos = ativos.map(custo => {
 
     let icone = "📦";
+
 
     if (custo.tipo === "parcela") {
       icone = "🚗";
@@ -9048,7 +9362,9 @@ function atualizarCardCustosFixos() {
 
 
     // INFORMAÇÃO DAS PARCELAS
+
     let textoParcela = "";
+
 
     if (
       custo.parcelaAtual &&
@@ -9060,96 +9376,65 @@ function atualizarCardCustosFixos() {
 
     }
 
+
+    // FREQUÊNCIA
+
     let textoFrequencia = "Mensal";
 
-if (custo.frequencia === "semanal") {
-  textoFrequencia = "Semanal";
-}
 
-if (custo.frequencia === "anual") {
-  textoFrequencia = "Anual";
-}
+    if (custo.frequencia === "semanal") {
+      textoFrequencia = "Semanal";
+    }
 
-if (custo.frequencia === "unico") {
-  textoFrequencia = "Pagamento único";
-}
+    if (custo.frequencia === "anual") {
+      textoFrequencia = "Anual";
+    }
+
+    if (custo.frequencia === "unico") {
+      textoFrequencia = "Pagamento único";
+    }
 
 
     // STATUS DO VENCIMENTO
+
     const statusVencimento =
       obterStatusVencimentoCustoFixo(
         custo.proximoVencimento
       );
 
-      const ritmoCusto =
-  calcularRitmoCustoFixo(custo);
 
-  let comparacaoRitmo = null;
+    // RITMO INDIVIDUAL
 
-if (
-  ritmoCusto &&
-  ritmoCusto.situacao === "futuro" &&
-  mediaDiariaFaturamento > 0
-) {
-
-  const proporcao =
-    mediaDiariaFaturamento /
-    ritmoCusto.valorDia;
+    const ritmoCusto =
+      calcularRitmoCustoFixo(custo);
 
 
-  if (proporcao >= 1) {
-
-    comparacaoRitmo = {
-      classe: "suficiente",
-      texto: "🟢 Ritmo suficiente"
-    };
-
-  } else if (proporcao >= 0.8) {
-
-    comparacaoRitmo = {
-      classe: "atencao",
-      texto: "🟡 Próximo do ritmo necessário"
-    };
-
-  } else {
-
-    comparacaoRitmo = {
-      classe: "abaixo",
-      texto: "🔴 Abaixo do ritmo necessário"
-    };
-
-  }
-
-}
-
-
-    // CARD
     return `
       <div class="custo-fixo-item">
 
         <div class="custo-fixo-item-topo">
 
-        <div class="custo-fixo-item-info">
+          <div class="custo-fixo-item-info">
 
-  <strong>
-    ${icone} ${custo.nome}
-  </strong>
+            <strong>
+              ${icone} ${custo.nome}
+            </strong>
 
-  <div class="custo-fixo-detalhes">
+            <div class="custo-fixo-detalhes">
 
-    <small class="custo-fixo-frequencia">
-      🔁 ${textoFrequencia}
-    </small>
+              <small class="custo-fixo-frequencia">
+                🔁 ${textoFrequencia}
+              </small>
 
-    ${
-      textoParcela
-        ? `<small>${textoParcela}</small>`
-        : ""
-    }
+              ${
+                textoParcela
+                  ? `<small>${textoParcela}</small>`
+                  : ""
+              }
 
-  </div>
+            </div>
 
-</div>
+          </div>
 
 
           <div class="custo-fixo-item-acoes">
@@ -9206,55 +9491,43 @@ if (
 
         </div>
 
-        ${
-  ritmoCusto
-    ? `
-      <div class="
-        custo-fixo-ritmo
-        custo-fixo-ritmo-${ritmoCusto.situacao}
-      ">
-
-       <span>
-  🎯 Ritmo de faturamento necessário
-</span>
-
-<strong>
-  ${ritmoCusto.texto}
-</strong>
-
-${
-  ritmoCusto.situacao === "futuro" &&
-  mediaDiariaFaturamento > 0
-    ? `
-      <div class="custo-fixo-media">
-        <span>
-          📊 Sua média:
-          <b>
-            ${formatarMoeda(mediaDiariaFaturamento)}/dia
-          </b>
-        </span>
 
         ${
-          comparacaoRitmo
+          ritmoCusto
             ? `
-              <small class="
-                ritmo-status
-                ritmo-${comparacaoRitmo.classe}
+              <div class="
+                custo-fixo-ritmo
+                custo-fixo-ritmo-${ritmoCusto.situacao}
               ">
-                ${comparacaoRitmo.texto}
-              </small>
+
+                <span>
+                  🎯 Ritmo deste compromisso
+                </span>
+
+                <strong>
+                  ${ritmoCusto.texto}
+                </strong>
+
+                ${
+                  ritmoCusto.situacao === "futuro"
+                    ? `
+                      <small>
+                        ≈ ${ritmoCusto.diasTrabalhoEstimados}
+                        ${
+                          ritmoCusto.diasTrabalhoEstimados === 1
+                            ? "dia de trabalho"
+                            : "dias de trabalho"
+                        }
+                        até o vencimento
+                      </small>
+                    `
+                    : ""
+                }
+
+              </div>
             `
             : ""
         }
-      </div>
-    `
-    : ""
-}
-
-      </div>
-    `
-    : ""
-}
 
 
         <button
@@ -9269,6 +9542,16 @@ ${
     `;
 
   }).join("");
+
+
+  /*
+    PRIMEIRO O RESUMO GERAL,
+    DEPOIS OS COMPROMISSOS
+  */
+
+  lista.innerHTML =
+    htmlRitmoGeral +
+    htmlCustos;
 
 }
 async function confirmarPagamentoCustoFixo(id) {

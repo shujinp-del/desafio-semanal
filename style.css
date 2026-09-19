@@ -7949,3 +7949,32 @@ background:linear-gradient(
 .ritmo-abaixo {
   color: #ff6262;
 }
+/* =========================================
+   RITMO GERAL - CUSTOS FIXOS
+========================================= */
+
+.custo-fixo-ritmo-geral {
+  margin: 4px 0 16px;
+  padding: 12px;
+  border: 1px solid rgba(255, 122, 24, 0.35);
+  border-radius: 12px;
+  background: rgba(255, 122, 24, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.ritmo-geral-titulo {
+  font-size: 11px;
+  opacity: 0.75;
+}
+
+.custo-fixo-ritmo-geral > strong {
+  font-size: 17px;
+  color: #ff9b3d;
+}
+
+.custo-fixo-ritmo-geral > small {
+  font-size: 10px;
+  opacity: 0.65;
+}
