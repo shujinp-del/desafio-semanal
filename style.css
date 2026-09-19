@@ -7978,3 +7978,42 @@ background:linear-gradient(
   font-size: 10px;
   opacity: 0.65;
 }
+.ritmo-resumo-operacional {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+}
+
+.ritmo-resumo-operacional span {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+}
+
+.ritmo-resumo-operacional b {
+  white-space: nowrap;
+}
+
+.ritmo-disponivel {
+  margin-top: 4px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ritmo-disponivel b {
+  color: #ff9d2e;
+}
+
+.custo-fixo-media {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.custo-fixo-media .ritmo-status {
+  align-self: flex-start;
+}

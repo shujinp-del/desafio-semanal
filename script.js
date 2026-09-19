@@ -8906,7 +8906,239 @@ console.log(
   );
 
 }
+function calcularMediaOperacional30Dias() {
 
+  if (
+    !Array.isArray(corridasFirebase) ||
+    !Array.isArray(gastosFirebase) ||
+    !usuarioAtual
+  ) {
+    return {
+      mediaBruta: 0,
+      mediaCombustivelPedagio: 0,
+      mediaDisponivel: 0,
+      diasTrabalhados: 0
+    };
+  }
+
+
+  const hoje = new Date();
+  hoje.setHours(23, 59, 59, 999);
+
+  const inicioPeriodo = new Date(hoje);
+  inicioPeriodo.setDate(
+    inicioPeriodo.getDate() - 29
+  );
+  inicioPeriodo.setHours(0, 0, 0, 0);
+
+
+  // =========================================
+  // 1. DESCOBRE OS DIAS EM QUE HOUVE TRABALHO
+  // =========================================
+
+  const faturamentoPorDia = {};
+
+
+  corridasFirebase.forEach(corrida => {
+
+    if (
+      corrida.uid !== usuarioAtual.uid ||
+      !corrida.data
+    ) {
+      return;
+    }
+
+
+    const partes =
+      corrida.data.split("-").map(Number);
+
+    if (partes.length !== 3) return;
+
+
+    const [ano, mes, dia] = partes;
+
+    const dataCorrida =
+      new Date(ano, mes - 1, dia);
+
+    dataCorrida.setHours(12, 0, 0, 0);
+
+
+    if (
+      dataCorrida < inicioPeriodo ||
+      dataCorrida > hoje
+    ) {
+      return;
+    }
+
+
+    const chaveDia =
+      `${ano}-${String(mes).padStart(2, "0")}-${String(dia).padStart(2, "0")}`;
+
+
+    if (!faturamentoPorDia[chaveDia]) {
+      faturamentoPorDia[chaveDia] = 0;
+    }
+
+
+    faturamentoPorDia[chaveDia] +=
+      Number(corrida.valor) || 0;
+
+  });
+
+
+  const diasTrabalhados =
+    Object.keys(faturamentoPorDia)
+      .filter(
+        dia => faturamentoPorDia[dia] > 0
+      );
+
+
+  if (diasTrabalhados.length === 0) {
+
+    return {
+      mediaBruta: 0,
+      mediaCombustivelPedagio: 0,
+      mediaDisponivel: 0,
+      diasTrabalhados: 0
+    };
+
+  }
+
+
+  // =========================================
+  // 2. FATURAMENTO TOTAL
+  // =========================================
+
+  const faturamentoTotal =
+    diasTrabalhados.reduce(
+      (total, dia) =>
+        total + faturamentoPorDia[dia],
+      0
+    );
+
+
+  // =========================================
+  // 3. COMBUSTÍVEL + PEDÁGIO
+  // =========================================
+
+  let totalOperacional = 0;
+
+
+  gastosFirebase.forEach(gasto => {
+
+    if (
+      gasto.uid !== usuarioAtual.uid ||
+      !gasto.data
+    ) {
+      return;
+    }
+
+
+    if (
+      gasto.categoria !== "combustivel" &&
+      gasto.categoria !== "pedagio"
+    ) {
+      return;
+    }
+
+
+   // Considera combustível e pedágio
+// registrados em qualquer dia dos
+// últimos 30 dias, mesmo que naquele
+// dia não tenha ocorrido corrida.
+
+const partesGasto =
+  gasto.data.split("-").map(Number);
+
+if (partesGasto.length !== 3) {
+  return;
+}
+
+const [
+  anoGasto,
+  mesGasto,
+  diaGasto
+] = partesGasto;
+
+const dataGasto =
+  new Date(
+    anoGasto,
+    mesGasto - 1,
+    diaGasto
+  );
+
+dataGasto.setHours(12, 0, 0, 0);
+
+
+if (
+  dataGasto < inicioPeriodo ||
+  dataGasto > hoje
+) {
+  return;
+}
+
+
+totalOperacional +=
+  Number(gasto.valor) || 0;
+
+  });
+
+
+  // =========================================
+  // 4. MÉDIAS
+  // =========================================
+
+  const quantidadeDias =
+    diasTrabalhados.length;
+
+
+  const mediaBruta =
+    faturamentoTotal /
+    quantidadeDias;
+
+
+  const mediaCombustivelPedagio =
+    totalOperacional /
+    quantidadeDias;
+
+
+  const mediaDisponivel =
+    Math.max(
+      0,
+      mediaBruta -
+      mediaCombustivelPedagio
+    );
+
+
+  console.log(
+    "🚗 DIAGNÓSTICO OPERACIONAL 30 DIAS",
+    {
+      diasTrabalhados:
+        quantidadeDias,
+
+      faturamentoTotal,
+
+      totalCombustivelPedagio:
+        totalOperacional,
+
+      mediaBruta,
+
+      mediaCombustivelPedagio,
+
+      mediaDisponivel
+    }
+  );
+
+
+  return {
+    mediaBruta,
+    mediaCombustivelPedagio,
+    mediaDisponivel,
+    diasTrabalhados:
+      quantidadeDias
+  };
+
+}
 function calcularFrequenciaTrabalho30Dias() {
 
   if (
@@ -9143,10 +9375,11 @@ function atualizarCardCustosFixos() {
 
   if (!lista) return;
 
+const dadosOperacionais =
+  calcularMediaOperacional30Dias();
 
-  const mediaDiariaFaturamento =
-    calcularMediaDiariaFaturamento30Dias();
-
+const mediaDiariaFaturamento =
+  dadosOperacionais.mediaDisponivel;
 
   const ativos = custosFixosFirebase.filter(
     custo => custo.ativo !== false
@@ -9300,29 +9533,51 @@ function atualizarCardCustosFixos() {
             ? `
               <div class="custo-fixo-media">
 
-                <span>
-                  📊 Sua média:
-                  <b>
-                    ${formatarMoeda(
-                      mediaDiariaFaturamento
-                    )}/dia
-                  </b>
-                </span>
+  <div class="ritmo-resumo-operacional">
 
-                ${
-                  statusRitmoGeral
-                    ? `
-                      <small class="
-                        ritmo-status
-                        ritmo-${statusRitmoGeral.classe}
-                      ">
-                        ${statusRitmoGeral.texto}
-                      </small>
-                    `
-                    : ""
-                }
+    <span>
+      📊 Faturamento médio
+      <b>
+        ${formatarMoeda(
+          dadosOperacionais.mediaBruta
+        )}/dia
+      </b>
+    </span>
 
-              </div>
+    <span>
+      ⛽ Combustível + pedágio
+      <b>
+        -${formatarMoeda(
+          dadosOperacionais.mediaCombustivelPedagio
+        )}/dia
+      </b>
+    </span>
+
+    <span class="ritmo-disponivel">
+      💰 Disponível para compromissos
+      <b>
+        ${formatarMoeda(
+          dadosOperacionais.mediaDisponivel
+        )}/dia
+      </b>
+    </span>
+
+  </div>
+
+  ${
+    statusRitmoGeral
+      ? `
+        <small class="
+          ritmo-status
+          ritmo-${statusRitmoGeral.classe}
+        ">
+          ${statusRitmoGeral.texto}
+        </small>
+      `
+      : ""
+  }
+
+</div>
             `
             : ""
         }
