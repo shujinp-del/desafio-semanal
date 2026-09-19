@@ -9088,55 +9088,100 @@ totalOperacional +=
   // 4. MÉDIAS
   // =========================================
 
-  const quantidadeDias =
-    diasTrabalhados.length;
+ const quantidadeDias =
+  diasTrabalhados.length;
 
 
-  const mediaBruta =
-    faturamentoTotal /
-    quantidadeDias;
+// =========================================
+// TEMPO DE HISTÓRICO DO MOTORISTA
+// =========================================
+
+// Os dias já estão no formato YYYY-MM-DD.
+// Ordenamos para descobrir o primeiro dia
+// com faturamento dentro da amostra.
+
+const diasOrdenados =
+  [...diasTrabalhados].sort();
+
+const primeiroDiaTexto =
+  diasOrdenados[0];
+
+let diasDeHistorico = 0;
 
 
-  const mediaCombustivelPedagio =
-    totalOperacional /
-    quantidadeDias;
+if (primeiroDiaTexto) {
 
+  const [anoPrimeiro, mesPrimeiro, diaPrimeiro] =
+    primeiroDiaTexto.split("-").map(Number);
 
-  const mediaDisponivel =
-    Math.max(
-      0,
-      mediaBruta -
-      mediaCombustivelPedagio
+  const primeiroDia =
+    new Date(
+      anoPrimeiro,
+      mesPrimeiro - 1,
+      diaPrimeiro
     );
 
+  primeiroDia.setHours(0, 0, 0, 0);
 
-  console.log(
-    "🚗 DIAGNÓSTICO OPERACIONAL 30 DIAS",
-    {
-      diasTrabalhados:
-        quantidadeDias,
 
-      faturamentoTotal,
+  const hojeLocal =
+    new Date();
 
-      totalCombustivelPedagio:
-        totalOperacional,
+  hojeLocal.setHours(0, 0, 0, 0);
 
-      mediaBruta,
 
-      mediaCombustivelPedagio,
+  diasDeHistorico =
+    Math.floor(
+      (
+        hojeLocal.getTime() -
+        primeiroDia.getTime()
+      ) /
+      (1000 * 60 * 60 * 24)
+    ) + 1;
 
-      mediaDisponivel
-    }
+}
+
+
+// O MMS só avalia o ritmo depois
+// de completar pelo menos 7 dias corridos.
+const periodoMinimoAtingido =
+  diasDeHistorico >= 7;
+
+
+// =========================================
+// MÉDIAS
+// =========================================
+
+const mediaBruta =
+  faturamentoTotal /
+  quantidadeDias;
+
+
+const mediaCombustivelPedagio =
+  totalOperacional /
+  quantidadeDias;
+
+
+const mediaDisponivel =
+  Math.max(
+    0,
+    mediaBruta -
+    mediaCombustivelPedagio
   );
 
 
-  return {
-    mediaBruta,
-    mediaCombustivelPedagio,
-    mediaDisponivel,
-    diasTrabalhados:
-      quantidadeDias
-  };
+return {
+  mediaBruta,
+  mediaCombustivelPedagio,
+  mediaDisponivel,
+
+  diasTrabalhados:
+    quantidadeDias,
+
+  diasDeHistorico,
+
+  periodoMinimoAtingido
+};
 
 }
 function calcularFrequenciaTrabalho30Dias() {
@@ -9461,10 +9506,11 @@ const mediaDiariaFaturamento =
   let statusRitmoGeral = null;
 
 
-  if (
-    ritmoGeralNecessario > 0 &&
-    mediaDiariaFaturamento > 0
-  ) {
+ if (
+  ritmoGeralNecessario > 0 &&
+  mediaDiariaFaturamento > 0 &&
+  dadosOperacionais.periodoMinimoAtingido
+) {
 
     const proporcao =
       mediaDiariaFaturamento /
@@ -9564,8 +9610,30 @@ const mediaDiariaFaturamento =
 
   </div>
 
-  ${
-    statusRitmoGeral
+ ${
+  !dadosOperacionais.periodoMinimoAtingido
+    ? `
+      <small class="ritmo-status ritmo-aprendizado">
+        🎓 MMS conhecendo seu ritmo
+        <br>
+        ${dadosOperacionais.diasDeHistorico}
+        ${
+          dadosOperacionais.diasDeHistorico === 1
+            ? "dia de histórico"
+            : "dias de histórico"
+        }
+        •
+        ${dadosOperacionais.diasTrabalhados}
+        ${
+          dadosOperacionais.diasTrabalhados === 1
+            ? "dia trabalhado"
+            : "dias trabalhados"
+        }
+        <br>
+        Complete sua primeira semana para liberar a análise de ritmo.
+      </small>
+    `
+    : statusRitmoGeral
       ? `
         <small class="
           ritmo-status
@@ -9575,7 +9643,7 @@ const mediaDiariaFaturamento =
         </small>
       `
       : ""
-  }
+}
 
 </div>
             `
